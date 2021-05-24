@@ -1,7 +1,6 @@
 
 import java.util.*;
 
-
 //consecutive swaps
 public class q14{
     static int[] pos, arr;

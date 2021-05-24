@@ -22,9 +22,6 @@ class GFG {
 		    String str="";
 		    while(j>i)
 		    {
-		        
-		       
-		       
 		        str=arr[j]+" "+arr[i]+" ";
 		        i++;
 		        j--;

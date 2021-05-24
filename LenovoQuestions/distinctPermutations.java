@@ -5,11 +5,6 @@
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Java Program to find all permutations of a String
- * @author pankaj
- *
- */
 public class distinctPermutations {
 
     public static Set<String> permutationFinder(String str) {
@@ -31,7 +26,6 @@ public class distinctPermutations {
 
         char initial = str.charAt(0); // first character
         String rem = str.substring(1); // Full string without first character
-
         Set<String> words = permutationFinder(rem);
 
         for (String strNew : words) {

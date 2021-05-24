@@ -3,7 +3,7 @@ import java.util.*;
 // 			for(int i = n; i >= 1; i--) {
 // 				list.add(i);
 // 	}
-
+// https://www.hackerrank.com/challenges/ctci-array-left-rotation/problem
 public class q13 {
     public static void main(String args[]){
         Scanner sc = new Scanner(System.in);
