@@ -1,46 +1,38 @@
 class Solution {
-    // Brute force solution
-
-    // Have two matrixes, Space=O(mn*2) = O(mn)
-    // Time: O(mn * (m+n))
-    
-    // Time: traversing through each element of the matrix and for each elemnt each row and col again
+    // Use 2 ref arrs for rows and cols that have all elements 0
+    // Time: O(mn)
+    // Space: O(m+n)
     public void setZeroes(int[][] matrix) {
+        // sizes used later
         int rows = matrix.length;
         int cols = matrix[0].length;
-        int[][] resMatrix = new int[rows][cols];
 
-        // create a copy of the original matrix
-        // Space: O(mn)
-        for (int i = 0; i<rows; i++) {
-            for (int j = 0; j<cols; j++) {
-                resMatrix[i][j] = matrix[i][j];
-            }
-        }
+        // reference arrs
+        int[] rowsArr = new int[rows];
+        int[] colsArr = new int[cols];
+        Arrays.fill(rowsArr, -1); // init so that they don't have 0s to begin with
+        Arrays.fill(colsArr, -1);
 
-
-        // traverse through original matrix
-        // if you find 0; set row and column in resMatrix to 0
-        for (int i = 0; i<rows; i++) {
-            for (int j = 0; j<cols; j++) {
+        // traverse through each element of matrix
+        // Time: O(mn)
+        for (int i=0; i<rows; i++) {
+            for (int j=0; j<cols; j++) {
+                // if value in matrix is 0, set corresponding row and col to 0 in arrs
                 if (matrix[i][j] == 0) {
-                    // setting row to 0
-                    for (int res_i = 0; res_i < rows; res_i++) {
-                        resMatrix[res_i][j] = 0;
-                    }
-
-                    // setting col to 0
-                    for (int res_j = 0; res_j < cols; res_j++) {
-                        resMatrix[i][res_j] = 0;
-                    }
+                    rowsArr[i] = 0;
+                    colsArr[j] = 0;
                 }
             }
         }
 
-        // copy resMatrix to original matrix
-        for (int i = 0; i<rows; i++) {
-            for (int j = 0; j<cols; j++) {
-                matrix[i][j] = resMatrix[i][j];
+        // traverse through each element of matrix
+        // Time: O(mn)
+        for (int i=0; i<rows; i++) {
+            for (int j=0; j<cols; j++) {
+                // if ref arrays were set to 0, set values to 0
+                if (rowsArr[i] == 0 || colsArr[j] == 0) {
+                    matrix[i][j] = 0;
+                }
             }
         }
     }
