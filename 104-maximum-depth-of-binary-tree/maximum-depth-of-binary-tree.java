@@ -13,13 +13,26 @@
  *     }
  * }
  */
- // Recursion solution
- // Time: O(n)
+ // BFS (BREADTH FIRST SEARCH)
+ // LEVEL ORDER TRAVERSAL
+ // ITERATIVE APPROACH
 class Solution {
     public int maxDepth(TreeNode root) {
-        if (root == null) return 0;
-        int left = maxDepth(root.left);
-        int right = maxDepth(root.right);
-        return Math.max(left, right) + 1; // for root node
+        int ans = 0;
+        int count = 0;
+        Queue<TreeNode> queue = new LinkedList();
+        queue.add(root);
+        TreeNode cur = null;
+        while (root != null && !queue.isEmpty()) {
+            count = queue.size();
+            while (count != 0) {
+                cur = queue.poll();
+                if (cur.left != null) queue.add(cur.left);
+                if (cur.right != null) queue.add(cur.right);
+                count--;
+            }
+            ans++;
+        }
+        return ans;
     }
 }
