@@ -17,28 +17,36 @@ class Node {
     }
 }
 */
-// BFS: queue
-// DFS: stack
+// Ref: https://www.youtube.com/watch?v=t9pj1Ail2z4&t=354s
 class Solution {
-public Node cloneGraph(Node node) {
-        return cloneGraphWithVisited(node, new HashMap<Integer, Node>());
-    }
-    
-    // visited map used to keep track of nodes that are already visited so we don't recurse indefinitely
-    public Node cloneGraphWithVisited(Node node, Map<Integer, Node> visited) {
-        // base case
+    public Node cloneGraph(Node node) {
+        // edge case
         if (node == null) return null;
-        
-        // if node was already visited
-        if (visited.containsKey(node.val)) return visited.get(node.val); 
-        
-        // if unvisited node, create clone
-        Node clone = new Node(node.val, new ArrayList<Node>()); // create node
-        visited.put(node.val, clone); // add to list
-        for(Node neighbor: node.neighbors) { // recurse on neighbours
-            clone.neighbors.add(cloneGraphWithVisited(neighbor, visited));
+        // perform graph search BFS (use queue) of [actual nodes]
+        Queue<Node> q = new LinkedList();
+        // keep track of visited [actual nodes] and their [clones] using hash table
+        HashMap<Node, Node> hm = new HashMap();
+
+        // init q and hm
+        q.add(node);
+        hm.put(node, new Node(node.val));
+
+        while (q.isEmpty() == false) {
+            Node first = q.remove(); // get the top
+            Node firstClone = hm.get(first); // get the clone
+
+            for (Node neighbor : first.neighbors) {
+                Node neighborClone; // neighbor clone
+                if (hm.containsKey(neighbor)) { // already visited neighbor node
+                    neighborClone = hm.get(neighbor); // simply get already visited clone
+                } else { // never visited neighbor node
+                    neighborClone = new Node(neighbor.val); // create new node
+                    hm.put(neighbor, neighborClone); // add to hash map
+                    q.add(neighbor); // add to queue
+                }
+                firstClone.neighbors.add(neighborClone); // add neighbor clone to neigbor parent node
+            }
         }
-        
-        return clone; // return clone
+        return hm.get(node);
     }
 }
