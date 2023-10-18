@@ -1,24 +1,29 @@
-// Ref: look at editorial tab
-// brute force: bfs graph search
 class Solution {
-    public boolean wordBreak(String s, List<String> wordDict) {
-        Set<Integer> set = new HashSet(wordDict); // constant lookup of 
-        Queue<Integer> q = new LinkedList(); // keep track of work startings
-        q.add(0); // init q
-        boolean[] seen = new boolean[s.length() + 1]; // visit node only once
+    String s;
+    List<String> wordDict;
+    int[] memo; // stands for memoization
+    private boolean dp(int i) { // calculate dp states
+        if (i < 0) return true; // boundary checking/ edge case
+        if (memo[i] != -1) return memo[i] == 1; // don't calculate case more than once
 
-        while (q.isEmpty() == false) { // iterate until queue is empty
-            int start = q.remove(); // get first q element
-            if (start == s.length()) return true; // if we reached end of word
-            for (int end = start + 1; end <= s.length(); end++) { // for each start iterate through end of word to make sure all 
-                if (seen[end]) continue; // if already visited
+        for (String word : wordDict) { // check all words in dict
+            if (i < word.length() - 1) continue; // boundary checking
 
-                if (set.contains(s.substring(start, end))) { // check if string in dict
-                    q.add(end); // add to start list
-                    seen[end] = true; // update to make sure same node is not visited again
-                }
+            // actual dp case
+            if (s.substring(i - word.length() + 1, i + 1).equals(word) && dp(i - word.length())) {
+                memo[i] = 1;
+                return true;
             }
         }
+        // negative state
+        memo[i] = 0;
         return false;
+    }
+    public boolean wordBreak(String s, List<String> wordDict) {
+        this.s = s;
+        this.wordDict = wordDict;
+        this.memo = new int[s.length()];
+        Arrays.fill(this.memo, -1); // init with starting value (different from 1 and 0)
+        return dp(s.length() - 1); // we want to check if last index passed uses all words in dict
     }
 }
