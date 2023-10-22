@@ -20,18 +20,19 @@ class Solution {
 // Time Complexity : O(n)
 // Space Complexity : O(n)
     public TreeNode invertTree(TreeNode root) {
-        // base case
-        if (root == null) return root;
+        // till queue is empty
+        // do a bfs search and add nodes queue
+        Queue<TreeNode> q = new LinkedList<TreeNode>();
+        if (root != null) q.add(root);
+        while (q.isEmpty() != true) {
+            TreeNode node = q.poll();
+            if (node.left != null) q.add(node.left);
+            if (node.right != null) q.add(node.right);
 
-        // recurse over lef
-        invertTree(root.left);
-        // recurve over right
-        invertTree(root.right);
-
-        // swap left and right
-        TreeNode tmp_left = root.left;
-        root.left = root.right;
-        root.right = tmp_left;
+            TreeNode tmp_left = node.left;
+            node.left = node.right;
+            node.right = tmp_left;
+        }
 
         return root;
     }
