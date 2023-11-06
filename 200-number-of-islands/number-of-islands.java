@@ -1,28 +1,41 @@
-// Ref DFS solution: https://leetcode.com/problems/number-of-islands/solutions/56338/java-dfs-and-bfs-solution/?envType=list&envId=pxw54vnt
-// Ref DFS video: https://www.youtube.com/watch?v=U6-X_QOwPcs
+// Ref: https://leetcode.com/problems/number-of-islands/solutions/56338/java-dfs-and-bfs-solution/comments/278802
 class Solution {
     public int numIslands(char[][] grid) {
+        if (grid.length == 0)
+            return 0;
+
+        int m = grid.length;
+        int n = grid[0].length;
+
         int count = 0;
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[i].length; j++) {
-                if (grid[i][j] == '1') {
+        boolean[][] visited = new boolean[m][n];
+        Queue<int[]> q = new LinkedList<>();
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (grid[i][j] == '1' && !visited[i][j]) {
                     count++;
-                    DFS(i, j, grid);
+                    q.offer(new int[]{i, j});
+                    visited[i][j] = true;
+                    BFS(i, j, grid, visited, q);
                 }
             }
         }
         return count;
     }
 
-    private void DFS(int i, int j, char[][] grid) {
-        // boundary checks
-        if (i < 0 || i >= grid.length || j < 0 || j >= grid[i].length || grid[i][j] == '0') {
-            return;
+    int[][] dirs = {{0,1}, {0,-1}, {1,0}, {-1,0}};
+    private void BFS(int i, int j, char[][] grid, boolean[][] visited, Queue<int[]> q) {
+        while(!q.isEmpty()) {
+            int[] curr = q.poll();
+            for (int[] dir : dirs) {
+                int x = curr[0] + dir[0], y = curr[1] + dir[1];
+                if (x < 0 || x >= grid.length || y < 0 || y >= grid[0].length || visited[x][y] || grid[x][y] == '0') {
+                    continue;
+                }
+                q.offer(new int[] {x, y});
+                visited[x][y] = true;
+            }
         }
-        grid[i][j] = '0'; //set '1' to '0' so you don't visit it again
-        DFS(i+1, j, grid); //up
-        DFS(i-1, j, grid); //down
-        DFS(i, j-1, grid); //left
-        DFS(i, j+1, grid); //right
     }
 }
