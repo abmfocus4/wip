@@ -2,6 +2,9 @@
 // https://leetcode.com/problems/find-median-from-data-stream/description/comments/1564564
 // https://leetcode.com/problems/find-median-from-data-stream/description/comments/1567590
 
+// Good Description:
+// https://leetcode.com/problems/find-median-from-data-stream/solutions/652498/Good-for-interviews:-Python-general-sort-greater-insertion-sort-greater-two-heaps-greater-follow-ups
+
 
 // Code Ref: https://www.youtube.com/watch?v=JNKdfHmnMSg
 class MedianFinder {
