@@ -1,1 +1,1 @@
-<h2>longest-increasing-subsequence Notes</h2><hr>dp (n
+<h2>longest-increasing-subsequence Notes</h2><hr>dp (bottom up approach)
