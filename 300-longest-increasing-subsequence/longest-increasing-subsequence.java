@@ -1,39 +1,32 @@
-// https://www.youtube.com/watch?v=hbN20guU5pM
-// Time: O(nlogn), Space: O(n)
-
-// verbal explanation of tail arr and replace and insert decision
-// https://leetcode.com/problems/longest-increasing-subsequence/description/comments/1570655
+// https://www.youtube.com/watch?v=2kaWJaqoutg
+// Top down
+// Time: O(n^2), Space: O(n)
 class Solution {
+    Integer[] cache;
+    int N;
+    int[] nums;
     public int lengthOfLIS(int[] nums) {
-        int N = nums.length;
-        List<Integer> sub = new ArrayList<>();
-        sub.add(nums[0]);
-        for (int i = 1; i < N; i++) {
-            if (nums[i] > sub.get(sub.size()-1)) { // new size subsequence
-                sub.add(nums[i]);
-            } else { // replace or insert in between
-                int index = binarySearch(nums[i], sub);
-                sub.set(index, nums[i]);
-            }
+        this.N = nums.length;
+        this.cache = new Integer[N];
+        this.nums = nums;
+        int maxLIS = 0;
+        for (int i = 0; i < N; i++) { // where to start LIS
+            cache[i] = helper(i);
+            maxLIS = Math.max(cache[i], maxLIS);
         }
-        return sub.size();
+        return maxLIS;
     }
 
-    // checking tail
-    private int binarySearch(int num, List<Integer> sub) {
-        int left = 0;
-        int right = sub.size() - 1;
-        while (left < right) {
-            int mid = (left + right)/2;
-            if (sub.get(mid) == num) {
-                return mid; // replace
-            }
-            if (sub.get(mid) < num) {
-                left = mid + 1; // insert
-            } else {
-                right = mid;
+    private int helper(int index) {
+        if (cache[index] != null) return cache[index];
+        int curVal = nums[index];
+        int maxLIS = 0;
+        for (int i = index+1; i < N; i++) { // dfs to find max lis from that element to end of arr
+            if (curVal < nums[i]) { // next elem should be greater to be part of LIS
+                maxLIS = Math.max(maxLIS, helper(i));
             }
         }
-        return left;
+        cache[index] = maxLIS + 1;
+        return cache[index];
     }
 }
