@@ -1,1 +1,1 @@
-<h2>top-k-frequent-elements Notes</h2><hr>O(n log
+<h2>top-k-frequent-elements Notes</h2><hr>O(n logk)
