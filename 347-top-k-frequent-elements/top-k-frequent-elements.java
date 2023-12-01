@@ -1,37 +1,38 @@
 // what elements are repeated the most and top k out of those
 // https://www.youtube.com/watch?v=a3vb_SQVQBo
 
-// First Sol: O(nLogk)
+// Time Complexity: O(n)
 class Solution {
     public int[] topKFrequent(int[] nums, int k) {
-        // first create hash table with elem as key and freq as value
-        // create min heap sorted by freq
-        // insert elements one by one
-        // if size of heap exceeds over k then remove min freq elem
-        // insert all elems in heap into res arr
-        
+        // create hm of num and freq
+        // create hm of freq and list of nums with same freq
+        // inter N times to get the top k elems
 
-        Map<Integer, Integer> hm = new HashMap();
+        Map<Integer, Integer> freqHM = new HashMap<>();
         for (int num : nums) {
-            hm.put(num, hm.getOrDefault(num, 0) + 1);
+            freqHM.put(num, freqHM.getOrDefault(num, 0) + 1);
         }
 
-        Queue<Integer> q = new PriorityQueue<>((a,b) -> hm.get(a) - hm.get(b));
-
-        for (int num : hm.keySet()) {
-            q.add(num);
-            if (q.size() > k) {
-                q.poll();
-            }
+        Map<Integer, ArrayList<Integer>> numListHM = new HashMap();
+        for (int num : freqHM.keySet()) {
+            int newListHMKey = freqHM.get(num);
+            if (!numListHM.containsKey(newListHMKey))
+                numListHM.put(newListHMKey, new ArrayList<>());
+            numListHM.get(newListHMKey).add(num);
         }
 
         int[] res = new int[k];
+        int N = nums.length;
         int index = 0;
-        while(q.isEmpty() == false) {
-            res[index++] = q.poll();
+        for (int i = N; i > 0; i--) {
+            if (numListHM.containsKey(i)) {
+                ArrayList<Integer> list = numListHM.get(i);
+                for (int listElem : list) {
+                    res[--k] = listElem;
+                    if (k == 0) return res;
+                }
+            }
         }
-
         return res;
-
     }
 }
