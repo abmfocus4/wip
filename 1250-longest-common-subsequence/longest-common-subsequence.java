@@ -19,7 +19,7 @@ class Solution {
         if (t1 == 0 || t2 == 0) return 0; // null string case
         if (cache[t1][t2] != null) return cache[t1][t2]; // return repeated cal
         if (text1.charAt(t1-1) == text2.charAt(t2-1)) { // adding char that will increase len of pre cal subseq
-            cache[t1][t2] = 1 + helper(t1-1, t2-1);
+            return 1 + helper(t1-1, t2-1);
         } else {
             cache[t1][t2] = Math.max(helper(t1-1, t2), helper(t1, t2-1));
         }
