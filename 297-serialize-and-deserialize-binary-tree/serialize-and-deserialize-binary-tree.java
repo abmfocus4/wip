@@ -8,8 +8,8 @@
  * }
  */
 
- // https://www.youtube.com/watch?v=NoHwJP7xPxg
- // Recusion DFS PreOrder Tranversal
+// Ref: https://leetcode.com/problems/serialize-and-deserialize-binary-tree/solutions/281714/clean-java-solution/
+// Interative serialization
 public class Codec {
     final String nullNode = "X";
     // Encodes a tree to a single string.
@@ -18,26 +18,20 @@ public class Codec {
         return root.val + "," + serialize(root.left) + "," + serialize(root.right);
     }
 
-    String arr[];
-    int index = 0;
     // Decodes your encoded data to tree.
     public TreeNode deserialize(String data) {
-        arr = data.split(",");
-        return dfs();
+        Queue<String> q = new LinkedList(Arrays.asList(data.split(",")));
+        return dfs(q);
     }
 
-    private TreeNode dfs() {
-        // base case
-        if (arr[index].equals(nullNode)) {
-            index++;
+    private TreeNode dfs(Queue<String> q) {
+        String value = q.poll();
+        if (value.equals(nullNode)) {
             return null;
         }
-        // deserialize the current value
-        TreeNode root = new TreeNode(Integer.parseInt(arr[index++]));
-        // build our left subtree and return its root
-        root.left = dfs();
-        // build our right subtree and return its root
-        root.right = dfs();
+        TreeNode root = new TreeNode(Integer.parseInt(value));
+        root.left = dfs(q);
+        root.right = dfs(q);
         return root;
     }
 }
