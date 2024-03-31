@@ -1,40 +1,34 @@
 class Solution {
     public String longestPalindrome(String s) {
-        // use 2d array with row = start and column = end bounds of palindrome
-        // base cases:
-        // odd length palindrome reflected around i
-        // even length palindromes reflected around i+1 (non char center)
-        // dp : s[i] == s[j] && dp[i+1][j-1]
-
         int[] bounds = new int[] {0,0};
-        int n = s.length();
-        boolean[][] dp = new boolean[n][n];
-
-        for (int i = 0; i < n; i++) {
-            dp[i][i] = true;
-        }
-
-        for (int i = 0; i < n-1; i++) {
-            if (s.charAt(i) == s.charAt(i+1))
-            {
-                dp[i][i+1] = true;
-                bounds[0] = i;
-                bounds[1] = i+1;
+        for (int i = 0; i < s.length(); i++) {
+            // consider odd length palindromes - n centers
+            int oddLen = expand(s, i, i);
+            if (oddLen > bounds[1] - bounds[0] + 1) {
+                int dist = oddLen/2;
+                bounds[0] = i - dist;
+                bounds[1] = i + dist;
             }
-        }
 
-        for (int diff = 2; diff < n; diff++) {
-            for (int i = 0; i < n - diff; i++) {
-                int j = i+diff;
-                if (s.charAt(i) == s.charAt(j) && dp[i+1][j-1]) {
-                    dp[i][j] = true;
-                    bounds[0] = i;
-                    bounds[1] = j;
-                }
+            // consider even length palindromes - n-1 centers
+            int evenLen = expand(s, i , i+1);
+            if (evenLen > bounds[1] - bounds[0] + 1) {
+                int dist = (evenLen/2) - 1;
+                bounds[0] = i - dist;
+                bounds[1] = i + dist + 1;
             }
         }
 
         return s.substring(bounds[0], bounds[1]+1);
+    }
 
+    private int expand(String s, int i, int j) {
+        int left = i;
+        int right = j;
+        while (left >= 0 && right < s.length() && s.charAt(left) == s.charAt(right)) {
+            left--;
+            right++;
+        }
+        return right - left - 1;
     }
 }
