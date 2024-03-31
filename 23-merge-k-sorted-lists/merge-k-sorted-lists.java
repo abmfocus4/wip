@@ -8,25 +8,43 @@
  *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
+//  https://leetcode.com/problems/merge-k-sorted-lists/solutions/10522/my-simple-java-solution-use-recursion
 class Solution {
     public ListNode mergeKLists(ListNode[] lists) {
-        PriorityQueue<ListNode> pq = new PriorityQueue<>((a,b) -> a.val - b.val);
+        if (lists == null || lists.length == 0) return null;
+        ListNode head = merge(lists, 0, lists.length - 1);
+        return head;
+    }
 
-        for (ListNode node : lists) {
-            if (node == null) continue;
-            pq.add(node);
-        }
+    public ListNode merge(ListNode[] lists, int left, int right) {
+        if (left == right) return lists[left];
+        int mid = left + (right - left)/2;
+        ListNode list1 = merge(lists, left, mid);
+        ListNode list2 = merge(lists, mid+1, right);
+        return sort(list1, list2);
+    }
 
+    public ListNode sort(ListNode list1, ListNode list2) {
         ListNode dummy_node = new ListNode(0);
-        ListNode cur_node = dummy_node;
-
-        while (!pq.isEmpty()) {
-            ListNode top = pq.poll();
-            cur_node.next = top;
-            if (top.next != null) pq.add(top.next);
-            cur_node = cur_node.next;
+        ListNode curNode = dummy_node;
+        while (list1 != null && list2 != null) {
+            if(list1.val < list2.val) {
+                curNode.next = list1;
+                list1 = list1.next;
+            } else {
+                curNode.next = list2;
+                list2 = list2.next;
+            }
+            curNode = curNode.next;
         }
 
+        if (list1 != null) {
+            curNode.next = list1;
+        }
+
+        if (list2 != null) {
+            curNode.next = list2;
+        }
         return dummy_node.next;
     }
 }
