@@ -1,11 +1,33 @@
 class Solution {
     public boolean canJump(int[] nums) {
-        int target_pos = nums.length - 1;
-        for (int i = nums.length - 1; i >= 0; i--) {
-            if (nums[i] >= target_pos - i) {
-             target_pos = i;   
+        int[] dp = new int[nums.length];
+        Arrays.fill(dp, -1); // fill with -1
+        return canJump(nums, 0, dp);
+    }
+
+    public boolean canJump(int[] nums, int index, int[] dp) {
+        if(index >= nums.length - 1) {
+            return true; //order matters
+        }
+
+        if (nums[index] == 0) {
+            dp[index] = 0;
+            return false;
+        }
+
+        if (dp[index] != -1) {
+            return dp[index] == 1;
+        }
+
+
+        int jumps = nums[index];
+        for (int i = 1; i <= jumps; i++) { // start from 1
+            if (canJump(nums, index+i, dp)) {
+                dp[index] = 1; // set index dp not dp[i]
+                return true;
             }
         }
-        return target_pos == 0;
+        dp[index] = 0;
+        return false;
     }
 }
