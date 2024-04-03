@@ -1,19 +1,22 @@
 class Solution {
     public int uniquePaths(int m, int n) {
-        int[][] cache = new int[m][n];
-        for (int[] arr : cache) {
-            Arrays.fill(arr, -1);
-        }
-        return uniquePathsFrom(0, 0, cache, m, n);
-    }
+        // for each cell from bottom to top
+        // find the number of uniquePaths to reach the target cell
+        // reuse the precomputed unique paths of children cells when computing the value for destination cells
 
-    public int uniquePathsFrom(int row, int col, int[][] cache, int m, int n) {
-        if (row > m - 1 || col > n - 1) return 0;
-        if (row == m-1 && col == n-1) return 1;
-        if (cache[row][col] != -1) return cache[row][col];
-        int bottom = uniquePathsFrom(row+1, col, cache, m, n);
-        int right = uniquePathsFrom(row, col+1, cache, m, n);
-        cache[row][col] = bottom+right;
-        return cache[row][col];
+        int[][] dp = new int[m][n];
+        for (int[] arr : dp) {
+            Arrays.fill(arr, 1);
+        }
+
+        for (int i = m -2; i >= 0; i--) {
+            for (int j = n-2; j >= 0; j--) {
+                int bottom = dp[i+1][j];
+                int right = dp[i][j+1];
+                dp[i][j] = bottom + right;
+            }
+        }
+
+        return dp[0][0];
     }
 }
