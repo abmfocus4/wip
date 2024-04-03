@@ -1,14 +1,14 @@
 class Solution {
     public int climbStairs(int n) {
-        // to climb n stairs top
-        // sum of n-1 and n-2 routes
-        HashMap<Integer, Integer> dp = new HashMap();
-        return climbStairsTo(dp, n);
-    }
+        if (n == 0 || n == 1) {
+            return 1;
+        }
+        int[] dp = new int[n+1];
+        dp[0] = dp[1] = 1;
+        for (int i = 2; i <= n; i++) {
+            dp[i] = dp[i-1] + dp[i-2];
+        }
 
-    public int climbStairsTo(HashMap<Integer, Integer> dp, int stairs) {
-        if (stairs == 0 || stairs == 1) return 1;
-        if (!dp.containsKey(stairs)) dp.put(stairs, climbStairsTo(dp, stairs-1) + climbStairsTo(dp, stairs-2));
-        return dp.get(stairs);
+        return dp[n];
     }
 }
