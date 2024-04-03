@@ -1,35 +1,39 @@
 class Solution {
     public void setZeroes(int[][] matrix) {
+        // at max you set all rows and all cols to 0 (m+n) so you need m + n flags
+        // two arrays, row flags and col flags
+        // traverse matrix and flags
+        // traverse flag arrs and set matrix values to 0
 
-        // make a copy of matrix
-        // traverse orig matrix and set 0s in copy matrix
-        // copy matrix to orig matrix data transfer
-        int rows = matrix.length;
-        int cols = matrix[0].length;
-        int[][] copy = new int[rows][cols];
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                copy[i][j] = matrix[i][j];
-            }
-        }
+        int rows = matrix.length, cols = matrix[0].length;
+        int[] rowFlags = new int[rows];
+        int[] colFlags = new int[cols];
+
+        Arrays.fill(rowFlags, -1);
+        Arrays.fill(colFlags, -1);
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 if (matrix[i][j] == 0) {
-                    for (int r = 0; r < rows; r++) {
-                        copy[r][j] = 0;
-                    }
-
-                    for (int c = 0; c < cols; c++) {
-                        copy[i][c] = 0;
-                    }
+                    rowFlags[i] = 0;
+                    colFlags[j] = 0;
                 }
             }
         }
 
         for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                matrix[i][j] = copy[i][j];
+            if (rowFlags[i] == 0) {
+                for (int c = 0; c < cols; c++) {
+                    matrix[i][c] = 0;
+                }
+            }
+        }
+
+        for (int i = 0; i < cols; i++) {
+            if (colFlags[i] == 0) {
+                for (int r = 0; r < rows; r++) {
+                    matrix[r][i] = 0;
+                }
             }
         }
     }
