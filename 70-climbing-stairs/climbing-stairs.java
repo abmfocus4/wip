@@ -1,15 +1,14 @@
 class Solution {
-    // bottom up approach
-    // already at step n - 1, how to compute step 0 onwards distinct ways
     public int climbStairs(int n) {
-        int[] dp = new int[n+1];
-        Arrays.fill(dp, 1);
+        // to climb n stairs top
+        // sum of n-1 and n-2 routes
+        HashMap<Integer, Integer> dp = new HashMap();
+        return climbStairsTo(dp, n);
+    }
 
-        for (int i = n-2; i >= 0; i--) {
-            int oneStep = dp[i+1];
-            int twoStep = dp[i+2];
-            dp[i] = oneStep + twoStep;
-        }
-        return dp[0];
+    public int climbStairsTo(HashMap<Integer, Integer> dp, int stairs) {
+        if (stairs == 0 || stairs == 1) return 1;
+        if (!dp.containsKey(stairs)) dp.put(stairs, climbStairsTo(dp, stairs-1) + climbStairsTo(dp, stairs-2));
+        return dp.get(stairs);
     }
 }
