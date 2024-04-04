@@ -1,48 +1,49 @@
 class Solution {
-    // no look sol
     public String minWindow(String s, String t) {
-        if (s == null || t == null || s.length() < t.length() || s.isEmpty() || t.isEmpty()) return "";
+        // frequency map
+        // start, count, minLength, minStart
 
-        // add t to map
-        HashMap<Character, Integer> map = new HashMap<>();
-        for (char cur : t.toCharArray()) {
-            if (map.containsKey(cur)) {
-                map.put(cur, map.get(cur) + 1);
+        if (s == null || t == null || s.isEmpty() || t.isEmpty() || s.length() < t.length())
+            return "";
+
+        HashMap<Character, Integer> map = new HashMap();
+        for (char c : t.toCharArray()) {
+            if (map.containsKey(c)) {
+                map.put(c, map.get(c) + 1);
             } else {
-                map.put(cur, 1);
+                map.put(c, 1);
             }
         }
 
-        int count = 0;
         int start = 0;
-
-        int minLength = Integer.MAX_VALUE;
+        int count = 0;
         int minStart = 0;
+        int minLength = Integer.MAX_VALUE;
 
         for (int i = 0; i < s.length(); i++) {
-            char cur = s.charAt(i);
-            if (map.containsKey(cur)) { // expand window/ check eligibility
-                map.put(cur, map.get(cur) - 1);
-                if (map.get(cur) >= 0) count++;
+            if (map.containsKey(s.charAt(i))) {
+                map.put(s.charAt(i), map.get(s.charAt(i)) - 1);
+                if (map.get(s.charAt(i)) >= 0)
+                    count++; // err
             }
 
             while (count == t.length()) {
-                // check min window
                 if (minLength > i - start + 1) {
                     minLength = i - start + 1;
                     minStart = start;
                 }
 
-                char remove_cur = s.charAt(start);
-                if (map.containsKey(remove_cur)) {
-                    map.put(remove_cur, map.get(remove_cur) + 1);
-                    if (map.get(remove_cur) > 0) count--;
+                if (map.containsKey(s.charAt(start))) {
+                    map.put(s.charAt(start), map.get(s.charAt(start)) + 1);
+                    if (map.get(s.charAt(start)) > 0)
+                        count--;
                 }
                 start++;
             }
         }
 
-        if (minLength > s.length()) return "";
+        if (s.length() < minLength) //err
+            return "";
         return s.substring(minStart, minStart + minLength);
 
     }
