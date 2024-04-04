@@ -15,6 +15,8 @@
  */
 class Solution {
     public boolean isValidBST(TreeNode root) {
+        // inorder traversal
+        // make sure nodes on the right subtrees are always greater than root nodes
         if (root == null) return false;
         TreeNode pre = null;
         Stack<TreeNode> stack = new Stack();
@@ -23,9 +25,9 @@ class Solution {
                 stack.push(root);
                 root = root.left;
             }
-            root = stack.pop(); // next value should never is greater than prev value and smallest node is traversed first
+            root = stack.pop();
             if (pre != null && pre.val >= root.val) return false;
-            pre = root; // set current node as previous node
+            pre = root;
             root = root.right;
         }
         return true;
