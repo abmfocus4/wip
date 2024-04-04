@@ -4,9 +4,7 @@ class Solution {
 
         if (s.length() == 1) return 1;
 
-        int count1 = 1; 
-        int count2 = 1;
-
+        int count1 = 1, count2 = 1;
         for (int i = 1; i < s.length(); i++) {
             int d = s.charAt(i) - '0';
             int dd = d + (s.charAt(i-1) - '0')*10;
