@@ -13,27 +13,22 @@
  *     }
  * }
  */
-
- // Reference: https://www.youtube.com/watch?v=mOdetMWwtoI
- // Look at example in video and comments for more info
 class Solution {
-    int bestMaxSum;
-    public int maxPathSum(TreeNode root) {
-        bestMaxSum = Integer.MIN_VALUE;
-        maxSum(root); // updates bestMaxSum
-        return bestMaxSum;
+    int bestPathSum;
+    public int maxPathSum(TreeNode root) { // path sum with splitting
+        bestPathSum = Integer.MIN_VALUE;
+        pathSumWithoutSplitting(root); // maxPathSum when we split at root
+        return bestPathSum;
     }
 
-    private int maxSum(TreeNode root) {
+    public int pathSumWithoutSplitting(TreeNode root) {
         if (root == null) return 0;
-        // best left subtree sum
-        int left = Math.max(maxSum(root.left), 0); // you cannot make existing value bigger by adding negative value so discard negative value by using 0
-        // best right subtree sum
-        int right = Math.max(0, maxSum(root.right)); // same as above
+        int leftMax = Math.max(pathSumWithoutSplitting(root.left), 0);
+        int rightMax = Math.max(pathSumWithoutSplitting(root.right), 0);
 
-        // either start new path (root+left+right) or continue old path
-        bestMaxSum = Math.max(bestMaxSum, root.val + left + right);
+        bestPathSum = Math.max(bestPathSum, root.val + leftMax + rightMax);
 
-        return root.val + Math.max(left, right); // just returning root and best of left or right subtree sum
-    }
+        // max of 0, left and right (all 3 values)
+        return root.val + Math.max(leftMax, rightMax); // splitting, assume we already split at the root
+    } 
 }
