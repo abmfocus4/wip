@@ -13,26 +13,11 @@
  *     }
  * }
  */
- // BFS (BREADTH FIRST SEARCH)
- // LEVEL ORDER TRAVERSAL
- // ITERATIVE APPROACH
 class Solution {
     public int maxDepth(TreeNode root) {
-        int ans = 0;
-        int count = 0;
-        Queue<TreeNode> queue = new LinkedList();
-        queue.add(root);
-        TreeNode cur = null;
-        while (root != null && !queue.isEmpty()) {
-            count = queue.size();
-            while (count != 0) {
-                cur = queue.poll();
-                if (cur.left != null) queue.add(cur.left);
-                if (cur.right != null) queue.add(cur.right);
-                count--;
-            }
-            ans++;
-        }
-        return ans;
+        if (root == null) return 0;
+        int maxDepthLeft = maxDepth(root.left);
+        int maxDepthRight = maxDepth(root.right);
+        return Math.max(maxDepthLeft, maxDepthRight) + 1;
     }
 }
