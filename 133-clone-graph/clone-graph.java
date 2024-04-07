@@ -17,36 +17,25 @@ class Node {
     }
 }
 */
-// Ref: https://www.youtube.com/watch?v=t9pj1Ail2z4&t=354s
+
 class Solution {
     public Node cloneGraph(Node node) {
-        // edge case
+        // issue is that we keep recursing indefinitely
+        // need to keep reference to created nodes (map with node and clone created - reuse)
+        return cloneGraphWithMap(node, new HashMap<Node, Node>());
+    }
+
+    public Node cloneGraphWithMap(Node node, HashMap<Node, Node> visited) {
         if (node == null) return null;
-        // perform graph search BFS (use queue) of [actual nodes]
-        Queue<Node> q = new LinkedList();
-        // keep track of visited [actual nodes] and their [clones] using hash table
-        HashMap<Node, Node> hm = new HashMap();
 
-        // init q and hm
-        q.add(node);
-        hm.put(node, new Node(node.val));
+        if (visited.containsKey(node)) return visited.get(node); 
 
-        while (q.isEmpty() == false) {
-            Node first = q.remove(); // get the top
-            Node firstClone = hm.get(first); // get the clone
-
-            for (Node neighbor : first.neighbors) {
-                Node neighborClone; // neighbor clone
-                if (hm.containsKey(neighbor)) { // already visited neighbor node
-                    neighborClone = hm.get(neighbor); // simply get already visited clone
-                } else { // never visited neighbor node
-                    neighborClone = new Node(neighbor.val); // create new node
-                    hm.put(neighbor, neighborClone); // add to hash map
-                    q.add(neighbor); // add to queue
-                }
-                firstClone.neighbors.add(neighborClone); // add neighbor clone to neigbor parent node
-            }
+        Node clone = new Node(node.val, new ArrayList<Node>());
+        visited.put(node, clone);
+        for (Node neighbor : node.neighbors) {
+            clone.neighbors.add(cloneGraphWithMap(neighbor, visited));
         }
-        return hm.get(node);
+
+        return clone;
     }
 }
