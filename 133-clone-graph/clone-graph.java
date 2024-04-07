@@ -20,22 +20,30 @@ class Node {
 
 class Solution {
     public Node cloneGraph(Node node) {
-        // issue is that we keep recursing indefinitely
-        // need to keep reference to created nodes (map with node and clone created - reuse)
-        return cloneGraphWithMap(node, new HashMap<Node, Node>());
-    }
+        // bfs traveral - use q to store old nodes
+        // visited map to store old node -> new node/clone
 
-    public Node cloneGraphWithMap(Node node, HashMap<Node, Node> visited) {
         if (node == null) return null;
+        Queue<Node> q = new LinkedList();
+        HashMap<Node, Node> map = new HashMap();
+        q.add(node);
+        map.put(node, new Node(node.val));
 
-        if (visited.containsKey(node)) return visited.get(node); 
-
-        Node clone = new Node(node.val, new ArrayList<Node>());
-        visited.put(node, clone);
-        for (Node neighbor : node.neighbors) {
-            clone.neighbors.add(cloneGraphWithMap(neighbor, visited));
+        while (q.isEmpty() == false) {
+            Node curNode = q.remove();
+            Node curClone = map.get(curNode); // err
+            for (Node neighbor : curNode.neighbors) {
+                Node cloneNeighbor;
+                if (map.containsKey(neighbor)) {
+                    cloneNeighbor = map.get(neighbor);
+                } else {
+                    cloneNeighbor = new Node(neighbor.val);
+                    q.add(neighbor);
+                    map.put(neighbor, cloneNeighbor);
+                }
+                curClone.neighbors.add(cloneNeighbor);
+            }
         }
-
-        return clone;
+        return map.get(node);
     }
 }
