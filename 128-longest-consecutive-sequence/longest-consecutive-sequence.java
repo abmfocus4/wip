@@ -1,20 +1,23 @@
 class Solution {
     public int longestConsecutive(int[] nums) {
-        if(nums.length==0)return 0; // corner case
-        Arrays.sort(nums); // sorting nums
-        int val= nums[0]; // init num
-        int count=1; int maxCount =0;
-        for(int i:nums){
-            if(i==val) continue;
-            else if (i == (val + 1)){
-                ++val; ++count;
-            }else{
-                if (count > maxCount) maxCount = count; // update max
-                count = 1; // reset counters
-                val=i;
+        if (nums == null || nums.length == 0)
+            return 0;
+        Arrays.sort(nums);
+        int longestLength = 0;
+        int currentLength = 1; // err: init to 1 since one element in streak
+        int streakStart = nums[0];
+        for (int num : nums) {
+            if (streakStart == num) { // starting streak
+                continue;
+            } else if (num == streakStart + 1) { // continue streak // err: next number is consecutive number of streak start
+                streakStart++;
+                currentLength++;
+            } else { // streak reset
+                streakStart = num;
+                longestLength = Math.max(longestLength, currentLength);
+                currentLength = 1;
             }
         }
-        if (count > maxCount) maxCount = count; // find count check
-        return maxCount;
+        return Math.max(longestLength, currentLength);
     }
 }
