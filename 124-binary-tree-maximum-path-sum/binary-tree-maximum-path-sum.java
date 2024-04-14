@@ -14,21 +14,17 @@
  * }
  */
 class Solution {
-    int bestPathSum;
-    public int maxPathSum(TreeNode root) { // path sum with splitting
-        bestPathSum = Integer.MIN_VALUE;
-        pathSumWithoutSplitting(root); // maxPathSum when we split at root
-        return bestPathSum;
+    int maxPathSumWithSplitting = Integer.MIN_VALUE;
+    public int maxPathSum(TreeNode root) {
+        maxPathSumWithoutSplitting(root);
+        return maxPathSumWithSplitting;
     }
 
-    public int pathSumWithoutSplitting(TreeNode root) {
+    private int maxPathSumWithoutSplitting(TreeNode root) {
         if (root == null) return 0;
-        int leftMax = Math.max(pathSumWithoutSplitting(root.left), 0);
-        int rightMax = Math.max(pathSumWithoutSplitting(root.right), 0);
-
-        bestPathSum = Math.max(bestPathSum, root.val + leftMax + rightMax);
-
-        // max of 0, left and right (all 3 values)
-        return root.val + Math.max(leftMax, rightMax); // splitting, assume we already split at the root
-    } 
+        int leftMax = Math.max(maxPathSumWithoutSplitting(root.left), 0);
+        int rightMax = Math.max(maxPathSumWithoutSplitting(root.right), 0);
+        maxPathSumWithSplitting = Math.max(maxPathSumWithSplitting, root.val + leftMax + rightMax);
+        return root.val + Math.max(leftMax, rightMax);
+    }
 }
