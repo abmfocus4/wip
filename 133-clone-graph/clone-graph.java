@@ -20,21 +20,36 @@ class Node {
 
 class Solution {
     public Node cloneGraph(Node node) {
-        // visited map (node.val and node clone)
-        return cloneGraphWithVisited(node, new HashMap<Integer, Node>());
-    }
+        // do bfs traversal
+        // queue to keep track of traversed nodes in order of orig nodes
+        // visited map with orig node and clone node
 
-    public Node cloneGraphWithVisited(Node node, HashMap<Integer, Node> visited) {
         if (node == null) return null;
 
-        if (visited.containsKey(node.val)) return visited.get(node.val);
+        Queue<Node> q = new LinkedList();
+        q.add(node);
 
-        Node nodeClone = new Node(node.val);
-        visited.put(node.val, nodeClone);
-        for (Node neighbor : node.neighbors) {
-            nodeClone.neighbors.add(cloneGraphWithVisited(neighbor, visited));
+        HashMap<Node, Node> visited = new HashMap();
+        visited.put(node, new Node(node.val));
+
+        while (q.isEmpty() == false)
+        {
+            Node curNode = q.poll();
+            Node curNodeClone = visited.get(curNode);
+            for (Node neighbor : curNode.neighbors) {
+                if (!visited.containsKey(neighbor))
+                {
+                    // create neighbor clone
+                    Node neighborNodeClone = new Node(neighbor.val);
+                    // add to q
+                    q.add(neighbor);
+                    // add node and clone to map
+                    visited.put(neighbor, neighborNodeClone);
+                }
+                curNodeClone.neighbors.add(visited.get(neighbor));
+            }
         }
 
-        return nodeClone;
+        return visited.get(node);
     }
 }
