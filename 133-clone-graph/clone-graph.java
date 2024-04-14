@@ -20,30 +20,21 @@ class Node {
 
 class Solution {
     public Node cloneGraph(Node node) {
-        // bfs traveral - use q to store old nodes
-        // visited map to store old node -> new node/clone
+        // visited map (node.val and node clone)
+        return cloneGraphWithVisited(node, new HashMap<Integer, Node>());
+    }
 
+    public Node cloneGraphWithVisited(Node node, HashMap<Integer, Node> visited) {
         if (node == null) return null;
-        Queue<Node> q = new LinkedList();
-        HashMap<Node, Node> map = new HashMap();
-        q.add(node);
-        map.put(node, new Node(node.val));
 
-        while (q.isEmpty() == false) {
-            Node curNode = q.remove();
-            Node curClone = map.get(curNode); // err
-            for (Node neighbor : curNode.neighbors) {
-                Node cloneNeighbor;
-                if (map.containsKey(neighbor)) {
-                    cloneNeighbor = map.get(neighbor);
-                } else {
-                    cloneNeighbor = new Node(neighbor.val);
-                    q.add(neighbor);
-                    map.put(neighbor, cloneNeighbor);
-                }
-                curClone.neighbors.add(cloneNeighbor);
-            }
+        if (visited.containsKey(node.val)) return visited.get(node.val);
+
+        Node nodeClone = new Node(node.val);
+        visited.put(node.val, nodeClone);
+        for (Node neighbor : node.neighbors) {
+            nodeClone.neighbors.add(cloneGraphWithVisited(neighbor, visited));
         }
-        return map.get(node);
+
+        return nodeClone;
     }
 }
