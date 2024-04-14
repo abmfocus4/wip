@@ -15,29 +15,23 @@
  */
 class Solution {
     public List<List<Integer>> levelOrder(TreeNode root) {
-        // use queue to store each level consequtively
-        // loop through the level nodes and left and right nodes and append val to list
-        // add the list to the list of lists after for loop
-        // return list of lists at the end
-        List<List<Integer>> result = new ArrayList();
+        List<List<Integer>> list = new ArrayList();
         Queue<TreeNode> q = new LinkedList();
-        if (root != null) q.add(root);
-        while (!q.isEmpty()) {
-            int levelLength = q.size();
-            List<Integer> list = new ArrayList();
-            for (int i = 0; i < levelLength; i++) {
-                TreeNode cur = q.poll();
-                list.add(cur.val);
-                if (cur.left != null) {
-                    q.add(cur.left);
-                }
-                if (cur.right != null) {
-                    q.add(cur.right);
-                }
+        q.add(root);
+        TreeNode curNode = null;
+        while (root != null && q.isEmpty() == false) {
+            int levelSize = q.size();
+            List<Integer> levelList = new ArrayList();
+            while (levelSize != 0) {
+                curNode = q.poll();
+                levelList.add(curNode.val);
+                if (curNode.left != null) q.add(curNode.left);
+                if (curNode.right != null) q.add(curNode.right);
+                levelSize--;
             }
-            result.add(list);
+            list.add(levelList);
         }
 
-        return result;
+        return list;
     }
 }
