@@ -15,13 +15,15 @@
  */
 class Solution {
     public int sumNumbers(TreeNode root) {
-        return DFS(root, 0);
+        // tree traversal
+        // update running sum
+        return dfs(root, 0);
     }
 
-    public int DFS(TreeNode root, int sum) {
+    private int dfs(TreeNode root, int runningSum) {
         if (root == null) return 0;
-        int runningSum = sum*10 + root.val;
-        if (root.left == null && root.right == null) return runningSum; 
-        return DFS(root.left, runningSum) + DFS(root.right, runningSum);
+        runningSum = 10*runningSum + root.val;
+        if (root.left == null && root.right == null) return runningSum;
+        return dfs(root.left, runningSum) + dfs(root.right, runningSum);
     }
 }
