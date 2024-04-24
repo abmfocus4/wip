@@ -7,31 +7,33 @@
  *     TreeNode(int x) { val = x; }
  * }
  */
-
-// Ref: https://leetcode.com/problems/serialize-and-deserialize-binary-tree/solutions/281714/clean-java-solution/
-// Interative serialization
 public class Codec {
-    final String nullNode = "X";
+    final String nullNode = "#";
+    final String delimeter = ",";
     // Encodes a tree to a single string.
     public String serialize(TreeNode root) {
         if (root == null) return nullNode;
-        return root.val + "," + serialize(root.left) + "," + serialize(root.right);
+        return root.val +  delimeter + serialize(root.left) + delimeter + serialize(root.right);
     }
 
+    String arr[];
+    int index = 0;
     // Decodes your encoded data to tree.
     public TreeNode deserialize(String data) {
-        Queue<String> q = new LinkedList(Arrays.asList(data.split(",")));
-        return dfs(q);
+        arr = data.split(delimeter);
+        return dfs();
     }
 
-    private TreeNode dfs(Queue<String> q) {
-        String value = q.poll();
-        if (value.equals(nullNode)) {
+    // string -> node
+    public TreeNode dfs() {
+        if (arr[index].equals(nullNode)) {
+            index++;
             return null;
         }
-        TreeNode root = new TreeNode(Integer.parseInt(value));
-        root.left = dfs(q);
-        root.right = dfs(q);
+
+        TreeNode root = new TreeNode(Integer.parseInt(arr[index++]));
+        root.left = dfs();
+        root.right = dfs();
         return root;
     }
 }
