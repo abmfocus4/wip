@@ -12,6 +12,11 @@
 
  // Ref: https://leetcode.com/problems/serialize-and-deserialize-bst/solutions/177617/the-general-solution-for-serialize-and-deserialize-bst-and-serialize-and-deserialize-bt/?envType=list&envId=pxw54vnt
 
+//  if (val < lower || val > upper) return null;
+// is used to determine when to change direction.
+
+// https://leetcode.com/problems/serialize-and-deserialize-bst/solutions/177617/the-general-solution-for-serialize-and-deserialize-bst-and-serialize-and-deserialize-bt/comments/214024
+
  // check comments for how lower and upper bounds are changed
 public class Codec {
 
