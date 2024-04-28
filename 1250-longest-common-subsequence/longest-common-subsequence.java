@@ -1,22 +1,23 @@
-// Space Optimizations: https://leetcode.com/problems/longest-common-subsequence/?envType=list&envId=pxw54vnt
-// Code with explanation indexes
+// https://www.youtube.com/watch?v=e9tUPwZZSBI&ab_channel=NikhilLohia
 class Solution {
     public int longestCommonSubsequence(String text1, String text2) {
-        int m = text1.length(), n = text2.length();
-        if (n>m) return longestCommonSubsequence(text2, text1);
-        int[] dp = new int[n+1];
-        for (int i = 0; i < m; i++) {
-            int prevRow = 0, prevRowCol = 0;
-            for (int j = 0; j < n; j++) {
-                prevRowCol = prevRow;
-                prevRow = dp[j+1];
-                if (text1.charAt(i) == text2.charAt(j)) {
-                    dp[j+1] = prevRowCol + 1;
+        int[][] dp = new int[text1.length() + 1][text2.length() + 1];
+        for (int[] row : dp) {
+            Arrays.fill(row, 0);
+        }
+        int M = text1.length();
+        int N = text2.length();
+
+        for (int i = 1; i <= M; i++) {
+            for (int j = 1; j <= N; j++) {
+                if (text1.charAt(i-1) == text2.charAt(j-1)) {
+                    dp[i][j] = 1 + dp[i-1][j-1];
                 } else {
-                    dp[j+1] = Math.max(dp[j], prevRow);
+                    dp[i][j] = Math.max(dp[i][j-1], dp[i-1][j]);
                 }
             }
         }
-        return dp[n];
+
+        return dp[M][N];
     }
 }
