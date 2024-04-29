@@ -21,13 +21,13 @@ class Solution {
         }
 
         for (int[] prereq : prerequisites) {
-            adj[prereq[0]].add(prereq[1]);
-            indegree[prereq[1]]++;
+            adj[prereq[1]].add(prereq[0]);
+            indegree[prereq[0]]++;
         }
 
         for (int i = 0; i < numCourses; i++) {
             if (indegree[i] == 0) {
-                q.offer(i);
+                q.add(i);
             }
         }
 
@@ -37,7 +37,7 @@ class Solution {
             for (int neighbor : adj[node]) {
                 indegree[neighbor]--;
                 if (indegree[neighbor] == 0) {
-                    q.offer(neighbor);
+                    q.add(neighbor);
                 }
             }
         } 
