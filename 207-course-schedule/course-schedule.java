@@ -1,46 +1,66 @@
 // Discussion: https://leetcode.com/problems/course-schedule/description/comments/1572589
 // Topological sort: Multiple ways - DFS (stack based) / Kahn's algo BFS q based 
-// Ref BFS mod Kahn's algo:https://www.youtube.com/watch?v=EUDwWbvtB_Q
-// Top Sort: https://www.youtube.com/watch?v=3HHlOG05qEo
-// Graph Traversals: https://www.youtube.com/watch?v=pcKY4hjDrxk
+// Ref:https://www.youtube.com/watch?v=EUDwWbvtB_Q
+// https://www.youtube.com/watch?v=3HHlOG05qEo
+// https://www.youtube.com/watch?v=pcKY4hjDrxk
 
 
-// BFS TOP SORT IMPL:
-// Ref BFS mod Kahn's algo:https://www.youtube.com/watch?v=EUDwWbvtB_Q
-// Code ref: https://leetcode.com/problems/course-schedule/solutions/58524/java-dfs-and-bfs-solution/?envType=list&envId=pxw54vnt
-
+// Current sol is DFS but without using stack you are using the unvisited, visited, completed idea
+// it's the arrival and departure style top sort algo
+// https://leetcode.com/problems/course-schedule/solutions/1124408/clearly-explained-solution-1ms-java-dfs/comments/1218314
+// Ref: https://leetcode.com/problems/course-schedule/solutions/1124408/clearly-explained-solution-1ms-java-dfs/?envType=list&envId=pxw54vnt
 class Solution {
     public boolean canFinish(int numCourses, int[][] prerequisites) {
+        // Create Array of lists -> adjecency matrix of graph
         ArrayList<Integer>[] adj = new ArrayList[numCourses];
-        int[] indegree = new int[numCourses];
-        Queue<Integer> q = new LinkedList();
-        int visited = 0;
 
+        // Fill all the nodes (0 to numCourses - 1) as array index holding newly created arraylists
         for (int i = 0; i < numCourses; i++) {
-            adj[i] = new ArrayList();
+            adj[i] = new ArrayList<>();
         }
 
-        for (int[] prereq : prerequisites) {
-            adj[prereq[1]].add(prereq[0]);
-            indegree[prereq[0]]++;
+        // Fill the arraylists of each nodes with their outgoing edges/connected nodes
+        for (int[] pre : prerequisites) {
+            adj[pre[1]].add(pre[0]);
         }
 
+        // Define an array of visited (0 -> unvisited, 1 -> visited, 2 -> completed), initially filled with 0's 
+        int[] visited = new int[numCourses];
+
+        // Do DFS for each of the array nodes to check a cycle
         for (int i = 0; i < numCourses; i++) {
-            if (indegree[i] == 0) {
-                q.add(i);
+            if (!dfs(i, visited, adj)) {
+                return false;
             }
         }
 
-        while (q.isEmpty() == false) {
-            int node = (int)q.poll();
-            visited++;
-            for (int neighbor : adj[node]) {
-                indegree[neighbor]--;
-                if (indegree[neighbor] == 0) {
-                    q.add(neighbor);
-                }
+        return true;
+    }
+
+    private boolean dfs(int node, int[] visited, ArrayList<Integer>[] adj) {
+        // Return true if the node is completed processing
+        if (visited[node] == 2) {
+            return true;
+        }
+
+        // Return false if the node is visited and viewed again before completion
+        if (visited[node] == 1) {
+            return false;
+        }
+
+        // Mark the node as visited
+        visited[node] = 1;
+
+        // DFS of all the other nodes current "node" is connected to
+        for (int n : adj[node]) {
+            if (!dfs(n, visited, adj)) {
+                return false;
             }
-        } 
-        return numCourses == visited;
+        }
+
+        // If no more other nodes for the current "node" mark as completed and return true
+        visited[node] = 2;
+        
+        return true;
     }
 }
