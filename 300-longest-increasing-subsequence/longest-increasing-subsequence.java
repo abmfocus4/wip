@@ -1,32 +1,64 @@
-// https://www.youtube.com/watch?v=2kaWJaqoutg
-// Top down
-// Time: O(n^2), Space: O(n)
-class Solution {
-    Integer[] cache;
-    int N;
-    int[] nums;
-    public int lengthOfLIS(int[] nums) {
-        this.N = nums.length;
-        this.cache = new Integer[N];
-        this.nums = nums;
-        int maxLIS = 0;
-        for (int i = 0; i < N; i++) { // where to start LIS
-            cache[i] = helper(i);
-            maxLIS = Math.max(cache[i], maxLIS);
-        }
-        return maxLIS;
-    }
+// nlogn patience sort
 
-    private int helper(int index) {
-        if (cache[index] != null) return cache[index];
-        int curVal = nums[index];
-        int maxLIS = 0;
-        for (int i = index+1; i < N; i++) { // dfs to find max lis from that element to end of arr
-            if (curVal < nums[i]) { // next elem should be greater to be part of LIS
-                maxLIS = Math.max(maxLIS, helper(i));
+// look at https://www.youtube.com/watch?v=on2hvxBXJH4
+
+// take away: intuition
+
+// look at 
+// https://www.youtube.com/watch?v=i4NBDE8ZEV8&ab_channel=SuyashiSinghal
+
+// take away: elem >= num[i] is replace condition
+
+// --------------------
+
+// for interview:
+
+// {10, 11, 4, 12, 1, 10}
+
+// do a run through like first link
+
+// outline your steps:
+// - Iterate through arr and iterate through list of sub(looked at last elem of each sub to see if we need to append or create new sub)
+
+// - what is time and space complexity of this? discuss?
+
+// - optimize this idea
+// - only store tails since that's all we need
+// - reduce space since you don't need the actual value of LIS coalesce them and only store tails
+// - coalesce condition - use binary search
+// - iterate this is not LIS but representative of stream of data we received
+
+// - pics in phone favorites
+class Solution {
+    public int lengthOfLIS(int[] nums) {
+        int N = nums.length;
+        List<Integer> sub = new ArrayList<>();
+        sub.add(nums[0]);
+        for (int i = 1; i < N; i++) {
+            if (nums[i] > sub.get(sub.size()-1)) { // new size subsequence
+                sub.add(nums[i]);
+            } else { // replace or insert in between
+                int index = binarySearch(nums[i], sub);
+                sub.set(index, nums[i]);
             }
         }
-        cache[index] = maxLIS + 1;
-        return cache[index];
+        return sub.size();
+    }
+
+    // checking tail
+    private int binarySearch(int num, List<Integer> sub) {
+        int left = 0;
+        int right = sub.size() - 1;
+        while (left < right) {
+            int mid = (left + right)/2;
+            if (sub.get(mid) == num) {
+                return mid; // replace
+            } else if (sub.get(mid) < num) {
+                left = mid + 1; // insert
+            } else {
+                right = mid;
+            }
+        }
+        return left;
     }
 }
