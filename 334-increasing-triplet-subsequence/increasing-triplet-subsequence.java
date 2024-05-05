@@ -1,6 +1,9 @@
 // https://leetcode.com/problems/increasing-triplet-subsequence/solutions/79004/concise-java-solution-with-comments
 class Solution {
        public boolean increasingTriplet(int[] nums) {
+        if (nums == null || nums.length < 3) {
+            return false;
+        }
         int small = Integer.MAX_VALUE, big = Integer.MAX_VALUE;
         for (int n : nums) {
             if (n <= small) { 
