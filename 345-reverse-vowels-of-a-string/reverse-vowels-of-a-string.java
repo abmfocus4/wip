@@ -1,24 +1,17 @@
-// https://leetcode.com/problems/reverse-vowels-of-a-string/solutions/3723102/easy-solution-with-simple-explanation-using-two-pointer
-
-// use hashset or string of vowels with indexOf and equal to -1
-// indexOf runs in linear time
 class Solution {
     public String reverseVowels(String s) {
         char[] word = s.toCharArray();
         int start = 0;
-        int end = s.length() - 1;
-        // String vowels = "aeiouAEIOU";
-        Set<Character> vowels = new HashSet<>(Arrays.asList('a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'));        
+        int end = s.length() - 1;       
 
         while (start < end) {
             // Move start pointer until it points to a vowel
-            while (start < end && vowels.contains(word[start]) == false) {
-            // while (start < end && vowels.indexOf(word[start]) == -1) {
+            while (start < end && isVowel(word[start]) == false) {
                 start++;
             }
             
             // Move end pointer until it points to a vowel
-            while (start < end && vowels.contains(word[end]) == false) {
+            while (start < end && isVowel(word[end]) == false) {
                 end--;
             }
             
@@ -33,5 +26,10 @@ class Solution {
         }
         
         return new String(word);
+    }
+
+    private boolean isVowel(char c) {
+        return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u'
+            || c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U';
     }
 }
