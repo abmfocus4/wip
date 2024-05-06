@@ -1,28 +1,31 @@
-// https://www.youtube.com/watch?v=0iQqj5egK9k&ab_channel=NickWhite - maybe check
 class Solution {
     public String decodeString(String s) {
-        Deque<Character> queue = new LinkedList<>();
-        for (char c : s.toCharArray()) queue.offer(c);
-        return helper(queue);
+        Queue<Character> q = new LinkedList();
+        for (char c : s.toCharArray())  q.add(c);
+        return helper(q);
     }
-    
-    public String helper(Deque<Character> queue) {
-        StringBuilder sb = new StringBuilder();
+
+    public String helper(Queue<Character> q) {
         int num = 0;
-        while (!queue.isEmpty()) {
-            char c= queue.poll();
-            if (Character.isDigit(c)) {
-                num = num * 10 + c - '0';
-            } else if (c == '[') {
-                String sub = helper(queue);
-                for (int i = 0; i < num; i++) sb.append(sub);   
+        StringBuilder sb = new StringBuilder();
+
+        while (q.isEmpty() == false) {
+            char c = q.poll(); // current character
+            if (Character.isDigit(c)) { // k case
+                num = (num*10) + (c - '0');
+            } else if (c == '[') { // sub problem
+                String str = helper(q);
+                for (int i = 0; i < num; i++) {
+                    sb.append(str);
+                }
                 num = 0;
-            } else if (c == ']') {
+            } else if (c == ']') { // end case
                 break;
-            } else {
+            } else { // char case
                 sb.append(c);
             }
         }
+
         return sb.toString();
     }
 }
