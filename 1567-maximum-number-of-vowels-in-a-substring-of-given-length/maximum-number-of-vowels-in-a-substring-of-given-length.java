@@ -9,13 +9,13 @@ class Solution {
             if (isVowel(s.charAt(i))) {
                 ++winCnt; 
             }
-            if (i-start == k) { // len of substr
+            while (i-start+1 == k) { // len of substr
+                ans = Math.max(winCnt, ans);
+                if (ans == k) break; // max vowels you can have
                 if (isVowel(s.charAt(start))) // if contains vowels
                     --winCnt;
                 start++; // just pop from start of window
             }
-            ans = Math.max(winCnt, ans);
-            if (ans == k) break; // max vowels you can have
         }
         return ans;
     }
