@@ -2,23 +2,29 @@
 class SmallestInfiniteSet {
     int min;
     PriorityQueue<Integer> heap;
+    boolean[] isBucketEmpty;
 
     public SmallestInfiniteSet() {
         min = 1;
         heap = new PriorityQueue();
+        isBucketEmpty = new boolean[1001];
     }
     
     public int popSmallest() {
         if (heap.isEmpty() == false) {
+            isBucketEmpty[heap.peek()] = true;
             return heap.poll();
         }
+        isBucketEmpty[min] = true;
         min++; // popped the min element so min is next element
         return min-1; // current min
     }
     
     public void addBack(int num) {
-        if (num < min && heap.contains(num) == false) {
+        // heap.contains takes O(n) time
+        if (num < min && isBucketEmpty[num] == true) {
             heap.add(num);
+            isBucketEmpty[num] = false;
         }
     }
 }
