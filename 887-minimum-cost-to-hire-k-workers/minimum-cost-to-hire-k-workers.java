@@ -1,18 +1,21 @@
 // https://leetcode.com/problems/minimum-cost-to-hire-k-workers/solutions/141768/detailed-explanation-o-nlogn
+// https://www.youtube.com/watch?v=f879mUH6vJk&ab_channel=NeetCodeIO
 class Solution {
     public double mincostToHireWorkers(int[] q, int[] w, int K) {
         double[][] workers = new double[q.length][2];
         for (int i = 0; i < q.length; ++i)
             workers[i] = new double[]{(double)(w[i]) / q[i], (double)q[i]};
-        Arrays.sort(workers, (a, b) -> Double.compare(a[0], b[0]));
-        double res = Double.MAX_VALUE, qsum = 0;
-        PriorityQueue<Double> pq = new PriorityQueue<>();
+            // sort in ascending
+        Arrays.sort(workers, (a, b) -> Double.compare(a[0], b[0])); // 0 is ration and // 1 is quality
+        double minCost = Double.MAX_VALUE, qualitySum = 0;
+        // use max heap - eject max quality - reduce our max cost
+        Queue<Double> pq = new PriorityQueue<>((a,b) -> Double.compare(b,a));
         for (double[] worker: workers) {
-            qsum += worker[1];
-            pq.add(-worker[1]);
-            if (pq.size() > K) qsum += pq.poll();
-            if (pq.size() == K) res = Math.min(res, qsum * worker[0]);
+            qualitySum += worker[1];
+            pq.add(worker[1]);
+            if (pq.size() > K) qualitySum -= pq.poll();
+            if (pq.size() == K) minCost = Math.min(minCost, qualitySum * worker[0]);
         }
-        return res;
+        return minCost;
     }
 }
