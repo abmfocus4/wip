@@ -13,7 +13,7 @@ class Solution {
         Queue<int[]> queue = new LinkedList<>();
         int count_fresh = 0;
         // Put the position of all rotten oranges in queue
-        // mins the number of fresh oranges
+        // cal num of fresh oranges
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 if (grid[i][j] == 2) {
@@ -24,7 +24,7 @@ class Solution {
             }
         }
 
-        // if mins of fresh oranges is zero --> return 0
+        // if num of fresh oranges is zero --> return 0
         if (count_fresh == 0)
             return 0;
 
