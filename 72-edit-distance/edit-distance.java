@@ -1,32 +1,28 @@
-// https://www.youtube.com/watch?v=XYi2-LPrwm4&ab_channel=NeetCode
 class Solution {
     public int minDistance(String word1, String word2) {
         int m = word1.length();
         int n = word2.length();
 
-        int[][] ops = new int[m+1][n+1];
+        int[] cur = new int[n+1];
 
-        // if one of the words in empty, then ops is number of chars in non empty string
-        for (int i = 0; i <= m; i++) {
-            ops[i][n] = m-i;
+        for (int i = 1; i <= n; i++) { // cur[0] = 0;
+            cur[i] = i;
         }
 
-        for (int i = 0; i <= n; i++) {
-            ops[m][i] = n-i;
-        }
-
-        for (int i = m-1; i >= 0; i--) {
-            for (int j = n-1; j >= 0; j--) {
-                if (word1.charAt(i) == word2.charAt(j)) {
-                    ops[i][j] = ops[i+1][j+1];
+        for (int i = 1; i <= m; i++) {
+            int pre = cur[0];
+            cur[0] = i; // when word2 is empty
+            for (int j = 1; j <= n; j++) {
+                int temp = cur[j];
+                if (word1.charAt(i-1) == word2.charAt(j-1)) {
+                    cur[j] = pre;
                 } else {
-                    int replace = ops[i+1][j+1];
-                    int insert = ops[i][j+1];
-                    int delete = ops[i+1][j];
-                    ops[i][j] = 1 + Math.min(replace, Math.min(insert, delete)); // min of all 3 ops
+                    cur[j] = Math.min(pre, Math.min(cur[j-1], cur[j])) + 1;
                 }
+                pre = temp;
             }
         }
-        return ops[0][0];
+
+        return cur[n];
     }
 }
