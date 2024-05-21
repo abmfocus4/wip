@@ -1,0 +1,55 @@
+// code ref: https://leetcode.com/problems/n-queens/solutions/2107776/explained-with-diagrams-backtracking-and-bit-manipulation
+// video ref: https://www.youtube.com/watch?v=i05Ju7AftcM&ab_channel=takeUforward
+class Solution {
+    private List<List<String>> res;
+    private int N;
+
+    // for interviews, just return List<char[][]>
+    public List<List<String>> solveNQueens(int n) {
+        res = new ArrayList<>();
+        N = n;
+        char[][] emptyBoard = new char[N][N];
+        for (char[] row: emptyBoard) Arrays.fill(row, '.');
+        
+        backtrack(emptyBoard, 0, 0, 0, 0);
+        return res;
+    }
+    
+    private void backtrack(char[][] board, int row, int cols, int diags, int antiDiags) {
+        // if we've successfuly placed a Queen at all rows, we have a valid board state
+        if (row == N) {
+            // for interviews you can remove this
+            res.add(toBoard(board));
+            return;
+        }
+        
+        for (int col=0; col<N; col++) {
+            int currDiag = row-col+N;
+            int currAntiDiag = row+col;
+            
+            // can't place queen
+            if ((cols & (1 << col)) != 0 || (diags & (1 << currDiag)) != 0 || (antiDiags & (1 << currAntiDiag)) != 0) continue;
+            
+            // if so, add changes
+            board[row][col] = 'Q';
+            cols |= (1 << col);
+            diags |= (1 << currDiag);
+            antiDiags |= (1 << currAntiDiag);
+            
+            // continue to the next row
+            backtrack(board, row + 1, cols, diags, antiDiags);
+            
+            // undo changes and continue
+            board[row][col] = '.';
+            cols ^= (1 << col);
+            diags ^= (1 << currDiag);
+            antiDiags ^= (1 << currAntiDiag);
+        }
+    }
+    
+    private List<String> toBoard(char[][] board) {
+        List<String> newBoard = new ArrayList<>();
+        for (char[] row: board) newBoard.add(new String(row));
+        return newBoard;
+    }
+}
