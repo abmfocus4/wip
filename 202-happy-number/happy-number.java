@@ -1,29 +1,26 @@
-// https://www.youtube.com/watch?v=ljz85bxOYJ0&ab_channel=NeetCode
+// https://leetcode.com/problems/happy-number/solutions/3767573/easy-java-solution-two-pointers-floyd-s-tortoise-and-hare-detailed-explanation
 class Solution {
     public boolean isHappy(int n) {
-        // detect cycle in process where we visit a number twise
+        int slow = n, fast = n;
 
-        HashSet<Integer> square_sums = new HashSet();
-
-        while (square_sums.contains(n) == false) {
-            square_sums.add(n);
-            n = getSumOfSquares(n);
-            if (n == 1) {
+        do {
+            slow = getSumOfSquares(slow);
+            fast = getSumOfSquares(getSumOfSquares(fast)); // have to use do while first
+            if (fast == 1) {
                 return true;
             }
-        }
+        } while (fast != slow);
 
         return false;
     }
 
     private int getSumOfSquares(int n) {
-        int output = 0;
+        int res = 0;
         while (n != 0) {
-            int last_digit = n % 10;
-            output += (last_digit * last_digit);
-            n = n / 10;
+            int remainder = n % 10;
+            res += (remainder * remainder);
+            n /= 10;
         }
-
-        return output;
+        return res;
     }
 }
