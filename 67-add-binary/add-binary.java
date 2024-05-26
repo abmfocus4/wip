@@ -1,18 +1,15 @@
-public class Solution {
+class Solution {
     public String addBinary(String a, String b) {
         StringBuilder sb = new StringBuilder();
-        int i = a.length()-1, j = b.length()-1, carry = 0;
-        while (i >= 0 || j >= 0) {
-            int sum = carry;
-            if (j >= 0) sum += b.charAt(j--) - '0';
-            if (i >= 0) sum += a.charAt(i--) - '0';
-            sb.append(sum % 2);
-            carry = sum / 2;
-        }
-        if (carry != 0) {
-            sb.append(carry);
+        int aPos = a.length() - 1, bPos = b.length() - 1, carry = 0;;
+        int aVal = 0, bVal = 0;
+        while (aPos >= 0 || bPos >= 0 || carry == 1) {
+            aVal = (aPos >= 0) ? a.charAt(aPos--) - '0' : 0;
+            bVal = (bPos >= 0) ? b.charAt(bPos--) - '0' : 0;
+            sb.append(aVal ^ bVal ^ carry);
+            carry = (aVal & bVal) | (aVal & carry) | (bVal & carry);
         }
 
-        return sb.reverse().toString(); // we computed from left to right
+        return sb.reverse().toString();
     }
 }
