@@ -13,27 +13,35 @@
  *     }
  * }
  */
- // recursive
- // https://www.youtube.com/watch?v=Mao9uzxwvmc&ab_channel=NeetCodeIO
 class Solution {
     public boolean isSymmetric(TreeNode root) {
         if (root == null) {
             return true;
         }
-        return dfs(root.left, root.right);
-    }
 
-    private boolean dfs(TreeNode left, TreeNode right) {
-        if (left == null && right == null) {
-            return true;
+        Stack<TreeNode> stack = new Stack();
+        stack.push(root.left);
+        stack.push(root.right);
+
+        while (stack.isEmpty() == false) {
+            TreeNode node1 = stack.pop();
+            TreeNode node2 = stack.pop();
+
+            if (node1 == null && node2 == null) {
+                continue;
+            }
+
+            if (node1 == null || node2 == null || node1.val != node2.val) {
+                return false;
+            }
+
+            // order is imp - cmp left with right
+            stack.push(node1.left);
+            stack.push(node2.right);
+            stack.push(node1.right);
+            stack.push(node2.left);
         }
 
-        if (left == null || right == null) {
-            return false;
-        }
-
-        return (left.val == right.val &&
-                dfs(left.left, right.right) &&
-                dfs(left.right, right.left));
+        return true; // once we compare all, then we return true
     }
 }
