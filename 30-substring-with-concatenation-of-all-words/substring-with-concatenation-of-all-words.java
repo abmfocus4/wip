@@ -1,43 +1,63 @@
-// https://www.youtube.com/watch?v=taYRJf-M25I&list=TLPQMjYwNTIwMjRZnxFRIBCHUQ&index=10&ab_channel=Techdose - not that good explanation but okay
 class Solution {
-        int wordLen;
-        Map<String, Integer> counts;
-
-        public List<Integer> findSubstring(String s, String[] words) {
-        if (s == null || words == null || s.length() == 0 || words.length == 0) {
-            return new ArrayList<>();
-        }
-        // create frequency map for words
-        counts = new HashMap<>();
-        for (String word : words) {
-            counts.put(word, counts.getOrDefault(word, 0) + 1);
-        }
-        
-        List<Integer> r = new ArrayList<>();
-
-        int sLen = s.length();
-        int n = words.length;
-
-        wordLen = words[0].length(); // word len is same
-        int concatStrLen = n * wordLen;
-
-        for (int i = 0; i <= sLen - concatStrLen; i++) { // starting window index
-            String sub = s.substring(i, i + concatStrLen);
-            if (isConcat(sub)) {
-                r.add(i); // starting index of concat string
+    public List<Integer> findSubstring(String s, String[] words) {
+        Trie trie = new Trie(words);
+        List<Integer> res = new ArrayList<>();
+        for(int i = 0; i <= s.length() - words.length; i++) {
+            if(trie.dfs(s, i, trie.root) >= words.length) {
+                res.add(i);
             }
         }
-        return r;
+        return res;
+    }
+}
+
+class TrieNode {
+    Map<Character, TrieNode> children;
+    boolean endOfWord;
+    boolean visited;
+    int wordCount;
+    TrieNode() {
+        children = new HashMap<>();
+        endOfWord = false;
+        visited = false;
+        wordCount = 0;
+    }
+}
+
+class Trie {
+    TrieNode root;
+    Trie(String[] words) {
+        root = new TrieNode();
+        for(String word: words)
+            insert(word);
     }
     
-    /**
-     * */
-    private boolean isConcat(String str) {
-        Map<String, Integer> seen = new HashMap<>();
-        for (int i = 0; i <= str.length() - wordLen; i += wordLen) { // create map of seens string so far
-            String subWord = str.substring(i, i + wordLen);
-            seen.put(subWord, seen.getOrDefault(subWord, 0) + 1);
+    public void insert(String s) {
+        TrieNode cur = root;
+        for(char ch: s.toCharArray()) {
+            TrieNode node = cur.children.get(ch);
+            if(node == null) {
+                node = new TrieNode();
+                cur.children.put(ch, node);
+            }
+            cur = node;
         }
-        return seen.equals(counts); // comparing hash maps
+        cur.wordCount++;
+        cur.endOfWord = true;
+    }
+    
+    public int dfs(String s, int idx, TrieNode node) {
+        if(idx >= s.length() || node == null)   
+            return 0;
+        char ch = s.charAt(idx);
+        TrieNode cur = node.children.get(ch);
+        if(cur == null)     return 0;
+        if(cur.endOfWord && cur.wordCount > 0) {
+            cur.wordCount--;
+            int res = 1 + dfs(s, idx + 1, root);
+            cur.wordCount++;
+            return res;
+        }
+        return dfs(s, idx + 1, cur);
     }
 }
