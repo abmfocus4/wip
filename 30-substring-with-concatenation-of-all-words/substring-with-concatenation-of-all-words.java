@@ -17,7 +17,7 @@ class Solution {
 
         int sLen = s.length();
         int n = words.length;
-        
+
         wordLen = words[0].length(); // word len is same
         int concatStrLen = n * wordLen;
 
@@ -34,7 +34,7 @@ class Solution {
      * */
     private boolean isConcat(String str) {
         Map<String, Integer> seen = new HashMap<>();
-        for (int i = 0; i < str.length(); i += wordLen) { // create map of seens string so far
+        for (int i = 0; i <= str.length() - wordLen; i += wordLen) { // create map of seens string so far
             String subWord = str.substring(i, i + wordLen);
             seen.put(subWord, seen.getOrDefault(subWord, 0) + 1);
         }
