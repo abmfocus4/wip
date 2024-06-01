@@ -4,9 +4,9 @@ class Solution {
         Deque<String> dq = new LinkedList(); // double ended queue
         for (String token : path.split("/")) {
             if (token.equals("..")) {
-                dq.poll(); // stack pop but without checking for empty
+                if (dq.isEmpty() == false) dq.removeLast(); // stack pop but without checking for empty
             } else if (isDir(token)) {
-                dq.push(token);
+                dq.addLast(token);
             }
         }
         
@@ -16,7 +16,7 @@ class Solution {
 
         StringBuilder sb = new StringBuilder();
         while (dq.isEmpty() == false) {
-            sb.append("/").append(dq.pollLast());
+            sb.append("/").append(dq.removeFirst());
         }
 
         return sb.toString();
