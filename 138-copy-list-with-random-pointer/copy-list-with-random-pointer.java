@@ -15,32 +15,42 @@ class Node {
 // https://www.youtube.com/watch?v=OLgXN2Yg3xQ&list=TLPQMDEwNjIwMjSUjnvbX72tSg&index=9&ab_channel=codestorywithMIK
 class Solution {
     public Node copyRandomList(Node head) {
-        HashMap<Node, Node> origNodeToCopy = new HashMap();
+        if (head == null) {
+            return null;
+        }   
 
-        Node newHead = null;
+
+        // inserting new node after orig node
         Node cur = head;
-        Node prev = null;
         while (cur != null) {
-            Node temp = new Node(cur.val); // creating temp node
-
-            origNodeToCopy.put(cur, temp); // storing temp node with orig
-
-            if (newHead == null) { // connecting to prev node
-                newHead = temp;
-            } else {
-                prev.next = temp;
-            }
-            
-            prev = temp; // storing prev node for next node connection
-            cur = cur.next; // iterating
+            Node curNext = cur.next;
+            cur.next = new Node(cur.val);
+            cur.next.next = curNext;
+            cur = curNext;
         }
 
         cur = head;
+        // random pointing update
+        while (cur != null && cur.next != null) {
+            if (cur.random == null) {
+                cur.next.random = null;
+            } else {
+                cur.next.random = cur.random.next;
+            }
+            
+            cur = cur.next.next;
+        }
+
+        // separating ll
+        Node newHead = head.next;
         Node newCur = newHead;
+        cur = head;
         while (cur != null && newCur != null) {
-            newCur.random = origNodeToCopy.get(cur.random); // setting random node
-            newCur = newCur.next; // iterating both ll forward
+            cur.next = (cur.next == null) ? null : cur.next.next;
+            newCur.next = (newCur.next == null) ? null : newCur.next.next;
+
             cur = cur.next;
+            newCur = newCur.next;
         }
 
         return newHead;
