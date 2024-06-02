@@ -1,4 +1,3 @@
-// https://www.youtube.com/watch?v=B-uQN5wp6Jg&ab_channel=codestorywithMIK
 /**
  * Definition for singly-linked list.
  * public class ListNode {
@@ -10,51 +9,43 @@
  * }
  */
 class Solution {
-    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
-        Stack<Integer> s1 = new Stack();
-        Stack<Integer> s2 = new Stack();
+        public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        int n1 = 0, n2 = 0;
+        for (ListNode i = l1; i != null; i = i.next) n1++;
+        for (ListNode i = l2; i != null; i = i.next) n2++;
         
-        while (l1 != null) { // push all l1 elements into stack
-            s1.push(l1.val);
-            l1 = l1.next;
-        }
-
-        while (l2 != null) {
-            s2.push(l2.val);
-            l2 = l2.next;
-        }
-
-        int sum = 0, carry = 0;
-        ListNode ans = new ListNode(0);
-        while (s1.isEmpty() == false || s2.isEmpty() == false) {
-            if (s1.isEmpty() == false) {
-                sum += s1.pop();
+        Stack<Integer> st = new Stack();
+        int totn = Math.max(n1, n2);
+        for (ListNode i = l1, j = l2; totn > 0; totn--) {
+            int a = 0, b = 0;
+            if (totn <= n1) {
+                a = i.val;
+                i = i.next;
             }
-
-            if (s2.isEmpty() == false) {
-                sum += s2.pop();
+            if (totn <= n2) {
+                b = j.val;
+                j = j.next;
             }
-            ans.val = sum % 10;
-            carry = sum / 10;
-            ListNode newNode = new ListNode(carry);
-            newNode.next = ans;
-            ans = newNode;
-            sum = carry;
+            st.push(a + b);
         }
-
-        if (carry == 0) {
-            return ans.next;
-        } else {
-            return ans;
+        
+        int c = 0;
+        ListNode ans = null;
+        while (!st.empty()) {
+            ListNode i = new ListNode(st.pop());
+            int c1 = (c + i.val) / 10;
+            i.val = (c + i.val) % 10;
+            i.next = ans;
+            ans = i;
+            c = c1;
         }
+        
+        if (c > 0) {
+            ListNode i = new ListNode(c);
+            i.next = ans;
+            ans = i;
+        }
+        
+        return ans;
     }
-
-    // private void PrintAns(ListNode head) {
-    //     while (head != null) {
-    //         System.out.println(head.val);
-    //         head = head.next;
-    //     }
-
-    //     System.out.println("-----");
-    // }
 }
