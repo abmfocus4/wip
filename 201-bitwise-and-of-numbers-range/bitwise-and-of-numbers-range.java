@@ -1,15 +1,11 @@
-// finding longest common prefix
 // https://www.youtube.com/watch?v=3XYQLHSoew8&list=TLPQMDYwNjIwMjTGU_sP9Ubjew&index=3&ab_channel=codestorywithMIK
+// set most bit unset
 class Solution {
     public int rangeBitwiseAnd(int left, int right) {
-        int shiftRightCount = 0;
-
-        while(left != right) {
-            left >>= 1;
-            right >>= 1;
-            shiftRightCount++;
+        while (left < right) {
+            right &= (right - 1); // keep unsetting right bits
         }
-
-        return left << shiftRightCount;
+//TC: number of set bits in right (log n) 
+        return right;
     }
 }
