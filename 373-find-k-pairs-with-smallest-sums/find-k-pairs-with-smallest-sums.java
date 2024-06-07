@@ -1,42 +1,41 @@
-// https://www.youtube.com/watch?v=eptC4nUL_2A&list=TLPQMDYwNjIwMjTGU_sP9Ubjew&index=1&ab_channel=codestorywithMIK
-// TC: O(m*n*logk)
+// https://www.youtube.com/watch?v=PiGYS7BbV_Q&list=TLPQMDYwNjIwMjTGU_sP9Ubjew&index=2&ab_channel=codestorywithMIK
 class Solution {
-    class PQElement {
-        int sum;
-        int i;
-        int j;
-
-        public PQElement(int sum, int i, int j) {
-            this.sum = sum;
-            this.i = i;
-            this.j = j;
-        }
-    }
+    // TC: kLogK
     public List<List<Integer>> kSmallestPairs(int[] nums1, int[] nums2, int k) {
-        List<List<Integer>> result = new ArrayList();
-        // max heap with sum as first and indexes as second
-        PriorityQueue<PQElement> pq = new PriorityQueue<>((a, b) -> b.sum - a.sum);
-        for (int i = 0; i < nums1.length; i++) {
-            for (int j = 0; j < nums2.length; j++) {
-                int sum = nums1[i] + nums2[j];
-                if (pq.size() < k) {
-                    pq.add(new PQElement(sum, nums1[i], nums2[j]));
-                } else if (pq.peek().sum > sum) {
-                    pq.poll();
-                    pq.add(new PQElement(sum, nums1[i], nums2[j]));
-                } else {
-                    break; // coming pairs will be larger because of ascending order
-                }
-            } 
-        }
 
-        while (k-- > 0) {
-            var top = pq.poll();
-            result.add(List.of(top.i, top.j));
-        }
+        // int[0] -> sum and int[1] and int[2] are i and j indexes
+        PriorityQueue<int[]> pq = new PriorityQueue<int[]>((a, b) -> a[0] - b[0]);
+        int m = nums1.length;
+        int n = nums2.length;
 
+        Set<Pair<Integer, Integer>> visited = new HashSet<>(); // to handle duplicates
+
+        // we know first element will definitely be part of result
+        int sum = nums1[0] + nums2[0];
+        pq.add(new int[] { sum, 0, 0 });
+        visited.add(new Pair(0,0));
+
+        List<List<Integer>> result = new ArrayList<>();
+
+        while (k-- > 0 && !pq.isEmpty()) {
+            int[] r = pq.poll();
+            int i = r[1];
+            int j = r[2];
+            result.add(Arrays.asList(nums1[i], nums2[j]));
+
+            if (j + 1 < n && !visited.contains(new Pair(i, j + 1) )) {
+                sum = nums1[i] + nums2[j + 1];
+                pq.add(new int[] { sum, i, j + 1 });
+                visited.add(new Pair( i, j + 1));
+            }
+
+            if (i + 1 < m && !visited.contains(new Pair(i + 1, j))) {
+                sum = nums1[i + 1] + nums2[j];
+                pq.add(new int[] { sum, i + 1, j });
+                visited.add(new Pair( i + 1, j));
+            }
+        }
         return result;
 
-        
     }
 }
