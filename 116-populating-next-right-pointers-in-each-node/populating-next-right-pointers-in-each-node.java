@@ -21,23 +21,24 @@ class Node {
 };
 */
 
-// brute force bfs solution
-// O(n/2) space and O(n) time
-//https://www.youtube.com/watch?v=U4hFQCa1Cq0&ab_channel=NeetCode
+// brute force dfs solution
+// https://www.youtube.com/watch?v=U4hFQCa1Cq0&ab_channel=NeetCode
 class Solution {
     public Node connect(Node root) {
-        if (root == null) return root;
-        Queue<Node> q = new LinkedList<>();
-        q.add(root);
-        while (!q.isEmpty()) {
-            int size = q.size();
-            for (int i = 0; i < size; i++) {
-                Node curr = q.poll();
-                if (curr.left != null) q.add(curr.left);
-                if (curr.right != null) q.add(curr.right);
-                if (i == size - 1) curr.next = null; else curr.next = q.peek();
-            }
+        if(root == null) return null;
+
+        if (root.left != null) {
+            root.left.next = root.right;
         }
+        if (root.right != null) {
+            root.right.next = (root.next == null) ? null : root.next.left;
+        }
+
+        connect(root.left);
+        connect(root.right);
+
         return root;
     }
 }
+
+// TC: O(n), SC: O(h)
