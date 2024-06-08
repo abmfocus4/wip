@@ -1,41 +1,34 @@
 // https://www.youtube.com/watch?v=6aML2-rJJik&list=TLPQMDcwNjIwMjSq9lKrG3yYNQ&index=14&ab_channel=codestorywithMIK
-// - recursion & memoization
-// TC: O(m*n) = SC
+// bottom up : tabulation
 class Solution {
-    int m, n;
-    Integer[][] dp;
     public int minPathSum(int[][] grid) {
-        this.m = grid.length;
-        this.n = grid[0].length;
+        // dp[i][j] : minPathSum to reach i,j from 0,0
 
-        dp = new Integer[m][n];
-
-        return solve(grid, 0, 0);
-    }
-
-    private int solve(int[][] grid, int i, int j) {
-
-        // destination
-        if (i == m - 1 && j == n - 1) {
-            return dp[i][j] = grid[i][j];
-        } 
-
-        if (dp[i][j] != null) {
-            return dp[i][j];
-        }
+        int m = grid.length;
+        int n = grid[0].length;
+        
+        int[][] dp = new int[m][n];
 
         // base cases
-        // last col
-        if (j == n-1) {
-            return dp[i][j] = grid[i][j] + solve(grid, i+1, j);
+        dp[0][0] = grid[0][0];
+
+        // fill 1st row, // came from left
+        for (int col = 1; col < n; col++) {
+            dp[0][col] = grid[0][col] + dp[0][col-1];
         }
 
-        // last row
-        if (i == m-1) {
-            return dp[i][j] = grid[i][j] + solve(grid, i , j+1);
+        // fill 1st col, came from top
+        for (int row = 1; row < m; row++) {
+            dp[row][0] = grid[row][0] + dp[row-1][0];
         }
 
-        return dp[i][j] = grid[i][j] + Math.min(solve(grid, i+1, j), solve(grid, i , j+1));
+        // fill rest of rows and cols
+        for (int row = 1; row < m; row++) {
+            for (int col = 1; col < n; col++) {
+                dp[row][col] = grid[row][col] + Math.min(dp[row-1][col], dp[row][col-1]);
+            }
+        }
 
+        return dp[m-1][n-1];
     }
 }
