@@ -21,24 +21,29 @@ class Node {
 };
 */
 
-// brute force dfs solution
+// bfs solution
 // https://www.youtube.com/watch?v=U4hFQCa1Cq0&ab_channel=NeetCode
 class Solution {
     public Node connect(Node root) {
-        if(root == null) return null;
+        if (root == null) return null;
 
-        if (root.left != null) {
-            root.left.next = root.right;
-        }
-        if (root.right != null) {
-            root.right.next = (root.next == null) ? null : root.next.left;
-        }
+        Node cur = root;
+        Node nxt = root.left;
 
-        connect(root.left);
-        connect(root.right);
+        while (cur != null && nxt != null) {
+            cur.left.next = cur.right;
+            if (cur.next != null) {
+                cur.right.next = cur.next.left;
+            }
+            cur = cur.next; // moving in the same level
+            if (cur == null) { // if we finished traversing level
+                cur = nxt;
+                nxt = cur.left; // point to next level
+            }
+        }
 
         return root;
     }
 }
 
-// TC: O(n), SC: O(h)
+// TC: o(n), SC:O(1)
