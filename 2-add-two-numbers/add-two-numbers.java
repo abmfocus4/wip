@@ -8,12 +8,14 @@
  *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
-//  https://www.youtube.com/watch?v=B-uQN5wp6Jg&ab_channel=codestorywithMIK
 class Solution {
     public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        // iterate through both ll until both are empty
+        // propagate sum in new ll and carry in sum
+        // end check if sum is 0, otherwise create last node
+        ListNode dummy = new ListNode(-1); // will stay at head
+        ListNode ans = dummy; // will move forward
         int sum = 0, carry = 0;
-        ListNode dummy = new ListNode(0);
-        ListNode ans = dummy;
         while (l1 != null || l2 != null) {
             if (l1 != null) {
                 sum += l1.val;
@@ -24,14 +26,14 @@ class Solution {
                 sum += l2.val;
                 l2 = l2.next;
             }
-            ListNode newNode = new ListNode(sum % 10);
-            carry = sum / 10;
+
+            ans.next = new ListNode(sum % 10); // last digit
+            carry = sum / 10; // rest of the digits
             sum = carry;
-            ans.next = newNode;
             ans = ans.next;
         }
 
-        if (sum > 0) {
+        if (sum != 0) {
             ans.next = new ListNode(sum);
         }
 
