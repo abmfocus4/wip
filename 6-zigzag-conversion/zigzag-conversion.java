@@ -4,7 +4,7 @@ class Solution {
         if (numRows <= 1) return s;
 
         StringBuilder[] sbs = new StringBuilder[numRows]; // each row is string builder
-        for (int i = 0; i < sbs.length; i++) sbs[i] = new StringBuilder();
+        for (int i = 0; i < numRows; i++) sbs[i] = new StringBuilder();
 
         int idx = 0;
         int direction = -1;
