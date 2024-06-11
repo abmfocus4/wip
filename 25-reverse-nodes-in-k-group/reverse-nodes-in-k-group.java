@@ -8,7 +8,6 @@
  *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
-//  https://www.youtube.com/watch?v=lIar1skcQYI&list=TLPQMjYwNTIwMjRZnxFRIBCHUQ&index=14&ab_channel=takeUforward
 class Solution {
     public ListNode reverseKGroup(ListNode head, int k) {
         ListNode temp = head;
@@ -19,17 +18,16 @@ class Solution {
                 if (prevNode != null) prevNode.next = temp;
                 break;
             }
-
             ListNode nextNode = kthNode.next;
-
             kthNode.next = null;
-            reverse(temp);
+            reverse(temp); // pass head
 
             if (temp == head) {
                 head = kthNode;
             } else {
                 prevNode.next = kthNode;
             }
+
             prevNode = temp;
             temp = nextNode;
         }
@@ -44,21 +42,21 @@ class Solution {
 
         ListNode cur = head;
         int count = 1;
-
         while (cur != null && count != k) {
             cur = cur.next;
             count++;
         }
+
         return cur;
     }
 
     private void reverse(ListNode head) {
         ListNode prev = null;
         while (head != null) {
-            ListNode nextNode = head.next;
+            ListNode nextHead = head.next;
             head.next = prev;
             prev = head;
-            head = nextNode;
+            head = nextHead;
         }
     }
 }
