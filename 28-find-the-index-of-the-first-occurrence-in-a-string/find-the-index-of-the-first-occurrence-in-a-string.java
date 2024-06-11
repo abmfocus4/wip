@@ -8,7 +8,9 @@ class Solution {
         int n = haystack.length(), m = needle.length();
         for (int i = 0, j = 0; i < n; i++) { // only move one way in primary string
             while (haystack.charAt(i) != needle.charAt(j) && j > 0) j = lps[j-1]; // only j moves
-            if (haystack.charAt(i) == needle.charAt(j)) ++j;
+            if (haystack.charAt(i) == needle.charAt(j)) {
+                ++j;
+            }
             if (j == m) return (i - j + 1);
         }
         return -1;
@@ -19,7 +21,10 @@ class Solution {
         int[] lps = new int[m];
         for (int i = 1, j = 0; i < m; i++) { // pi table or lps table
             while (haystack.charAt(i) != haystack.charAt(j) && j > 0) j = lps[j-1];
-            if (haystack.charAt(i) == haystack.charAt(j)) lps[i] = ++j;
+            if (haystack.charAt(i) == haystack.charAt(j)) {
+                lps[i] = ++j;
+            }
+            
         }
         return lps;
     }
