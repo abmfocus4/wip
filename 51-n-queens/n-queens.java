@@ -5,6 +5,8 @@ class Solution {
         //check if we can place a queen
         //recurse
 
+        // optimize - use bit map int for - top left, left, bottom left
+
         // prepare empty board
         char[][] board = new char[n][n];
         for (char[] row : board) {
@@ -13,12 +15,12 @@ class Solution {
 
         List<List<String>> result = new ArrayList();
 
-        backtrack(n, result, 0, board, 0);
+        backtrack(n, result, 0, board);
 
         return result;
     }
 
-    private void backtrack(int n, List<List<String>> result, int col, char[][] board, int test) {
+    private void backtrack(int n, List<List<String>> result, int col, char[][] board) {
         if (col == n) {
             result.add(stringBoard(board));
             return;
@@ -29,7 +31,7 @@ class Solution {
         for (int row = 0; row < n; row++) {
             if (canPlaceQueen(row, col, board, n)) {
                 board[row][col] = 'Q';
-                backtrack(n, result, col+1, board, test); // increment col here
+                backtrack(n, result, col+1, board); // increment col here
                 board[row][col] = '.';
             }
         }
