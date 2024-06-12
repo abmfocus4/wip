@@ -5,7 +5,8 @@ class Solution {
         this.s = s;
         Trie trie = new Trie(words);
         List<Integer> res = new ArrayList<>();
-        for (int i = 0; i <= s.length() - words.length; i++) {
+        int concatStrLength =  (words.length*words[0].length());
+        for (int i = 0; i <= s.length() - concatStrLength; i++) {
             if (trie.dfs(i, trie.root) >= words.length) {
                 res.add(i);
             }
