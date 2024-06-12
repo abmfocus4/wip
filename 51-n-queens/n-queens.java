@@ -1,55 +1,81 @@
-// code ref: https://leetcode.com/problems/n-queens/solutions/2107776/explained-with-diagrams-backtracking-and-bit-manipulation
-// video ref: https://www.youtube.com/watch?v=i05Ju7AftcM&ab_channel=takeUforward
 class Solution {
-    private List<List<String>> res;
-    private int N;
-
-    // for interviews, just return List<char[][]>
     public List<List<String>> solveNQueens(int n) {
-        res = new ArrayList<>();
-        N = n;
-        char[][] emptyBoard = new char[N][N];
-        for (char[] row: emptyBoard) Arrays.fill(row, '.');
-        
-        backtrack(emptyBoard, 0, 0, 0, 0);
-        return res;
+        //backtrack
+        //go col by col
+        //check if we can place a queen
+        //recurse
+
+        // prepare empty board
+        char[][] board = new char[n][n];
+        for (char[] row : board) {
+            Arrays.fill(row, '.'); // initially all rows are empty
+        } 
+
+        List<List<String>> result = new ArrayList();
+
+        backtrack(n, result, 0, board, 0);
+
+        return result;
     }
-    
-    private void backtrack(char[][] board, int row, int cols, int diags, int antiDiags) {
-        // if we've successfuly placed a Queen at all rows, we have a valid board state
-        if (row == N) {
-            // for interviews you can remove this
-            res.add(toBoard(board));
+
+    private void backtrack(int n, List<List<String>> result, int col, char[][] board, int test) {
+        if (col == n) {
+            result.add(stringBoard(board));
             return;
         }
-        
-        for (int col=0; col<N; col++) {
-            int currDiag = row-col+N;
-            int currAntiDiag = row+col;
-            
-            // can't place queen
-            if ((cols & (1 << col)) != 0 || (diags & (1 << currDiag)) != 0 || (antiDiags & (1 << currAntiDiag)) != 0) continue;
-            
-            // if so, add changes
-            board[row][col] = 'Q';
-            cols |= (1 << col);
-            diags |= (1 << currDiag);
-            antiDiags |= (1 << currAntiDiag);
-            
-            // continue to the next row
-            backtrack(board, row + 1, cols, diags, antiDiags);
-            
-            // undo changes and continue
-            board[row][col] = '.';
-            cols ^= (1 << col);
-            diags ^= (1 << currDiag);
-            antiDiags ^= (1 << currAntiDiag);
+
+    // place queen in each col
+    // interate each row
+        for (int row = 0; row < n; row++) {
+            if (canPlaceQueen(row, col, board, n)) {
+                board[row][col] = 'Q';
+                backtrack(n, result, col+1, board, test); // increment col here
+                board[row][col] = '.';
+            }
         }
     }
-    
-    private List<String> toBoard(char[][] board) {
-        List<String> newBoard = new ArrayList<>();
-        for (char[] row: board) newBoard.add(new String(row));
-        return newBoard;
+
+    private boolean canPlaceQueen(int row, int col, char[][] board, int n) {
+        int dummyCol = col;
+        // check left
+        while (dummyCol >= 0) {
+            if (board[row][dummyCol] == 'Q') {
+                return false;
+            }
+            dummyCol--;
+        }
+        dummyCol = col;
+        int dummyRow = row;
+        // check upper diagnal
+        while (dummyRow >= 0 && dummyCol >= 0) {
+            if (board[dummyRow][dummyCol] == 'Q') {
+                return false;
+            }
+            dummyCol--;
+            dummyRow--;
+        }
+
+        // check lower diagnal // row increase, col decrease
+        dummyCol = col;
+        dummyRow = row;
+        while (dummyCol >= 0 && dummyRow < n) {
+            if (board[dummyRow][dummyCol] == 'Q') {
+                return false;
+            }
+            dummyCol--;
+            dummyRow++;
+        }
+
+        return true;
+    }
+
+    private List<String> stringBoard(char[][] board) {
+        List<String> strBoard = new ArrayList();
+
+        for (char[] row : board) {
+            strBoard.add(new String(row));
+        }
+
+        return strBoard;
     }
 }
