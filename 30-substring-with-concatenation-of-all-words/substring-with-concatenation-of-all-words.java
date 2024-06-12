@@ -7,7 +7,7 @@ class Solution {
         List<Integer> res = new ArrayList<>();
         int concatStrLength =  (words.length*words[0].length());
         for (int i = 0; i <= s.length() - concatStrLength; i++) {
-            if (trie.dfs(i, trie.root) >= words.length) {
+            if (trie.dfs(i, trie.root) == words.length) {
                 res.add(i);
             }
         }
