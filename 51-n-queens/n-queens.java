@@ -1,9 +1,9 @@
 class Solution {
     public List<List<String>> solveNQueens(int n) {
-        //backtrack
-        //go col by col
-        //check if we can place a queen
-        //recurse
+        // backtrack
+        // go col by col
+        // check if we can place a queen
+        // recurse
 
         // optimize - use bit map int for - top left, left, bottom left
 
@@ -11,16 +11,16 @@ class Solution {
         char[][] board = new char[n][n];
         for (char[] row : board) {
             Arrays.fill(row, '.'); // initially all rows are empty
-        } 
+        }
 
         List<List<String>> result = new ArrayList();
 
-        backtrack(n, result, 0, board);
+        backtrack(n, result, 0, board, 0, 0, 0);
 
         return result;
     }
 
-    private void backtrack(int n, List<List<String>> result, int col, char[][] board) {
+    private void backtrack(int n, List<List<String>> result, int col, char[][] board, int topLeft, int left, int bottomLeft) {
         if (col == n) {
             result.add(stringBoard(board));
             return;
@@ -29,10 +29,32 @@ class Solution {
     // place queen in each col
     // interate each row
         for (int row = 0; row < n; row++) {
-            if (canPlaceQueen(row, col, board, n)) {
+            // check top left, left, bottom left
+            // if true proceed
+
+            // calculate cur row, col hash
+            // for left it's just row number
+            // for topLeft = row - col + N (+N is for offsetting neg values)
+            // for bottomLeft = row + col
+
+            int curTopLeft = row - col;
+            int curBottomLeft = row + col;
+            int curLeft = row;
+
+            if ((left & (1 << curLeft)) == 0 && (topLeft & (1 << curTopLeft)) == 0 && (bottomLeft & (1 << curBottomLeft)) == 0) {
+                // update/set topleft, left, bottomleft
+                left |= (1<<curLeft);
+                topLeft |= (1<<curTopLeft);
+                bottomLeft |= (1<<curBottomLeft);
+
                 board[row][col] = 'Q';
-                backtrack(n, result, col+1, board); // increment col here
+                backtrack(n, result, col+1, board, topLeft, left, bottomLeft); // increment col here
                 board[row][col] = '.';
+
+                // undo/unset topleft, left, bottomleft
+                left ^= (1<<curLeft);
+                topLeft ^= (1<<curTopLeft);
+                bottomLeft ^= (1<<curBottomLeft);
             }
         }
     }
