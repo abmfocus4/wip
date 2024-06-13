@@ -1,41 +1,31 @@
-// https://leetcode.com/problems/maximum-subarray/solutions/1595186/java-kadane-divide-and-conquer-dp
 class Solution {
     public int maxSubArray(int[] nums) {
-    
-        return helper(nums,0,nums.length-1);
+        return helper(nums, 0, nums.length - 1);
     }
-    
-    public int helper(int nums[],int i,int j){
 
-        if(i==j){
-            return nums[i];
+    private int helper(int[] nums, int left, int right) {
+        if (left == right) {
+            return nums[left];
         }
-                          
-        int mid  =  (i+j)/2;
-        int sum = 0,leftMaxSUM = Integer.MIN_VALUE;
-        
-        for(int l =  mid;l>=i;l--){
-            sum+=nums[l];
-            if(sum>leftMaxSUM){
-                leftMaxSUM =  sum;
-            }                                    
-        }
-        
-     int rightMaxSUM = Integer.MIN_VALUE;
-        sum = 0;    // reset sum to 0
-        for (int l = mid + 1; l <=j; l++)
-        {
+
+        int mid = left + (right - left)/2;
+        int leftHalfMax = Integer.MIN_VALUE, rightHalfMax = Integer.MIN_VALUE;
+        int sum = 0;
+        for (int l = mid; l >= left; l--) {
             sum += nums[l];
-            if (sum > rightMaxSUM ) {
-                rightMaxSUM = sum;
-            }
+            leftHalfMax = Math.max(leftHalfMax, sum);
         }
-        
-       int maxLeftRight = Math.max(helper(nums, i, mid),
-                                    helper(nums, mid + 1, j ));
-        return Math.max(maxLeftRight, leftMaxSUM + rightMaxSUM );
-        
-        
-    
+
+        sum = 0;
+        for (int r = mid + 1; r <= right; r++) {
+            sum += nums[r];
+            rightHalfMax = Math.max(rightHalfMax, sum);
+        }
+
+        int leftMax = helper(nums, left, mid);
+        int rightMax = helper(nums, mid + 1, right);
+        int middleMax = leftHalfMax + rightHalfMax;
+
+        return Math.max(Math.max(leftMax, rightMax), middleMax);
     }
 }
