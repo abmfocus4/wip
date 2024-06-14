@@ -1,21 +1,25 @@
+// explanation : https://www.youtube.com/watch?v=dJ7sWiOoK7g&list=TLPQMDgwNjIwMjTSiTgJSC2Yog&index=3&pp=gAQBiAQB
+// explanation II : https://www.youtube.com/watch?v=9kyHYVxL4fw&list=TLPQMDgwNjIwMjTSiTgJSC2Yog&index=4&ab_channel=NikhilLohia
+// bfs traversal in O(n) time
 class Solution {
-	Integer[] dp;
     public int jump(int[] nums) {
-        dp=new Integer[nums.length];
-        return jump(0,nums);        
-    }
-    private int jump(int curIdx, int[] nums) {
-        int n = nums.length;
-        if(curIdx >= n-1) // don't forget greater
-            return 0;
+        int minJumps = 0;
 
-        if(dp[curIdx] != null)
-            return dp[curIdx];
+        int left = 0, right = 0;
 
-        int minSteps = n; // max steps you can take // don't know why can't set to max value int
-        for(int jump=1;jump<=nums[curIdx];jump++) 
-            minSteps = Math.min(minSteps, 1+jump(curIdx+jump, nums));
+        while (right < nums.length - 1) {
+            int farthestIndex = 0;
+            for (int i = left; i <= right; i++) {
+                if (i >= nums.length) {
+                    break;
+                }
+                farthestIndex = Math.max(farthestIndex, i + nums[i]);
+            }
+            left = right + 1;
+            right = farthestIndex;
+            minJumps += 1; // level traversed
+        }
 
-        return dp[curIdx]=minSteps;
+        return minJumps;
     }
 }
