@@ -9,8 +9,12 @@ class Solution {
 
             TreeNode pre1 = c1.left, pre2 = c2.left;
 
-            for (; pre1 != null && pre1.right != null && pre1.right != c1; pre1 = pre1.right);
-            for (; pre2 != null && pre2.right != null && pre2.right != c2; pre2 = pre2.right);
+            while (pre1 != null && pre1.right != null && pre1.right != c1) {
+                pre1 = pre1.right;
+            }
+            while (pre2 != null && pre2.right != null && pre2.right != c2) {
+                pre2 = pre2.right;
+            }
             
             if (pre1 == null ^ pre2 == null) return false;
             
