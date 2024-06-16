@@ -1,41 +1,39 @@
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
 class Solution {
-    public boolean isSameTree(TreeNode p, TreeNode q) {
-        // use queue to sequentially compare corresponding nodes in each subtree
-        // first add the roots of the trees
-        // while the queue is not empty
-        // complete equality checks
-        // add left and right nodes to queue
-        // return true once the loop is exited
+    public boolean isSameTree(TreeNode root1, TreeNode root2) {
+        if (root1 == null && root2 == null) return true;
+        if (root1 == null || root2 == null) return false;
+        TreeNode c1 = root1, c2 = root2;
+        while (c1 != null && c2 != null) {
 
-        Queue<TreeNode> queue = new LinkedList();
-        queue.add(p);
-        queue.add(q);
-        while(!queue.isEmpty()) {
-            TreeNode a = queue.poll();
-            TreeNode b = queue.poll();
-            if (a == null && b == null) continue;
-            else if (a == null || b == null || a.val != b.val) return false;
-            queue.add(a.left);
-            queue.add(b.left);
-            queue.add(a.right);
-            queue.add(b.right);
+            if (c1.val != c2.val) return false;
+
+            TreeNode pre1 = c1.left, pre2 = c2.left;
+
+            for (; pre1 != null && pre1.right != null && pre1.right != c1; pre1 = pre1.right);
+            for (; pre2 != null && pre2.right != null && pre2.right != c2; pre2 = pre2.right);
+            
+            if (pre1 == null ^ pre2 == null) return false;
+            
+            if (pre1 == null) { // if left is null
+                c1 = c1.right;
+            } else if (pre1.right == null) {
+                pre1.right = c1;
+                c1 = c1.left;
+            } else {
+                pre1.right = null;
+                c1 = c1.right;
+            }
+            
+            if (pre2 == null) {
+                c2 = c2.right;
+            } else if (pre2.right == null) {
+                pre2.right = c2;
+                c2 = c2.left;
+            } else {
+                pre2.right = null;
+                c2 = c2.right;
+            }
         }
-
-        return true;
+        return c1 == null && c2 == null;
     }
 }
