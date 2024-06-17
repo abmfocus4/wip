@@ -1,19 +1,39 @@
 class Solution {
-    public boolean wordBreak(String s, List<String> wordDict) {
-        int n = s.length();
-        HashSet set = new HashSet<>(wordDict); // O(mk)
-        boolean[] dp = new boolean[n+1];
-        dp[0] = true;
+    private String s;
+    private List<String> wordDict;
+    private int[] memo;
 
-        // O(n3)
-        for (int i = 0 ; i <= n; i++) { //O(n)
-            for (int j = 0; j < i; j++) { // O(n)
-                if (dp[j] && set.contains(s.substring(j, i))) { // O(n)
-                    dp[i] = true;
-                    break;
-                }
+    private boolean dp(int i) {
+        if (i < 0) return true;
+
+        if (memo[i] != -1) {
+            return memo[i] == 1;
+        }
+
+        for (String word : wordDict) {
+            // Handle out of bounds case
+            // if (i - word.length() + 1 < 0) {
+            //     continue;
+            // }
+
+            if ( (i - word.length() + 1 >= 0) && 
+                s.substring(i - word.length() + 1, i + 1).equals(word) &&
+                dp(i - word.length())
+            ) {
+                memo[i] = 1;
+                return true;
             }
         }
-        return dp[n];
+
+        memo[i] = 0;
+        return false;
+    }
+
+    public boolean wordBreak(String s, List<String> wordDict) {
+        this.s = s;
+        this.wordDict = wordDict;
+        this.memo = new int[s.length()];
+        Arrays.fill(this.memo, -1);
+        return dp(s.length() - 1);
     }
 }
