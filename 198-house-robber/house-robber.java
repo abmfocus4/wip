@@ -1,13 +1,16 @@
-// Ref: https://leetcode.com/problems/house-robber/solutions/1605334/java-dp-with-and-without-space-explained/
-
 class Solution {
+    // x(prev-prev) y(prev) z
     public int rob(int[] nums) {
-        int curMax = 0, prevMax = 0, temp = 0;
+        int prev_prev = 0;
+        int prev = 0;
+
         for (int num : nums) {
-            temp = curMax;
-            curMax = Math.max(num+prevMax, curMax); // first arg: rob house, snd arg: don't rob
-            prevMax = temp;
+            int cur = Math.max(num + prev_prev, prev); // rob current house or not rob
+            prev_prev = prev;
+            prev = cur;
         }
-        return curMax;
+
+        return Math.max(prev, prev_prev);
+
     }
 }
