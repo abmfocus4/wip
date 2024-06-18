@@ -14,10 +14,10 @@ class Solution {
 
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
-                if (grid[i][j] == '1' && visited[i][j] == false) {
+                if (grid[i][j] == '1') {
                     count++;
                     q.add(new int[] {i, j});
-                    visited[i][j] = true;
+                    grid[i][j] = '0';
                     bfs(i, j, grid);
                 }
             }
@@ -32,9 +32,9 @@ class Solution {
             for (int[] dir : dirs) {
                 int x = coord[0] + dir[0];
                 int y = coord[1] + dir[1];
-                if (x < 0 || y < 0 || y >= grid[0].length || x >= grid.length || grid[x][y] == '0' || visited[x][y]) continue;
+                if (x < 0 || y < 0 || y >= grid[0].length || x >= grid.length || grid[x][y] == '0') continue;
                 q.add(new int[] {x, y});
-                visited[x][y] = true;
+                grid[x][y] = '0';
             }
         }
 
