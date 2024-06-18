@@ -1,31 +1,23 @@
-// Expl: https://www.youtube.com/watch?v=ucmqYGVGQK8
 class Solution {
     public int rob(int[] nums) {
-        if (nums.length < 2) return nums[0];
+        int n = nums.length;
 
-        int[] skipLastHouse = new int[nums.length-1];
-        int[] skipFirstHouse = new int[nums.length-1];
+        if (n < 2)
+            return n != 0 ? nums[0] : 0;
+        int skipFirstHouseMax = robRow(nums, 1, n);
+        int skipLastHouseMax = robRow(nums, 0, n - 1);
 
-        for (int i = 0; i < nums.length -1; i++) {
-            skipLastHouse[i] = nums[i];
-            skipFirstHouse[i] = nums[i+1];
-        }
-
-        int skipLastHouseLoot = robRow(skipLastHouse);
-        int skipFirstHouseLoot = robRow(skipFirstHouse);
-
-        return Math.max(skipLastHouseLoot, skipFirstHouseLoot);
+        return Math.max(skipFirstHouseMax, skipLastHouseMax);
     }
 
-    private int robRow(int[] nums) {
-        int curMax = 0, prevMax = 0, temp = 0;
-        for (int num : nums) {
-            temp = curMax;
-            curMax = Math.max(num+prevMax, curMax);
-            prevMax = temp;
+    public int robRow(int[] nums, int start, int end) {
+        int prev_prev = 0, prev = 0;
+        for (int i = start; i < end; i++) {
+            int cur = Math.max(nums[i] + prev_prev, prev);
+            prev_prev = prev;
+            prev = cur;
         }
 
-        return curMax;
+        return Math.max(prev_prev, prev);
     }
 }
-
