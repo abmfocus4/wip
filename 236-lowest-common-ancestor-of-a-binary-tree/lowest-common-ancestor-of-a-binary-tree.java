@@ -11,7 +11,7 @@
  // Ref: https://www.youtube.com/watch?v=Sy1HmN6RbBA
 class Solution {
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
-        if (root == null || p == null || q == null) return root;
+        if (root == null || p == null || q == null) return null;
         if (root == p || root == q) return root;
 
         // post order traversal: LRN
