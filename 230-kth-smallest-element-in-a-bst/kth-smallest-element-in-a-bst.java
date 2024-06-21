@@ -13,19 +13,38 @@
  *     }
  * }
  */
- // If you have to frequently find kth elements
 class Solution {
     public int kthSmallest(TreeNode root, int k) {
-        Stack<TreeNode> stack = new Stack();
-        while (root != null || !stack.isEmpty()) {
-            while (root != null) {
-                stack.push(root);
-                root = root.left;
+        return morris(root, k);
+    }
+
+    // Morris trav - https://www.youtube.com/watch?v=80Zug6D1_r4&t=1151s&ab_channel=takeUforward
+    private int morris(TreeNode root, int k) {
+        int count = 0;
+        int ans = 0;
+        TreeNode curr = root;
+        while (curr != null) {
+            if (curr.left == null) {
+                count++;
+                ans = curr.val;
+                curr = curr.right;
+            } else {
+                TreeNode temp = curr.left;
+                while (temp.right != null && temp.right != curr) {
+                    temp = temp.right;
+                }
+                if (temp.right == null) {
+                    temp.right = curr;
+                    curr = curr.left;
+                } else {
+                    temp.right = null;
+                    count++;
+                    ans = curr.val;
+                    curr = curr.right;
+                }
             }
-            root = stack.pop();
-            if (--k == 0) break;
-            root = root.right;
+            if (count == k) return ans;
         }
-        return root.val;
+        return ans;
     }
 }
