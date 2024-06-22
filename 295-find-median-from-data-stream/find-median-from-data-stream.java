@@ -1,39 +1,31 @@
-// Follow-ups:
-// https://leetcode.com/problems/find-median-from-data-stream/description/comments/1564564
-// https://leetcode.com/problems/find-median-from-data-stream/description/comments/1567590
-
-// Good Description:
-// https://leetcode.com/problems/find-median-from-data-stream/solutions/652498/Good-for-interviews:-Python-general-sort-greater-insertion-sort-greater-two-heaps-greater-follow-ups
-
-
-// Code Ref: https://www.youtube.com/watch?v=JNKdfHmnMSg
 class MedianFinder {
-    // declare heaps - priority queue
-    // max heap
     // min heap
-    Queue<Integer> maxHeap; // only touching maxHeap
-    Queue<Integer> minHeap;
+    PriorityQueue<Integer> minHeap;
+    // max heap
+    PriorityQueue<Integer> maxHeap;
+    // size
     int size;
 
+
     public MedianFinder() {
-        // init
-        this.maxHeap = new PriorityQueue<>((a, b) -> (b-a));
         this.minHeap = new PriorityQueue<>();
-        this.size = 0; 
+        this.maxHeap = new PriorityQueue<>((a,b) -> b-a);
+        this.size = 0;
+        
     }
     
     public void addNum(int num) {
-        // increase size
+        // size increase
         size++;
 
-        // add onto right heap
-        if (maxHeap.size() == 0 || num <= maxHeap.peek()) {
+        // add to one of the heaps
+        if (maxHeap.isEmpty() || num <= maxHeap.peek()) {
             maxHeap.add(num);
         } else {
             minHeap.add(num);
         }
 
-        // balance heaps
+        // adjust heaps
         if (maxHeap.size() > minHeap.size() + 1) {
             minHeap.add(maxHeap.poll());
         } else if (maxHeap.size() < minHeap.size()) {
@@ -42,13 +34,11 @@ class MedianFinder {
     }
     
     public double findMedian() {
-        // if size is off then pop from max heap
-        if (size % 2 != 0) {
-            return (double) maxHeap.peek();
-        } else { // if size is even then take avg of max and min heap roots
+        if (size % 2 == 0) { // even
             return (maxHeap.peek() + minHeap.peek())/2.0;
+        } else { // odd
+            return (double)maxHeap.peek();
         }
-        
     }
 }
 
