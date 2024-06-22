@@ -8,30 +8,29 @@
  * }
  */
 public class Codec {
-    final String nullNode = "#";
-    final String delimeter = ",";
+    String delimit = ",";
+    String nullStr = "X";
+
     // Encodes a tree to a single string.
     public String serialize(TreeNode root) {
-        if (root == null) return nullNode;
-        return root.val +  delimeter + serialize(root.left) + delimeter + serialize(root.right);
+        if (root == null) return nullStr;
+        return root.val + delimit + serialize(root.left) + delimit + serialize(root.right);
     }
 
-    String arr[];
-    int index = 0;
+    Queue<String> q;
     // Decodes your encoded data to tree.
     public TreeNode deserialize(String data) {
-        arr = data.split(delimeter);
+        this.q = new LinkedList(Arrays.asList(data.split(delimit)));
         return dfs();
     }
 
-    // string -> node
     public TreeNode dfs() {
-        if (arr[index].equals(nullNode)) {
-            index++;
+        String val = q.poll();
+        if (val.equals(nullStr)) {
             return null;
         }
 
-        TreeNode root = new TreeNode(Integer.parseInt(arr[index++]));
+        TreeNode root = new TreeNode(Integer.parseInt(val));
         root.left = dfs();
         root.right = dfs();
         return root;
