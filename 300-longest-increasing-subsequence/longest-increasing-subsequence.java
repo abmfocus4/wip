@@ -1,27 +1,23 @@
 class Solution {
-    int[][] dp;
     public int lengthOfLIS(int[] nums) {
-        // for every index find the lis
+        // 1d arr = store maxlis with that index as last added element
         int n = nums.length;
-        if (nums.length <= 1) return nums.length;
-        this.dp = new int[n][n+1];
-        for (int[] row : dp) {
-        Arrays.fill(row, -1);
+        if (n <= 1)
+            return n;
 
-        }
-        return lis(nums, 0, -1);
-    }
+        int maxLis = 1;
+        int[] dp = new int[n];
+        Arrays.fill(dp, 1);
 
-    private int lis(int[] nums, int currentIdx, int prevIdx) {
-        if (currentIdx == nums.length) return 0;
-        if (dp[currentIdx][prevIdx+1] != -1) return dp[currentIdx][prevIdx+1];
-        int skip = lis(nums, currentIdx+1, prevIdx);
-        int select = -1;
-        if (prevIdx == -1 || nums[currentIdx] > nums[prevIdx]) {
-            select = 1 + lis(nums, currentIdx + 1, currentIdx);
+        for (int i = 1; i < n; i++) {
+            for (int j = 0; j < i; j++) {
+                if (nums[i] > nums[j]) {
+                    dp[i] = Math.max(dp[i], dp[j] + 1);
+                }
+                maxLis = Math.max(maxLis, dp[i]);
+            }
         }
 
-        return dp[currentIdx][prevIdx+1] = Math.max(skip, select);
+        return maxLis;
     }
-
 }
