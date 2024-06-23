@@ -1,35 +1,31 @@
 class Solution {
     public String reverseVowels(String s) {
-        char[] word = s.toCharArray();
+        char[] s_arr = s.toCharArray();
         int start = 0;
-        int end = s.length() - 1;       
+        int end = s.length() - 1;
 
         while (start < end) {
-            // Move start pointer until it points to a vowel
-            while (start < end && isVowel(word[start]) == false) {
+            while (start < end && isVowel(s_arr[start]) == false) {
                 start++;
             }
-            
-            // Move end pointer until it points to a vowel
-            while (start < end && isVowel(word[end]) == false) {
+
+            while (start < end && isVowel(s_arr[end]) == false) {
                 end--;
             }
-            
-            // Swap the vowels
-            char temp = word[start];
-            word[start] = word[end];
-            word[end] = temp;
-            
-            // Move the pointers towards each other
+
+            char temp = s_arr[start];
+            s_arr[start] = s_arr[end];
+            s_arr[end] = temp;
+
             start++;
             end--;
         }
-        
-        return new String(word);
+
+        return new String(s_arr);
     }
 
     private boolean isVowel(char c) {
-        return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u'
-            || c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U';
+        return (c == 'a' || c == 'A' || c == 'e' || c == 'E' || c == 'i' || c == 'I' || c == 'o' || 
+                c == 'O' || c == 'u' || c == 'U');
     }
 }
