@@ -9,8 +9,8 @@ class Solution {
             int digit = i;
             int count = 0;
             while (digit != 0) {
-                if ((digit & 1) == 1) count++;
-                digit >>= 1;
+                digit &= digit - 1;
+                count++;
             }
             res[i] = count;
         }
