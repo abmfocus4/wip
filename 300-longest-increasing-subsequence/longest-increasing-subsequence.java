@@ -1,23 +1,39 @@
+// https://www.youtube.com/watch?v=hbN20guU5pM
+// Time: O(nlogn), Space: O(n)
+
+// verbal explanation of tail arr and replace and insert decision
+// https://leetcode.com/problems/longest-increasing-subsequence/description/comments/1570655
 class Solution {
     public int lengthOfLIS(int[] nums) {
-        // 1d arr = store maxlis with that index as last added element
-        int n = nums.length;
-        if (n <= 1)
-            return n;
-
-        int maxLis = 1;
-        int[] dp = new int[n];
-        Arrays.fill(dp, 1);
-
-        for (int i = 1; i < n; i++) {
-            for (int j = 0; j < i; j++) {
-                if (nums[i] > nums[j]) {
-                    dp[i] = Math.max(dp[i], dp[j] + 1);
-                }
-                maxLis = Math.max(maxLis, dp[i]);
+        int N = nums.length;
+        List<Integer> sub = new ArrayList<>();
+        sub.add(nums[0]);
+        for (int i = 1; i < N; i++) {
+            if (nums[i] > sub.get(sub.size()-1)) { // new size subsequence
+                sub.add(nums[i]);
+            } else { // replace or insert in between
+                int index = binarySearch(nums[i], sub);
+                sub.set(index, nums[i]);
             }
         }
+        return sub.size();
+    }
 
-        return maxLis;
+    // checking tail
+    private int binarySearch(int num, List<Integer> sub) {
+        int left = 0;
+        int right = sub.size() - 1;
+        while (left <= right) {
+            int mid = (left + right)/2;
+            if (sub.get(mid) == num) {
+                return mid; // replace
+            }
+            if (sub.get(mid) < num) {
+                left = mid + 1; // insert
+            } else {
+                right = mid - 1;
+            }
+        }
+        return left;
     }
 }
