@@ -1,21 +1,23 @@
-// https://www.youtube.com/watch?v=H3kSFSv-t30&ab_channel=codestorywithMIK
-// optimization: instead of using another visited arr, by bank is too large, you can consider removing the gene directly from bank
 class Solution {
     public int minMutation(String startGene, String endGene, String[] bank) {
-        char[] AGCT = { 'A', 'G', 'C', 'T' };
-
+        char[] acgt = {'A', 'C', 'G', 'T'};
+        // construct bank
         HashSet<String> bankSet = new HashSet();
-        for (String str : bank) {
+        for(String str : bank) {
             bankSet.add(str);
         }
-
+        // use q for bfs
         Queue<String> q = new LinkedList();
+        // set for visited tracking
         HashSet<String> visited = new HashSet();
+        
+        // add start
         q.add(startGene);
         visited.add(startGene);
+
         int level = 0;
 
-        while (q.isEmpty() == false) {
+        while(q.isEmpty() == false) {
             int levelSize = q.size();
             while (levelSize-- > 0) {
                 String curGene = q.poll();
@@ -26,20 +28,21 @@ class Solution {
                 char[] curGeneArr = curGene.toCharArray();
                 for (int i = 0; i < curGeneArr.length; i++) {
                     char origChar = curGeneArr[i];
-                    for (char c : AGCT) {
+                    for (char c : acgt) {
                         curGeneArr[i] = c;
-                        String updatedGene = new String(curGeneArr);
-                        if (visited.contains(updatedGene)) {
+                        String newGene = new String(curGeneArr);
+                        if (visited.contains(newGene)) {
                             continue;
                         }
-                        if (bankSet.contains(updatedGene)) {
-                            visited.add(updatedGene);
-                            q.add(updatedGene);
-                        }
 
+                        if (bankSet.contains(newGene)) {
+                            q.add(newGene);
+                            visited.add(newGene);
+                        }
                     }
-                    curGeneArr[i] = origChar; // set to original after experiments
+                    curGeneArr[i] = origChar;
                 }
+
             }
             level++;
         }
