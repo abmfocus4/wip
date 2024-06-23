@@ -1,19 +1,20 @@
-// https://leetcode.com/problems/increasing-triplet-subsequence/solutions/79004/concise-java-solution-with-comments
 class Solution {
-       public boolean increasingTriplet(int[] nums) {
-        if (nums == null || nums.length < 3) {
-            return false;
-        }
-        int small = Integer.MAX_VALUE, big = Integer.MAX_VALUE;
-        for (int n : nums) {
-            if (n <= small) { 
-                small = n; 
-            } else if (n <= big) { 
-                big = n; 
+    public boolean increasingTriplet(int[] nums) {
+        int n = nums.length;
+        if (nums == null || n < 3) return false;
+
+        int first = Integer.MAX_VALUE;
+        int second = Integer.MAX_VALUE;
+        for (int num : nums) {
+            if (num <= first) {
+                first = num;
+            } else if (num <= second) {
+                second = num;
             } else {
                 return true;
             }
         }
+
         return false;
     }
 }
