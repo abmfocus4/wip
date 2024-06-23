@@ -9,8 +9,9 @@
 class Solution {
     public int change(int amount, int[] coins) {
         int[][] dp = new int[coins.length + 1][amount + 1];
-        dp[0][0] = 1;
-        for (int i = 1; i <= coins.length; i++) {
+        // why we use 1: https://leetcode.com/problems/coin-change-ii/description/comments/1573895
+        dp[0][0] = 1; // choosing no coins to make amount 0
+        for (int i = 1; i <= coins.length; i++) { // choosing 1st coin and n coins to getting amount
             dp[i][0] = 1;
             for (int j = 1; j <= amount; j++) {
                 // take
