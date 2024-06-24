@@ -14,44 +14,33 @@
  * }
  */
 class Solution {
-     Map<Long, Integer> hmap;
+    HashMap<Long, Integer> prefixMap;
     int count;
-
     public int pathSum(TreeNode root, int targetSum) {
-        hmap = new HashMap<>();
-        count = 0;
-
-        dfs(root, 0, targetSum);
-
+        this.count = 0;
+        prefixMap = new HashMap();
+        backtrack(root, targetSum, 0L);
         return count;
     }
 
-    private void dfs(TreeNode root, long prefixSum, int targetSum) {
-        // base case
+    private void backtrack(TreeNode root, int targetSum, long prefixSum) {
         if (root == null) return;
 
-        
         prefixSum += root.val;
-        
-        // If map contains a sum equal to (prefixSum - targetSum), we need to increment count that many times
-        if (hmap.containsKey(prefixSum-targetSum)) {
-            count += hmap.get(prefixSum-targetSum);
-        } 
-        
-        // There can be cases when the prefixSum is directly equal to targetSum, we need to increment count
-        if (targetSum == prefixSum) {
+        if (prefixSum == targetSum) {
             count++;
         }
 
-        // Update the prefixSum till current node and it's count
-        hmap.put(prefixSum, hmap.getOrDefault(prefixSum, 0) + 1);
+        if (prefixMap.containsKey(prefixSum - targetSum)) {
+            count += prefixMap.get(prefixSum - targetSum);
+        }
 
-        // Recurse
-        dfs(root.left, prefixSum, targetSum);
-        dfs(root.right, prefixSum, targetSum);
+        prefixMap.put(prefixSum, prefixMap.getOrDefault(prefixSum, 0) + 1);
 
-        // Backtrack
-        hmap.put(prefixSum, hmap.get(prefixSum) - 1);
-        
+        backtrack(root.left, targetSum, prefixSum);
+        backtrack(root.right, targetSum, prefixSum);
+
+        prefixMap.put(prefixSum, prefixMap.getOrDefault(prefixSum, 0) - 1);
+
     }
 }
