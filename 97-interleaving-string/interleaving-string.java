@@ -1,43 +1,54 @@
-// https://www.youtube.com/watch?v=CfzP4oXxZTI&list=TLPQMDcwNjIwMjSq9lKrG3yYNQ&index=9&ab_channel=codestorywithMIK
 class Solution {
-    int m, n, N;
-    Boolean dp[][];
-    boolean check(String s1, String s2, String s3, int i, int j) {
-        if(i >= m && j >= n && i+j >= N) 
-            return true;
-        
-        if(i+j >= N) 
-            return false;
-
-        if(dp[i][j] != null)
-            return dp[i][j];
-
-        boolean result = false;
-
-        if(i < m && s1.charAt(i) == s3.charAt(i+j)){
-            result = check(s1, s2, s3, i+1, j);
-        }
-
-        if(result == true){
-            return dp[i][j] = result;
-        }
-
-        if(j < n && s2.charAt(j) == s3.charAt(i+j)){
-            result = check(s1, s2, s3, i, j+1);
-        }
-        return dp[i][j] = result;
-    }
-
     public boolean isInterleave(String s1, String s2, String s3) {
-        m = s1.length();
-        n = s2.length();
-        N = s3.length();
-
-        if(m + n != N)
+        int len1 = s1.length(); int len2 = s2.length(); int len3 = s3.length();
+        // If simply adding length do not match len3, then there is no way we can forms
+        // s3 by interleaving chars in s1,s2
+        if(len1 + len2 != len3) {
             return false;
-
-        dp = new Boolean[m+1][n+1]; // make sure +1 for both
-        return check(s1, s2, s3, 0, 0);
-
+        }
+        
+        /*
+        dp[i][j] -> true if s1[0..i-1] and s2[0..j-1] interleaves s3[0..i+j-1]
+        */
+        boolean[][] dp = new boolean[len1+1][len2+1];
+        
+        /*
+        EMPTY s1,s2 can surely interleave to form EMPTY s3
+        */
+        dp[0][0] = true;
+        
+        /*
+        If S2 is empty, then just check whether char in s1 matches with that of s3
+        Note: j == 0 here.
+        */
+        for(int i = 1;i<=len1;i++) {
+            dp[i][0] = dp[i-1][0] && s3.charAt(i-1) == s1.charAt(i-1);
+        }
+        
+        /*
+        If S1 is empty, then just check whether char in s2 matches with that of s3
+        Note: i == 0 here.
+        */
+        for(int j = 1;j<=len2;j++) {
+            dp[0][j] = dp[0][j-1] && s3.charAt(j-1) == s2.charAt(j-1);
+        }
+        
+        /*
+        Now check for both s1,s2 being non empty
+        */
+        for(int i = 1; i<=len1; i++) {
+            for(int j = 1; j<=len2; j++) {
+                // Characters to be compared
+                int c1 = s1.charAt(i - 1);
+                int c2 = s2.charAt(j - 1);
+                int c3 = s3.charAt(i + j - 1);
+                
+                // If c3 matches c1, then is every char before c1 in s1 valid?
+                // If c3 matches c2, then is every char before c2 in s2 valid?
+                dp[i][j] = (c1 == c3 && dp[i-1][j]) || (c2 == c3 && dp[i][j-1]);
+            }
+        }
+        
+        return dp[len1][len2];
     }
 }
