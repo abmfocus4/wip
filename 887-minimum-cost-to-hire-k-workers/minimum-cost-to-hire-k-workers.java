@@ -9,12 +9,12 @@ class Solution {
         Arrays.sort(workers, (a, b) -> Double.compare(a[0], b[0])); // 0 is ration and // 1 is quality
         double minCost = Double.MAX_VALUE, qualitySum = 0;
         // use max heap - eject max quality - reduce our max cost
-        Queue<Double> pq = new PriorityQueue<>((a,b) -> Double.compare(b,a));
+        Queue<Double> pq = new PriorityQueue<>((a,b) -> Double.compare(b,a)); // our sliding window
         for (double[] worker: workers) {
             qualitySum += worker[1];
             pq.add(worker[1]);
-            if (pq.size() > K) qualitySum -= pq.poll();
-            if (pq.size() == K) minCost = Math.min(minCost, qualitySum * worker[0]);
+            if (pq.size() > K) qualitySum -= pq.poll(); // move the max quality when heap size greater than k
+            if (pq.size() == K) minCost = Math.min(minCost, qualitySum * worker[0]); // the last worker we added is going to decide the ratio
         }
         return minCost;
     }
