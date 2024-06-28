@@ -1,36 +1,40 @@
-// https://youtube.com/watch?v=Za8V4wkZKkM&list=TLPQMDEwNjIwMjSUjnvbX72tSg&index=21&ab_channel=codestorywithMIK
 class Solution {
     public int maxSubarraySumCircular(int[] nums) {
+        // get max sum 
+        int maxSum = kadaneMax(nums);
+        // get max circular sum
         int totalSum = Arrays.stream(nums).sum();
-        int max_sum = kadaneMax(nums);
-        int min_sum = kadaneMin(nums);
-
-        if (max_sum > 0) {
-            return Math.max(max_sum, totalSum - min_sum); // corner case all -1, -1, -1
+        int minSum = kadaneMin(nums);
+        int cirSum = totalSum - minSum;
+        // return max of both with check for edge case of all neg numbers
+        if (cirSum > 0) {
+            return Math.max(cirSum, maxSum);
+        } else {
+            return maxSum;
         }
-
-        return max_sum;
-    }
-
-    private int kadaneMin(int[] nums) {
-        int cur_sum = nums[0];
-        int min_sum = nums[0];
-        for (int i = 1; i < nums.length; i++) {
-            cur_sum = Math.min(cur_sum + nums[i], nums[i]);
-            min_sum = Math.min(cur_sum, min_sum);
-        }
-
-        return min_sum;
     }
 
     private int kadaneMax(int[] nums) {
-        int cur_sum = nums[0];
-        int max_sum = nums[0];
+        int curSum = nums[0];
+        int maxSum = nums[0];
         for (int i = 1; i < nums.length; i++) {
-            cur_sum = Math.max(cur_sum + nums[i], nums[i]);
-            max_sum = Math.max(cur_sum, max_sum);
+            curSum = Math.max(curSum + nums[i], nums[i]);
+            maxSum = Math.max(maxSum, curSum);
         }
 
-        return max_sum;
+        return maxSum;
     }
+
+        private int kadaneMin(int[] nums) {
+        int curSum = nums[0];
+        int minSum = nums[0];
+        for (int i = 1; i < nums.length; i++) {
+            curSum = Math.min(curSum + nums[i], nums[i]);
+            minSum = Math.min(minSum, curSum);
+        }
+
+        return minSum;
+    }
+
+
 }
