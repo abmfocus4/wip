@@ -1,21 +1,38 @@
-// https://leetcode.com/problems/minimum-cost-to-hire-k-workers/solutions/141768/detailed-explanation-o-nlogn
-// https://www.youtube.com/watch?v=f879mUH6vJk&ab_channel=NeetCodeIO
 class Solution {
-    public double mincostToHireWorkers(int[] q, int[] w, int K) {
-        double[][] workers = new double[q.length][2];
-        for (int i = 0; i < q.length; ++i)
-            workers[i] = new double[]{(double)(w[i]) / q[i], (double)q[i]};
-            // sort in ascending
-        Arrays.sort(workers, (a, b) -> Double.compare(a[0], b[0])); // 0 is ration and // 1 is quality
-        double minCost = Double.MAX_VALUE, qualitySum = 0;
-        // use max heap - eject max quality - reduce our max cost
-        Queue<Double> pq = new PriorityQueue<>((a,b) -> Double.compare(b,a)); // our sliding window
-        for (double[] worker: workers) {
-            qualitySum += worker[1];
-            pq.add(worker[1]);
-            if (pq.size() > K) qualitySum -= pq.poll(); // move the max quality when heap size greater than k
-            if (pq.size() == K) minCost = Math.min(minCost, qualitySum * worker[0]); // the last worker we added is going to decide the ratio
+    public double mincostToHireWorkers(int[] quality, int[] wage, int k) {
+        // first find rate
+        // store rate and quality in pairs
+        // sort workers based on rate (take min rate first)
+        // store window in max heap
+        // before adding new element, pop max quality from heap and add new worker
+
+        int n = quality.length;
+
+        double[][] workers = new double[n][2];
+        for (int i = 0; i < n; i++) {
+            workers[i] = new double[] {(double)wage[i]/quality[i], (double)quality[i]};
         }
+
+        Arrays.sort(workers, (a,b) -> Double.compare(a[0],b[0]));
+
+        PriorityQueue<Double> pq = new PriorityQueue<>((a,b) -> Double.compare(b,a));
+
+        double minCost = Double.MAX_VALUE;
+
+        double sumQuality = 0;
+
+        for (double[] worker : workers) {
+            sumQuality += worker[1];
+            pq.add(worker[1]);
+            if (pq.size() > k) {
+                sumQuality -= pq.poll();
+            }
+            if (pq.size() == k) {
+                minCost = Math.min(minCost, sumQuality*worker[0]);
+            }
+        }
+
         return minCost;
+    
     }
 }
