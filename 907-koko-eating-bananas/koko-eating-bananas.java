@@ -1,22 +1,32 @@
 class Solution {
+    int[] piles;
     public int minEatingSpeed(int[] piles, int h) {
+        this.piles = piles;
+        
         int left = 1;
         int right = Arrays.stream(piles).max().getAsInt();
-        
-        while(left <= right){
-            int mid = left + (right - left) / 2;
-            if(canEatInTime(piles, mid, h)) right = mid - 1;
-            else left = mid + 1;
+
+        while (left <= right) {
+            int mid = left + ((right - left)/2);
+            long midHours = hoursTaken(mid);
+            if (midHours <= h) {
+                right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
         }
+
         return left;
     }
-    public boolean canEatInTime(int piles[], int k, int h){
-        long hours = 0;
-        for(int pile : piles){
-            int div = pile / k;
-            hours += div; // can cause overflow, use long
-            if(pile % k != 0) hours++;
+
+    private long hoursTaken(int k) {
+        long totalHours = 0;
+        for (int pile : piles) {
+            totalHours += pile/k;
+            if (pile%k != 0) {
+                totalHours++;
+            }
         }
-        return hours <= h;
+        return totalHours;
     }
 }
