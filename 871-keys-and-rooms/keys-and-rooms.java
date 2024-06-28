@@ -1,25 +1,24 @@
 class Solution {
     public boolean canVisitAllRooms(List<List<Integer>> rooms) {
-
-        Stack<Integer> stack = new Stack();
+        Queue<Integer> q = new LinkedList();
         int n = rooms.size();
         boolean[] visited = new boolean[n];
-        
-        stack.add(0);
+
+        q.add(0);
         visited[0] = true;
 
         int seen = 1;
 
-        while (stack.isEmpty() == false) {
-            int room = stack.pop();
+        while(q.isEmpty() == false) {
+            int room = q.poll();
             for (int nei : rooms.get(room)) {
                 if (visited[nei]) continue;
                 visited[nei] = true;
-                stack.add(nei);
+                q.add(nei);
                 seen++;
             }
         }
 
-        return n == seen;
+        return seen == n;
     }
 }
