@@ -1,64 +1,59 @@
-// https://www.youtube.com/watch?v=26IT3FYm5h8&ab_channel=codestorywithMIK
 class Solution {
     int n;
 
-    private int[] getCoordinate(int num) {
-        int[] coord = new int[2];
-        int rt = (num - 1) / n;
+    private int[] getCoord(int num) {
+        int rt = (num-1)/n;
         int rb = (n - 1) - rt;
+        int col = (num-1)%n;
 
-        int col = (num - 1) % n;
-
-        if ((rb % 2 == 0 && n % 2 == 0) || (rb % 2 == 1 && n % 2 == 1)) { 
-            // if both even or both odd (right to left order)
+        if ((rb % 2 == 0 && n % 2 == 0) || rb % 2 == 1 && n % 2 == 1) {
             col = (n - 1) - col;
         }
 
-        coord[0] = rb;
-        coord[1] = col;
-        return coord;
+        return new int[] {rb, col};
     }
-
     public int snakesAndLadders(int[][] board) {
-        // perform simple bfs
-        // visited to stop repeatedly visiting the same cell
+        // simple bfs
+        // each level 6 rolls or look for ladder/snake
         this.n = board.length;
 
-        boolean[][] visited = new boolean[n][n]; // if (r,c) is visited before
-        Queue<Integer> q = new LinkedList(); // contains cell numbers
-        visited[n - 1][0] = true;
+        Queue<Integer> q = new LinkedList();
+        boolean[][] visited = new boolean[n][n];
+
         q.add(1);
+        visited[n-1][0] = true;
 
         int steps = 0;
-        while (q.isEmpty() == false) {
+        while(q.isEmpty() == false) {
             int levelSize = q.size();
 
-            for (int i = 0; i < levelSize; i++) {
-                int x = q.poll();
-                if (x == n * n) { // pop and check
+            while (levelSize-- > 0) {
+                int cell = q.poll();
+                if (cell == n*n) {
                     return steps;
                 }
-                for (int k = 1; k <= 6; k++) {
-                    if (x + k > n * n) { // push only valid cell values
-                        break;
-                    }
-                    int[] coord = getCoordinate(x + k);
+                for (int i = 1; i <= 6; i++) {
+                    if (cell + i > n*n) break;
+
+                    int[] coord = getCoord(cell + i);
                     int row = coord[0];
                     int col = coord[1];
-                    if (visited[row][col] == true) { // check if visited before push
-                        continue;
-                    }
-                    visited[row][col] = true; // mark as visited
-                    if (board[row][col] == -1) { // push correct value
-                        q.add(x + k);
+
+                    if (visited[row][col]) continue;
+
+                    visited[row][col] = true;
+                    if (board[row][col] == -1) {
+                        q.add(cell + i);
                     } else {
                         q.add(board[row][col]);
                     }
                 }
             }
 
-            steps++; // after each level increase step
+            steps++;    
         }
-        return -1; // haven't returned during bfs
+
+        return -1;
+
     }
 }
