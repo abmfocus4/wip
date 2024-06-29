@@ -1,18 +1,17 @@
-// https://leetcode.com/problems/search-suggestions-system/solutions/440474/java-trie-explained-clean-code-14ms
 class Solution {
     class Trie {
         Trie[] children;
         List<String> words;
+
         public Trie() {
-            children = new Trie[26];
-            words = new ArrayList();
+            this.children = new Trie[26];
+            this.words = new ArrayList();
         }
     }
     public List<List<String>> suggestedProducts(String[] products, String searchWord) {
-        Arrays.sort(products); // sort ascending order
-
-        // add to trie
+        Arrays.sort(products);
         Trie root = new Trie();
+
         for (String product : products) {
             Trie cur = root;
             for (char c : product.toCharArray()) {
@@ -22,24 +21,25 @@ class Solution {
                 if (cur.children[c - 'a'].words.size() < 3) {
                     cur.children[c - 'a'].words.add(product);
                 }
-                cur = cur.children[c - 'a'];
+                cur = cur.children[c-'a'];
             }
         }
 
+        Trie node = root;
         List<List<String>> res = new ArrayList();
-        Trie cur = root;
         for (int i = 0; i < searchWord.length(); i++) {
-            if (cur.children[searchWord.charAt(i) - 'a'] == null) {
-                for (int j = i; j < searchWord.length(); j++)
+            char c = searchWord.charAt(i);
+            if (node.children[c - 'a'] == null) {
+                for (int j = i; j < searchWord.length(); j++) {
                     res.add(Collections.emptyList());
+                }
                 break;
             } else {
-                res.add(cur.children[searchWord.charAt(i) - 'a'].words);
+                res.add(node.children[c-'a'].words);
+                node = node.children[c-'a'];
             }
-            cur = cur.children[searchWord.charAt(i) - 'a'];
         }
 
         return res;
-
     }
 }
