@@ -3,14 +3,24 @@ class Solution {
         if (n <= 1) {
             return n;
         }
-        int[] dp = new int[n+1];
-        dp[0] = 0;
-        dp[1] = 1;
-        dp[2] = 1;
-        for (int i = 3; i <= n; i++) {
-            dp[i] = dp[i-1] + dp[i-2] + dp[i-3];
+
+        if (n == 2) {
+            return 1;
         }
 
-        return dp[n];
+        int res = 0;
+
+        int prev = 1;
+        int prev_prev = 1;
+        int prev_prev_prev = 0;
+
+        for (int i = 3; i <= n; i++) {
+            res = prev + prev_prev + prev_prev_prev;
+            prev_prev_prev = prev_prev;
+            prev_prev = prev;
+            prev = res;
+        }
+
+        return res;
     }
 }
