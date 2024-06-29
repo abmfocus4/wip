@@ -29,7 +29,7 @@ class Solution {
 
             while (levelSize-- > 0) {
                 int cell = q.poll();
-                if (cell == n*n) {
+                if (cell >= n*n) {
                     return steps;
                 }
                 for (int i = 1; i <= 6; i++) {
