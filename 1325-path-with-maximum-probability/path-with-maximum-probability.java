@@ -11,7 +11,7 @@ class Solution {
         double[] maxProb = new double[n];
         maxProb[start] = 1d;
 
-        PriorityQueue<Pair<Double, Integer>> pq = new PriorityQueue<>((a, b) -> -Double.compare(a.getKey(), b.getKey()));
+        PriorityQueue<Pair<Double, Integer>> pq = new PriorityQueue<>((a, b) -> Double.compare(b.getKey(), a.getKey()));
         pq.add(new Pair<>(1.0, start));
         while (!pq.isEmpty()) {
             Pair<Double, Integer> cur = pq.poll();
