@@ -1,36 +1,43 @@
-// https://www.youtube.com/watch?v=m17yOR5_PpI&ab_channel=NeetCode
 class Solution {
     public int minReorder(int n, int[][] connections) {
-        List<List<Integer>> adj_list = new ArrayList();
+        int reorder = 0;
+        // graph - int to list of int
+        Map<Integer, List<Integer>> adj_list = new HashMap();
+
         for (int i = 0; i < n; i++) {
-            adj_list.add(new ArrayList());
-        }
-
-        for (int i = 0; i < connections.length; i++) {
-            adj_list.get(connections[i][0]).add(connections[i][1]); // given
-            adj_list.get(connections[i][1]).add(-connections[i][0]); // opp dir
-        }
-
-        boolean[] visited = new boolean[n];
-        Queue<Integer> q = new LinkedList();
-        q.add(0);
-        visited[0] = true;
-
-        int numReorder = 0;
-
-        while(q.isEmpty() == false) {
-            int cur = q.poll();
-            for (int neighbour : adj_list.get(Math.abs(cur))) {
-                if (visited[Math.abs(neighbour)] == false) {
-                    q.add(neighbour);
-                    visited[Math.abs(neighbour)] = true;
-                    if (neighbour > 0) {
-                        numReorder++; // road out of cur to neighbour
-                    }
-                }
+            if (adj_list.containsKey(i) == false) {
+                adj_list.put(i, new ArrayList());
             }
         }
 
-        return numReorder;
+        for (int[] connection : connections) {
+            adj_list.get(connection[0]).add(connection[1]); // current direction
+            adj_list.get(connection[1]).add(-connection[0]); // opp direction 
+        }
+
+        Queue<Integer> q = new LinkedList();
+        boolean[] visited = new boolean[n];
+
+        q.add(0);
+        visited[0] = true;
+
+        while (q.isEmpty() == false) {
+            int node = q.poll();
+            // go to all neighbours of node
+            // if not visited, add to q
+            // check if it is pos: add to reorder
+            List<Integer> neighs = adj_list.get((node));
+            if (neighs == null || neighs.size() == 0) continue;
+            for (int neigh : neighs) {
+                if (visited[Math.abs(neigh)] == false) {
+                    visited[Math.abs(neigh)] = true;
+                    q.add(Math.abs(neigh));
+                    if (neigh > 0) {
+                        reorder++;
+                    }
+                } 
+            }
+        }
+        return reorder;
     }
 }
