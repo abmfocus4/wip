@@ -1,33 +1,42 @@
-// https://www.youtube.com/watch?v=ODuICq8exLo&ab_channel=codestorywithMIK
+// https://www.youtube.com/watch?v=IbhQ3U5NHLI&ab_channel=DeepCodes
 class Solution {
     public long totalCost(int[] costs, int k, int candidates) {
+        Queue<int[]> cost_index = new PriorityQueue<>((a, b) -> (a[0] == b[0]) ? a[1] - b[1] : a[0] - b[0]);
         int i = 0;
         int j = costs.length - 1;
-        PriorityQueue<Integer> pq_left = new PriorityQueue<>();
-        PriorityQueue<Integer> pq_right = new PriorityQueue<>();
-
         long totalCost = 0;
-        int hired = 0;
-        while (hired < k) {
-            while (pq_left.size() < candidates && i <= j) {
-                pq_left.offer(costs[i++]);
-            }
-            while (pq_right.size() < candidates && i <= j) {
-                pq_right.offer(costs[j--]);
-            }
 
-            int t1 = pq_left.size() > 0 ? pq_left.peek() : Integer.MAX_VALUE;
-            int t2 = pq_right.size() > 0 ? pq_right.peek() : Integer.MAX_VALUE;
-
-            if (t1 <= t2) {
-                totalCost += t1;
-                pq_left.poll();
-            } else {
-                totalCost += t2;
-                pq_right.poll();
-            }
-            hired++;
+        for (int x = 0; x < candidates; x++) {
+            cost_index.offer(new int[] {costs[x], x});
+            i++;
         }
+
+        for (int x = Math.max(candidates, costs.length - candidates); x < costs.length; x++) {
+            cost_index.offer(new int[] {costs[x], x});
+            j--;
+        }
+
+        int hired = 0;
+
+        while (hired < k) {
+            int[] minCostIdx = cost_index.poll();
+            totalCost += minCostIdx[0];
+            System.out.println(minCostIdx[0]);
+            hired++;
+
+            if (i <= j) {
+                if (minCostIdx[1] < i) {
+                    cost_index.add(new int[] { costs[i], i });
+                    i++;
+                } else if (minCostIdx[1] > j) { // popped from right
+                    cost_index.add(new int[] { costs[j], j });
+                    j--;
+                }
+            }
+            // popped from left side
+
+        }
+
         return totalCost;
     }
 }
