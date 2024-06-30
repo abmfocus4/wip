@@ -1,40 +1,30 @@
 class Solution {
+    // bellmann ford
+    // calculate how much time it takes to get to last node (max time)
     public int networkDelayTime(int[][] times, int n, int k) {
-        HashMap<Integer, Map<Integer, Integer>> adj_list = new HashMap();
+        int[] delays = new int[n+1];
+        Arrays.fill(delays, Integer.MAX_VALUE);
+        delays[k] = 0;
 
-        for (int[] time : times) {
-            if (adj_list.containsKey(time[0]) == false) {
-                adj_list.put(time[0], new HashMap());
-            }
-            adj_list.get(time[0]).put(time[1], time[2]);
-        }
+        int[] tmp = Arrays.copyOf(delays, n+1); // n+1 since node 0 is not considered
 
-        // time, dst node
-        PriorityQueue<int[]> pq = new PriorityQueue<>((a,b) -> a[0]-b[0]);
-        // add src
-        pq.add(new int[] {0, k});
-
-        boolean[] visited = new boolean[n+1]; // total nodes
-        int minDist = 0;
-
-        while (pq.isEmpty() == false) {
-            int[] cur = pq.poll();
-            int curNode = cur[1], curDist = cur[0];
-            if (visited[curNode]) continue;
-
-            visited[curNode] = true;
-            minDist = curDist;
-            n--;
-            if (n == 0) return minDist;
-
-            if (adj_list.containsKey(curNode)) {
-                for (var neighbor : adj_list.get(curNode).keySet()) {
-                    pq.add(new int[] {curDist + adj_list.get(curNode).get(neighbor), neighbor});
+        for (int i = 0; i < n; i++) {
+            for (int[] time : times) {
+                int u = time[0], v = time[1], w = time[2];
+                if (delays[u] == Integer.MAX_VALUE) continue;
+                if (delays[u] + w < tmp[v]) {
+                    tmp[v] = delays[u] + w;
                 }
             }
-
+            delays = Arrays.copyOf(tmp, n+1);
         }
 
-        return n == 0 ? minDist : -1; // are you able to reach all nodes or not
+        int res = 0;
+        for (int i = 1; i < n + 1; i++) {
+            res = Math.max(res, delays[i]); // starting from node 1 to N
+        }
+
+        return res == Integer.MAX_VALUE ? -1 : res; // if any node is MAX then it was unreachable
+
     }
 }
