@@ -1,30 +1,41 @@
 class Solution {
-    // bellmann ford
-    // calculate how much time it takes to get to last node (max time)
     public int networkDelayTime(int[][] times, int n, int k) {
-        int[] delays = new int[n+1];
-        Arrays.fill(delays, Integer.MAX_VALUE);
-        delays[k] = 0;
+        Map<Integer, List<Pair<Integer, Integer>>> graph = new HashMap();
+        // key: src and value : list of edges
+        // edge: key is v and value is w
 
-        int[] tmp = Arrays.copyOf(delays, n+1); // n+1 since node 0 is not considered
+        for (int i = 1; i <= n; i++) {
+            graph.put(i, new ArrayList());
+        }
 
-        for (int i = 0; i < n; i++) {
-            for (int[] time : times) {
-                int u = time[0], v = time[1], w = time[2];
-                if (delays[u] == Integer.MAX_VALUE) continue;
-                if (delays[u] + w < tmp[v]) {
-                    tmp[v] = delays[u] + w;
-                }
+        for (int[] time : times) {
+            int u = time[0], v = time[1], w = time[2];
+            graph.get(u).add(new Pair(v, w));
+        }
+
+        PriorityQueue<int[]> pq = new PriorityQueue<int[]>((a,b) -> a[0] - b[0]);
+        // min heap sort by delay (int[0] = delay and int[1] = node)
+        pq.add(new int[] {0, k});
+        boolean[] visited = new boolean[n+1];
+
+        int minDelay = 0;
+
+        while (pq.isEmpty() == false) {
+            int[] cur = pq.poll();
+            int curDelay = cur[0], curNode = cur[1];
+            if (visited[curNode]) continue;
+            visited[curNode] = true;
+            minDelay = curDelay;
+            n--;
+            if (n == 0) return minDelay;
+            for (Pair<Integer, Integer> neigh : graph.get(curNode)) {
+                int neighNode = neigh.getKey(), neighDelay = neigh.getValue();
+                pq.add(new int[] {curDelay + neighDelay, neighNode});
             }
-            delays = Arrays.copyOf(tmp, n+1);
         }
 
-        int res = 0;
-        for (int i = 1; i < n + 1; i++) {
-            res = Math.max(res, delays[i]); // starting from node 1 to N
-        }
-
-        return res == Integer.MAX_VALUE ? -1 : res; // if any node is MAX then it was unreachable
+        if (n == 0) return minDelay;
+        else return -1;
 
     }
 }
