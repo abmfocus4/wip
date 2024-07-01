@@ -15,7 +15,7 @@ class Solution {
         }
 
         if (leftRem == 0 && rightRem == 0) {
-            res.add(String.copyValueOf(parenthesis));
+            res.add(new String(parenthesis));
         } else {
             parenthesis[index] = '(';
             generateParenthesis(leftRem - 1, rightRem, index+1, parenthesis);
