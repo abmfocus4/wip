@@ -1,66 +1,47 @@
 class Solution {
-    int dp[];
-
-    //We use memoization
+    private Map<Integer, List<int[]>> map = new HashMap<>();
+    private final static int mod = 1_000_000_007;
+    
     public int countRestrictedPaths(int n, int[][] edges) {
-        int[] dist = new int[n+1];
-        dp = new int[n+1];
-        Arrays.fill(dp,-1);
-        Map<Integer, Map<Integer, Integer>> graph = new HashMap<>();
-        //Create the graph from input edges
-        for(int[] e : edges){
-            graph.putIfAbsent(e[0], new HashMap<>());
-            graph.putIfAbsent(e[1], new HashMap<>());
-            graph.get(e[0]).put(e[1],e[2]);
-            graph.get(e[1]).put(e[0],e[2]);
+        for(int[] e : edges) {
+            map.computeIfAbsent(e[0], x -> new ArrayList<>()).add(new int[] { e[1], e[2] }); //create graph with weights
+            map.computeIfAbsent(e[1], x -> new ArrayList<>()).add(new int[] { e[0], e[2] });
         }
-
-        //Single source shortest distance - something like Dijkstra's
-        PriorityQueue<int[]> pq = new PriorityQueue<>((a,b)->(a[1]-b[1]));
-        int[] base = new int[2];
-        base[0]=n;
-        pq.offer(base);
-        while(!pq.isEmpty()){
-            int[] currNode = pq.poll();
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a,b) -> a[1] - b[1]); //sort based on weight (Dijkstra's)
+        pq.offer(new int[]{ n, 0 });
+        int[] dist = new int[n+1];
+        Arrays.fill(dist, Integer.MAX_VALUE); 
+        dist[n] = 0;
+        
+        while(!pq.isEmpty()) {
+            int[] curr = pq.poll();
+            int node = curr[0];
+			int weight = curr[1];
             
-            for(Map.Entry<Integer, Integer> neighbour: graph.get(currNode[0]).entrySet()){
-                int node = neighbour.getKey();
-                int d = neighbour.getValue()+currNode[1];
-                if(node==n) continue;
-                //Select only those neighbours, whose new distance is less than existing distance
-                //New distance = distance of currNode from n + weight of edge between currNode and neighbour
-            
-                if( dist[node]==0 || d < dist[node]){
-                    int[] newNode = new int[2];
-                    newNode[0]=node;
-                    newNode[1]=d;
-                    pq.offer(newNode);
-                    dist[node]= d;
+            for(int[] neighbor : map.get(node)) {
+                int nei = neighbor[0];
+                int w = weight + neighbor[1];
+                
+                if(w < dist[nei]) { //only traverse if this will create a shorter path. At the end we have all the shortest paths for each node from the last node, n.
+                    dist[nei] = w;
+                    pq.offer(new int[]{ nei, w });
                 }
             }
         }
-
-        return find(1,graph,n,dist);
+        Integer[] dp = new Integer[n+1];
+        return dfs(1, n, dist, dp);
     }
-    
-    //This method traverses all the paths from source node to n though it's neigbours
-    private int find(int node, Map<Integer, Map<Integer, Integer>> graph, int n, int[] dist ){
-        if(node==n){
-            return 1;
-        }
-        
-        //Memoization avoid computaion of common subproblems. 
-        if(dp[node]!=-1) return dp[node];
-
-        int ans = 0;
-        for(Map.Entry<Integer, Integer> neighbour: graph.get(node).entrySet()){
-                int currNode = neighbour.getKey();
-                int d = dist[currNode];
-                if( dist[node] > d){
-                    ans = (ans + find(currNode, graph, n, dist)) % 1000000007;
+    public int dfs(int node, int end, int[] dist, Integer[] dp) {
+        if(node == end) return 1;
+        if(dp[node] != null) return dp[node];
+        long res = 0;
+        for(int[] neighbor : map.get(node)) {
+            int nei = neighbor[0];
+            if(dist[node] > dist[nei]) { //use our calculations from Dijkstra's to determine if we can travel to a neighbor.
+                res = (res + (dfs(nei, end, dist, dp)) % mod);
             }
         }
-        
-        return dp[node] = ans;
+        res = (res % mod);
+        return dp[node] = (int) res; //memoize for looking up values that have already been computed.
     }
 }
