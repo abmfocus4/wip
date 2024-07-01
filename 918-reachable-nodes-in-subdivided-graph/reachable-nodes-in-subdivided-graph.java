@@ -1,54 +1,61 @@
-class Node implements Comparable<Node> {
-    int u;
-    int w;
-    Node (int u, int w) {
-        this.u = u;
-        this.w = w;
-    }
-    @Override 
-    public int compareTo(Node o) {
-        return this.w - o.w;
-    }
-}
 class Solution {
     public int reachableNodes(int[][] edges, int maxMoves, int n) {
-        // 0 ... n-1 nodes 
-        PriorityQueue<Node> pq=new PriorityQueue<>();
-        int[] dis=new int[n];
-        List<List<Node>> adj=new ArrayList<>();
-        for (int i=0;i<n;i++) {
-            dis[i] = Integer.MAX_VALUE;
-            adj.add(new ArrayList<>());
-        }
-        dis[0] = 0;
-        for (int[] edge: edges) {
-            adj.get(edge[0]).add( new Node(edge[1], edge[2]+1) );
-            adj.get(edge[1]).add( new Node(edge[0], edge[2]+1) );
-        }
-        pq.add( new Node(0, 0) );
-        while (!pq.isEmpty()) {
-            Node node=pq.poll();
-            int src=node.u;
-            for (Node nei: adj.get(src)) {
-                if (dis[src] + nei.w < dis[nei.u] ) {
-                    dis[nei.u] = dis[src] + nei.w;
-                    pq.add(new Node(nei.u, dis[nei.u])  );
-                }
+        // create graph
 
+        // use dist to keep track of min distance so far
+
+        // ans to keep track of nodes visited
+
+        // used to keep track of how of an edge is used encoding u * n + v is used
+        // used maps unique edge to how much it was used
+
+        // you can use pair of u v instead or [long edgeKey = ((long) u << 32) | v]
+
+        Map<Integer, List<Pair<Integer, Integer>>> graph = new HashMap();
+        for (int i = 0; i < n; i++) {
+            graph.put(i, new ArrayList());
+        }
+
+        for (int[] edge : edges) {
+            int u = edge[0], v = edge[1], w = edge[2];
+            graph.get(u).add(new Pair(v, w));
+            graph.get(v).add(new Pair(u, w));
+        }
+
+        // store dist, node so far
+        PriorityQueue<int[]> pq = new PriorityQueue<int[]>((a,b) -> a[0] - b[0]);
+        pq.add(new int[]{0, 0});
+
+        Map<Integer, Integer> dist = new HashMap();
+        dist.put(0, 0);
+
+        Map<Integer, Integer> used = new HashMap();
+
+        int ans = 0;
+
+        while(pq.isEmpty() == false) {
+            int[] cur = pq.poll();
+            int curDist = cur[0], curNode = cur[1];
+            if (curDist > dist.getOrDefault(curNode, 0)) continue;
+            ans++;
+            for (Pair<Integer, Integer> neigh : graph.get(curNode)) {
+                int neighNode = neigh.getKey(), neighDist = neigh.getValue();
+                // edge used
+                used.put(curNode * n + neighNode, Math.min(neighDist, maxMoves - curDist));
+                if (curDist + neighDist + 1 < dist.getOrDefault(neighNode, maxMoves + 1)) {
+                    dist.put(neighNode, curDist + neighDist + 1);
+                    pq.add(new int[] {curDist + neighDist + 1, neighNode});
+                }
             }
         }
-        int ans = 0;
-        for (int i=0;i<edges.length;i++) {
-            int u=edges[i][0];
-            int v=edges[i][1];
-            int w=edges[i][2];
-            int t1=Math.min(  Math.max(maxMoves-dis[u], 0),   w   );
-            int t2=Math.min(  Math.max(maxMoves-dis[v], 0),   w    );
-            ans += Math.min(w,t1+t2);
+
+        for (int[] edge : edges) {
+            // min of weight
+            // edge used from one side and edge used from other side
+            ans += Math.min(edge[2], used.getOrDefault(edge[0] * n + edge[1], 0) + 
+                                        used.getOrDefault(edge[1] * n + edge[0], 0));
         }
-        for (int i=0;i<n;i++) {
-            if (dis[i]<=maxMoves) ans++;
-        }
+
         return ans;
     }
 }
