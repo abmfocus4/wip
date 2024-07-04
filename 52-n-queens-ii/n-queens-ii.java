@@ -1,36 +1,34 @@
-// only returning number of distinct solutions 
-// not actual solutions like N-Queens
 class Solution {
-	public int totalNQueens(int n) {
-        return backtrack(0, 0, 0, 0, n); // diff
+    public int totalNQueens(int n) {
+        return backtrack(0, n, 0, 0, 0);
     }
-    
-    private int backtrack(int row, int cols, int diags, int antiDiags, int N) {
-		// If we're at row N, we've finished placing all N queens. Therefore, we've reached a new valid position.
-        if (row == N) return 1; // diff
-        
-        int total = 0; // diff
-        for (int col=0; col<N; col++) {
-            int diag = row - col + N;
-            int antiDiag = row + col;
-            
-			// Check if it's possible to place a Queen at this point
-            if ((cols & (1 << col)) != 0 || (diags & (1 << diag)) != 0 || (antiDiags & (1 << antiDiag)) != 0) continue;
-            
-			// If so, apply changes to the columns and diagonals
-            cols |= 1 << col;
-            diags |= 1 << diag;
-            antiDiags |= 1 << antiDiag;
-            
-			// DIFF: Continue to the next row
-            total += backtrack(row + 1, cols, diags, antiDiags, N);
-            
-			// Undo changes and try another position
-            cols ^= 1 << col;
-            diags ^= 1 << diag;
-            antiDiags ^= 1 << antiDiag;
+
+    private int backtrack(int col, int n, int left, int topLeft, int bottomLeft) {
+        if (col == n) {
+            return 1;
         }
-        
+
+        int total = 0;
+        for (int row = 0; row < n; row++) {
+            int curLeft = row;
+            int curTopLeft = row - col + n;
+            int curBottomLeft = row + col;
+
+            if (((left & (1 << curLeft)) == 0) &&
+                    (topLeft & (1 << curTopLeft)) == 0 &&
+                        (bottomLeft & (1 << curBottomLeft)) == 0) 
+            {
+                left |= (1 << curLeft);
+                topLeft |= (1 << curTopLeft);
+                bottomLeft |= (1 << curBottomLeft);
+
+                total += backtrack(col + 1, n, left, topLeft, bottomLeft);
+
+                left ^= (1 << curLeft);
+                topLeft ^= (1 << curTopLeft);
+                bottomLeft ^= (1 << curBottomLeft);
+            }
+        }
         return total;
     }
 }
