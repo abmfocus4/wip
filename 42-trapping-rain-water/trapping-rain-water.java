@@ -6,22 +6,22 @@ class Solution {
             return 0;
         }
         int left = 0, right = height.length - 1;
-        int left_max = height[left];
-        int right_max = height[right];
+        int leftMax = height[left];
+        int rightMax = height[right];
 
         int res = 0;
         while (left < right) {
-            if (left_max < right_max) {
+            if (leftMax < rightMax) {
                 left++;
-                left_max = Math.max(left_max, height[left]);
-                res += left_max - height[left];
-
+                leftMax = Math.max(leftMax, height[left]);
+                res += leftMax - height[left];
             } else {
                 right--;
-                right_max = Math.max(right_max, height[right]);
-                res += right_max - height[right];
+                rightMax = Math.max(rightMax, height[right]);
+                res += rightMax - height[right];
             }
         }
+        
 
         return res;
     }
