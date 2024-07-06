@@ -1,16 +1,19 @@
-// https://www.youtube.com/watch?v=ZV-Hi1e1KL8&ab_channel=codestorywithMIK
 class Solution {
+    public static final String delimiter = "/";
     public String simplifyPath(String path) {
-        Deque<String> dq = new LinkedList(); // double ended queue
-        for (String token : path.split("/")) {
-            if (token.equals("..")) {
-                if (dq.isEmpty() == false) dq.removeLast(); // stack pop but without checking for empty
-            } else if (isDir(token)) {
+        Deque<String> dq = new LinkedList();
+        for (String token : path.split(delimiter)) {
+            if (token.equals("..")) { 
+                if (dq.isEmpty() == false) {
+                    dq.removeLast();
+                }
+            } else if(isDir(token)) {
                 dq.addLast(token);
             }
         }
-        
-        if (dq.isEmpty()) {
+
+        if (dq.isEmpty()) 
+        {
             return "/";
         }
 
@@ -22,8 +25,7 @@ class Solution {
         return sb.toString();
     }
 
-    // use string.equals to compare strings always
     private boolean isDir(String token) {
-        return token != null && !token.equals("") && !token.equals(".");
+        return (token != null) && (token.isEmpty() == false) && (token.equals(".") == false);
     }
 }
