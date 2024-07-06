@@ -9,13 +9,14 @@ class Solution {
 
         while (left <= right) {
             int mid = left + (right - left)/2;
-            int row = mid/n, col = mid%n; // 1d to 2d mapping
-            if (matrix[row][col] > target) {
-                right = mid - 1;
+            int row = mid/n;
+            int col = mid%n;
+            if (matrix[row][col] == target) {
+                return true;
             } else if (matrix[row][col] < target) {
                 left = mid + 1;
             } else {
-                return true;
+                right = mid - 1;
             }
         }
 
