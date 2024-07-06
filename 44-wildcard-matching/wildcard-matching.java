@@ -1,47 +1,39 @@
-// greedy solution with idea of DFS
-// starj stores the position of last * in p
-// last_match stores the position of the previous matched char in s after a *
-// e.g. 
-// s: a c d s c d
-// p: * c d
-// after the first match of the *, starj = 0 and last_match = 1
-// when we come to i = 3 and j = 3, we know that the previous match of * is actually wrong, 
-// (the first branch of DFS we take is wrong)
-// then it resets j = starj + 1 
-// since we already know i = last_match will give us the wrong answer
-// so this time i = last_match+1 and we try to find a longer match of *
-// then after another match we have starj = 0 and last_match = 4, which is the right solution
-// since we don't know where the right match for * ends, we need to take a guess (one branch in DFS), 
-// and store the information(starj and last_match) so we can always backup to the last correct place and take another guess.
-
 class Solution {
     public boolean isMatch(String s, String p) {
-        int i = 0, j = 0;
-        int m = s.length(), n = p.length();
 
-        int jStar = -1;
-        int lastMatch = -1;
+        Boolean[][] memo = new Boolean[s.length()][p.length()];
+        return isMatch(0, 0, s, p, memo);
 
-        while (i < m) { // first string reaches end
-            if ((j < n) && (p.charAt(j) == '?' || s.charAt(i) == p.charAt(j)))
-            {
-                i++;
-                j++;
-            } else if ((j < n) && p.charAt(j) == '*') {
-                jStar = j;
-                j++;
-                lastMatch = i;
-            } else if (jStar != -1) {
-                j = jStar + 1;
-                lastMatch++;
-                i = lastMatch;
-            } else {
-                return false;
-            }
+    }
+
+    public boolean isMatch(int i, int j, String s, String p, Boolean[][] memo) {
+        if (p.length() == j) {
+            return s.length() == i;
         }
-        while(j < n && p.charAt(j) == '*') {
-            j++;
+
+        if (i == s.length()) {
+            while (j < p.length() && p.charAt(j) == '*')
+                j++;
+            return j == p.length();
         }
-        return (j == n);
+
+        // if(j == p.length() && i !=s.length()) return false;
+
+        if (memo[i][j] != null) {
+            return memo[i][j];
+        }
+
+        boolean res = false;
+        
+        if (p.charAt(j) == '*') {
+            res = isMatch(i + 1, j + 1, s, p, memo) || 
+                    isMatch(i + 1, j, s, p, memo) || 
+                    isMatch(i, j + 1, s, p, memo);
+        } else if (p.charAt(j) == s.charAt(i) || p.charAt(j) == '?') {
+            res = isMatch(i + 1, j + 1, s, p, memo);
+        }
+        
+        memo[i][j] = res;
+        return res;
     }
 }
