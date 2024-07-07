@@ -8,24 +8,28 @@
  *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
-//  https://www.youtube.com/watch?v=9iJ3UsB9vMo&ab_channel=AyushiSharma
 class Solution {
     public ListNode deleteDuplicates(ListNode head) {
-        ListNode dummy = new ListNode(-1);
-        dummy.next = head;
-        ListNode prev = dummy;
-        while (head != null) {
-            if (head.next != null && head.val == head.next.val) {
-                while (head.next != null && head.val == head.next.val) {
-                    head = head.next;
-                }
-                prev.next = head.next;
-            } else {
-                prev = prev.next;
-            }
+        ListNode cur = head;
+        ListNode prev = null;
 
-            head = head.next;
+        while (cur != null && cur.next != null) {
+            if (cur.val != cur.next.val) {
+                prev = cur;
+            } else {
+                while (cur.next != null && cur.val == cur.next.val) {
+                    cur = cur.next; // get to the last node in the duplicate sequence
+                }
+                // have prev next point to next node of the (last node in duplicate sequence)
+                if (prev == null) {
+                    head = cur.next;
+                } else {
+                    prev.next = cur.next;
+                }
+            }
+            cur = cur.next;
         }
-        return dummy.next;
+
+        return head;
     }
 }
