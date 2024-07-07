@@ -1,19 +1,22 @@
+// editor: using bitsets
 class Solution {
-// https://leetcode.com/problems/permutations/solutions/18239/a-general-approach-to-backtracking-questions-in-java-subsets-permutations-combination-sum-palindrome-partioning
     public List<List<Integer>> subsets(int[] nums) {
-        List<List<Integer>> res = new ArrayList();
-        // Arrays.sort(nums); // needed?
-        generateSubsets(nums, 0, new ArrayList(), res);
-        return res;
-    }
-
-    private void generateSubsets(int[] nums, int index, List<Integer> tempList, List<List<Integer>> res) {
-        res.add(new ArrayList(tempList));
-
-        for (int i = index; i < nums.length; i++) {
-            tempList.add(nums[i]);
-            generateSubsets(nums, i+1, tempList, res);
-            tempList.remove(tempList.size() - 1);
+        List<List<Integer>> result = new ArrayList();
+        int n = nums.length;
+        for (int i = 0; i < (int)Math.pow(2, n); ++i) {
+            // fixed size bitset
+            // remove leading 1
+            // nums = [1, 2, 3] and i = 8, the binary representation is 1000, we want 000
+            String bitset = Integer.toBinaryString(i | (1<<n)).substring(1);
+            List<Integer> subset = new ArrayList();
+            for (int j = 0; j < bitset.length(); ++j) {
+                if (bitset.charAt(j) == '1') {
+                    subset.add(nums[j]);
+                }
+            }
+            result.add(subset);
         }
+
+        return result;
     }
 }
