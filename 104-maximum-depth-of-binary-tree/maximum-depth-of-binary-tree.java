@@ -1,34 +1,40 @@
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
+class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+    TreeNode(int x) { val = x; }
+}
+
 class Solution {
     public int maxDepth(TreeNode root) {
-        //maxDepth == maxLevels
-        // do a BFS (level order traversal) using queue to find the max depth
+        int currDepth = 0;
         int maxDepth = 0;
-        if (root == null) return 0;
-        Queue<TreeNode> q = new LinkedList();
-        q.add(root);
-        while (!q.isEmpty()) {
-            int levelSize = q.size();
-            for (int i = 0; i < levelSize; i++) {
-                TreeNode cur = q.poll();
-                if (cur.left != null) q.add(cur.left);
-                if (cur.right != null) q.add(cur.right);
+
+        while (root != null) {
+            if (root.left == null) {
+                root = root.right;
+                ++currDepth;
+                maxDepth = Math.max(maxDepth, currDepth);
+            } else {
+                TreeNode pred = root.left;
+                int depth = 2;
+                while (pred.right != null && pred.right != root) {
+                    pred = pred.right;
+                    ++depth;
+                }
+
+                if (pred.right == null) {
+                    pred.right = root;
+                    root = root.left;
+                    ++currDepth;
+                } else {
+                    pred.right = null;
+                    root = root.right;
+                    currDepth -= depth;
+                    ++currDepth;
+                    maxDepth = Math.max(maxDepth, currDepth);
+                }
             }
-            maxDepth++;
         }
         return maxDepth;
     }
