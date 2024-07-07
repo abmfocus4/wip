@@ -4,44 +4,57 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
+ *     TreeNode(int x) { val = x; }
  * }
  */
 class Solution {
     public boolean isSymmetric(TreeNode root) {
-        if (root == null) {
-            return true;
-        }
+        if (root == null) return true;
+        
+        TreeNode p = root.left;
+        TreeNode q = root.right;
+        
+        while (p != null && q != null) {
+            if (p.val != q.val) return false;
 
-        Stack<TreeNode> stack = new Stack();
-        stack.push(root.left);
-        stack.push(root.right);
-
-        while (stack.isEmpty() == false) {
-            TreeNode node1 = stack.pop();
-            TreeNode node2 = stack.pop();
-
-            if (node1 == null && node2 == null) {
-                continue;
+            // do tree p inorder traversal
+            if (p.left != null){
+                TreeNode prev = p.left;
+                while (prev.right != p && prev.right != null)
+                {
+                    prev = prev.right;
+                }
+                if (prev.right == null){
+                    prev.right = p;
+                    p = p.left;
+                }
+                else {
+                    prev.right = null;
+                    p = p.right;
+                }
+            } else {
+                p = p.right;
             }
-
-            if (node1 == null || node2 == null || node1.val != node2.val) {
-                return false;
+            
+            // do q inorder traversal
+            // switch left and right here
+            if (q.right != null){
+                TreeNode prev = q.right;
+                while (prev.left != q && prev.left != null) {
+                    prev = prev.left;
+                }
+                if (prev.left == null){
+                    prev.left = q;
+                    q = q.right;
+                }
+                else {
+                    prev.left = null;
+                    q = q.left;
+                }
+            } else {
+                q = q.left;
             }
-
-            // order is imp - cmp left with right
-            stack.push(node1.left);
-            stack.push(node2.right);
-            stack.push(node1.right);
-            stack.push(node2.left);
         }
-
-        return true; // once we compare all, then we return true
+        return (p == null) && (q == null);
     }
 }
