@@ -1,69 +1,76 @@
 class Solution {
     public boolean exist(char[][] board, String word) {
-        // find the first letter and then find the word from there
-        // use a 2d visited arr to make sure you are not revisiting already seen cells
-        // frequency check opt
-        // reverse word opt
+        // iterate through 2d matrix
+        // find first character of word cell
+        // run dfs from there
+        // use visited or update board
+        int m = board.length;
+        int n = board[0].length;
 
-        int rows = board.length;
-        int cols = board[0].length;
-
-        // frequency check
         int[] boardf = new int[128];
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
                 boardf[board[i][j]]++;
             }
         }
 
-        for (char c : word.toCharArray()) {
-            if (boardf[c]-- < 0) return false;
+        for (int i = 0; i < word.length(); i++) {
+            if (boardf[word.charAt(i)]-- < 0) {
+                return false;
+            }
         }
 
-        // reverse opt
+        // check frequency of first and last char in word and reverse
         if (boardf[word.charAt(0)] > boardf[word.charAt(word.length() - 1)]) {
             word = reverse(word);
         }
+        
 
-        boolean[][] visited = new boolean[rows][cols];
-        for (boolean[] arr : visited) {
-            Arrays.fill(arr, false);
-        }
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                if (board[i][j] == word.charAt(0) && wordSearch(i, j, 0, visited, board, word)) {
-                    return true;
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (board[i][j] == word.charAt(0)) {
+                    if (dfs(board, i, j, word, 0)) {
+                        return true;
+                    }
                 }
             }
         }
 
         return false;
-        
     }
 
-    public boolean wordSearch(int i, int j, int index, boolean[][] visited, char[][] board, String word) {
-        if (index == word.length()) return true;
-        if (i >= board.length || j >= board[0].length || i < 0 || j < 0 || visited[i][j] || word.charAt(index) != board[i][j]) return false;
-        visited[i][j] = true;
-        if (wordSearch(i + 1, j, index + 1, visited, board, word) || wordSearch(i - 1, j, index + 1, visited, board, word)
-                || wordSearch(i, j + 1, index + 1, visited, board, word)
-                || wordSearch(i, j - 1, index + 1, visited, board, word)) {
+    private String reverse(String word) {
+        char[] wordArr = word.toCharArray();
+        int n = wordArr.length;
+        for (int i = 0; i < n/2; i++) {
+            char temp = wordArr[i];
+            wordArr[i] = wordArr[n - i - 1];
+            wordArr[n - i - 1] = temp;
+        }
+        return new String(wordArr);
+    }
+
+    private boolean dfs(char[][] board, int i, int j, String word, int index) {
+        // basecase
+        if (index ==  word.length()) {
             return true;
         }
-        visited[i][j] = false;
-        return false;
-    }
 
-    public String reverse(String word) {
-        int N = word.length();
-        char[] word_arr = word.toCharArray();
-
-        for (int i = 0; i < N/2; i ++) {
-            char temp = word_arr[i];
-            word_arr[i] = word_arr[N-i-1];
-            word_arr[N-i-1] = temp;
+        if (i < 0 || j < 0 || i >= board.length || j >= board[0].length || board[i][j] == '.' || word.charAt(index) != board[i][j]) {
+            return false;
         }
 
-        return String.valueOf(word_arr);
+        // iterate all directions
+        char original = board[i][j];
+        board[i][j] = '.';
+        if (dfs(board, i + 1, j, word, index + 1) ||
+            dfs(board, i, j + 1, word, index + 1) ||
+            dfs(board, i - 1, j, word, index + 1) ||
+            dfs(board, i, j - 1, word, index + 1)) {
+                return true;
+        }
+
+        board[i][j] = original;
+        return false;
     }
 }
