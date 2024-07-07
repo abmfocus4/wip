@@ -8,11 +8,10 @@
  *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
-//  https://www.youtube.com/watch?v=p10f-VpO4nE&list=TLPQMDEwNjIwMjSUjnvbX72tSg&index=11&ab_channel=NeetCode
 class Solution {
     public ListNode deleteDuplicates(ListNode head) {
         if (head == null) {
-            return null;
+            return head;
         }
 
         for (ListNode cur = head; cur != null; cur = cur.next) {
