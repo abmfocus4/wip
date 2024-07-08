@@ -1,37 +1,34 @@
-// videos - https://www.youtube.com/watch?v=-uQGzhYj8BQ&list=TLPQMDgwNjIwMjTSiTgJSC2Yog&index=7&ab_channel=takeUforward
-// brute force onwards code - https://takeuforward.org/data-structure/buy-and-sell-stock-ii-dp-36
 class Solution {
+    public static final int BUY = 0;
+    public static final int SELL = 1;
     public int maxProfit(int[] prices) {
-        int k = 2;
-        // Create pricesays 'ahead' and 'cur' to store the maximum profit ahead and current profit
-        int[][] ahead = new int[2][k+1];
-        int[][] cur = new int[2][k+1];
+        return maxProfit(prices, 2);
+    }
 
-        // Base condition: If we have no stocks to buy or sell, profit is 0
-        for (int[] row : ahead) {
-            Arrays.fill(row, 0);
-        }
-
-        int profit = 0;
+    private int maxProfit(int[] prices, int numTransactions) {
         int n = prices.length;
-        // Iterate through the pricesay in reverse to calculate the maximum profit
-        for (int ind = n - 1; ind >= 0; ind--) {
-            for (int buy = 0; buy <= 1; buy++) {
-                for (int cap = 1; cap <= k; cap++) {
-                if (buy == 0) { // We can buy the stock
-                    profit = Math.max(0 + ahead[0][cap], -prices[ind] + ahead[1][cap]);
-                }
+        int[][] cur = new int[2][numTransactions + 1];
+        int[][] prev = new int[2][numTransactions + 1];
 
-                if (buy == 1) { // We can sell the stock
-                    profit = Math.max(0 + ahead[1][cap], prices[ind] + ahead[0][cap-1]);
-                }
-                cur[buy][cap] = profit;
+        for (int i = n - 1; i >= 0; i--) {
+            for (int k = 1; k <= numTransactions; k++) {
+                // if you are allowed to buy now
+
+                // if you buy, then you can't buy without selling
+                // if you didn't buy, then profit you can still buy
+                cur[BUY][k] = Math.max(-prices[i] + prev[SELL][k], 0 + prev[BUY][k]);
+                
+                // buy and sell together is one transaction
+                // if you sell, then you reduce the number of transactions you can make
+                // if you sell, then you can only buy
+                // if you don't, then you can sell in the future and transaction update then
+                cur[SELL][k] = Math.max(prices[i] + prev[BUY][k-1], 0 + prev[SELL][k]);
+
+                prev = cur; 
             }
+        }
 
-            // Update the 'ahead' pricesay with the current profit values
-            ahead = cur;
-        }
-        }
-        return cur[0][k]; // The maximum profit is stored in 'cur[0]'
+        // in beginning you can buy and still can make all numTransactions transactions
+        return cur[BUY][numTransactions];
     }
 }
