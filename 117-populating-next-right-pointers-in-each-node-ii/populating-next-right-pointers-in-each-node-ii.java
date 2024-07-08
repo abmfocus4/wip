@@ -23,28 +23,28 @@ class Node {
 // https://www.youtube.com/watch?v=BcQXUsd-f1k&ab_channel=EricProgramming
 class Solution {
     public Node connect(Node root) {
-        Node head = root;
+        Node cur = root;
 
-        while (head != null) {
-            Node dummy = new Node(-1);
-            Node tmp = dummy;
-            // building linkedlist with dummy pointing to head
-            while (head != null) {
-                if (head.left != null) {
-                    tmp.next = head.left;
-                    tmp = tmp.next;
+        while (cur != null) {
+            Node nxtHead = new Node(-1);
+            Node nxt = nxtHead;
+            // building linkedlist with nxtHead pointing to cur
+            while (cur != null) {
+                if (cur.left != null) {
+                    nxt.next = cur.left;
+                    nxt = nxt.next;
                 }
 
-                if (head.right != null) {
-                    tmp.next = head.right;
-                    tmp = tmp.next;
+                if (cur.right != null) {
+                    nxt.next = cur.right;
+                    nxt = nxt.next;
                 }
 
-                head = head.next;
+                cur = cur.next;
             }
 
             // move to next level
-            head = dummy.next;
+            cur = nxtHead.next;
         }
 
         return root;
