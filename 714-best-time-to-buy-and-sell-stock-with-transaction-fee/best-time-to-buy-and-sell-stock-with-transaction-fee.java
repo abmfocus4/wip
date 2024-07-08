@@ -1,32 +1,29 @@
-// https://www.youtube.com/watch?v=nGJmxkUJQGs&ab_channel=takeUforward
-// https://www.youtube.com/watch?v=k4eK-vEmnKg&ab_channel=takeUforward
 class Solution {
+    public static final int BUY = 0;
+    public static final int SELL = 1;
     public int maxProfit(int[] prices, int fee) {
-        // Create pricesays 'prev' and 'cur' to store the maximum profit prev and current profit
-        int[] prev = new int[2];
-        int[] cur = new int[2];
+        // buy and sell transactions
 
-        // Base condition: If we have no stocks to trans or sell, profit is 0
+        int n = prices.length;
+
+        // calculate current profit based on
+        // 1) can be buy or not buy
+        // 2) hold or transaction
+        int[] cur = new int[2];
+        int[] prev = new int[2];
+
         prev[0] = prev[1] = 0;
 
-        int profit = 0;
-        int n = prices.length;
-        // Iterate through the pricesay in reverse to calculate the maximum profit
-        for (int ind = n - 1; ind >= 0; ind--) {
-            for (int trans = 0; trans <= 1; trans++) { // 0: sell and 1: trans
-                if (trans == 0) { // We can trans the stock
-                    profit = Math.max(0 + prev[0], -prices[ind] + prev[1] - fee); // remove fee
-                }
-
-                if (trans == 1) { // We can sell the stock
-                    profit = Math.max(0 + prev[1], prices[ind] + prev[0]);
-                }
-                cur[trans] = profit;
-            }
-
-            // Update the 'prev' pricesay with the current profit values
+        for (int i = n - 1; i >= 0; i--) {
+            // allowed to buy
+            // buy or hold
+            cur[BUY] = Math.max(-prices[i] + prev[SELL] + -fee, 0 + prev[BUY]);
+            // allowed to sell
+            // sell or hold
+            cur[SELL] = Math.max(prices[i] + prev[BUY], 0 + prev[SELL]);
             prev = cur;
         }
-        return cur[0]; // The maximum profit is stored in 'cur[0]'
+
+        return cur[BUY];
     }
 }
