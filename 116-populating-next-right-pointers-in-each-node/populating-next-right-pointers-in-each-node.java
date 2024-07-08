@@ -21,29 +21,34 @@ class Node {
 };
 */
 
-// bfs solution
-// https://www.youtube.com/watch?v=U4hFQCa1Cq0&ab_channel=NeetCode
 class Solution {
     public Node connect(Node root) {
-        if (root == null) return null;
+        if (root == null) {
+            return null;
+        }
+        Queue<Node> q = new LinkedList();
+        q.add(root);
 
-        Node cur = root;
-        Node nxt = root.left;
+        while (!q.isEmpty()) {
+            int levelSize = q.size();
+            for (int i = 0; i < levelSize; i++) {
+                Node cur = q.poll();
+                if (cur.left != null) {
+                    q.add(cur.left);
+                }
 
-        while (cur != null && nxt != null) {
-            cur.left.next = cur.right;
-            if (cur.next != null) {
-                cur.right.next = cur.next.left;
-            }
-            cur = cur.next; // moving in the same level
-            if (cur == null) { // if we finished traversing level
-                cur = nxt;
-                nxt = cur.left; // point to next level
-            }
+                if (cur.right != null) {
+                    q.add(cur.right);
+                }
+
+                if (i == levelSize - 1) {
+                    cur.next = null;
+                } else {
+                    cur.next = q.peek();
+                }
+             }
         }
 
         return root;
     }
 }
-
-// TC: o(n), SC:O(1)
