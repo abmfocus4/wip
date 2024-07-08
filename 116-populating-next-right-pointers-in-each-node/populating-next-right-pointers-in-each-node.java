@@ -26,17 +26,26 @@ class Solution {
         if (root == null) {
             return root;
         }
+        Node cur = root;
+        Node nxt = cur.left;
 
-        if (root.left != null) {
-            root.left.next = root.right;
+        while (cur != null && nxt != null) {
+            if (cur.left != null) {
+                cur.left.next = cur.right;
+            }
+
+            if (cur.right != null) {
+                if (cur.next != null) {
+                    cur.right.next = cur.next.left;
+                }
+            }
+
+            cur = cur.next;
+            if (cur == null) {
+                cur = nxt;
+                nxt = cur.left;
+            }
         }
-
-        if (root.right != null && root.next != null) {
-            root.right.next = root.next.left;
-        }
-
-        connect(root.left);
-        connect(root.right);
 
         return root;
     }
