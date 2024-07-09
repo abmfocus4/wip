@@ -12,45 +12,31 @@ class Node {
     }
 }
 */
-// https://www.youtube.com/watch?v=OLgXN2Yg3xQ&list=TLPQMDEwNjIwMjSUjnvbX72tSg&index=9&ab_channel=codestorywithMIK
+
 class Solution {
     public Node copyRandomList(Node head) {
-        if (head == null) {
-            return null;
-        }   
-
-
-        // inserting new node after orig node
         Node cur = head;
+        Node newHead = null;
+        Node prev = null;
+        HashMap<Node, Node> origToClone = new HashMap();
         while (cur != null) {
-            Node curNext = cur.next;
-            cur.next = new Node(cur.val);
-            cur.next.next = curNext;
-            cur = curNext;
-        }
-
-        cur = head;
-        // random pointing update
-        while (cur != null && cur.next != null) {
-            if (cur.random == null) {
-                cur.next.random = null;
+            Node temp = new Node(cur.val);
+            origToClone.put(cur, temp);
+            if (newHead == null) {
+                newHead = temp;
             } else {
-                cur.next.random = cur.random.next;
+                prev.next = temp;
             }
-            
-            cur = cur.next.next;
+            prev = temp;
+            cur = cur.next;
         }
 
-        // separating ll
-        Node newHead = head.next;
-        Node newCur = newHead;
         cur = head;
-        while (cur != null && newCur != null) {
-            cur.next = (cur.next == null) ? null : cur.next.next;
-            newCur.next = (newCur.next == null) ? null : newCur.next.next;
-
+        Node cloneCur = newHead;
+        while (cur != null && cloneCur != null) {
+            cloneCur.random = origToClone.get(cur.random);
+            cloneCur = cloneCur.next;
             cur = cur.next;
-            newCur = newCur.next;
         }
 
         return newHead;
