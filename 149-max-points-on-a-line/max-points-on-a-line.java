@@ -1,35 +1,45 @@
 class Solution {
     public int maxPoints(int[][] points) {
-        // 2 points make a line
-        // get dy and dx from that point
-        // use the rest of the array to match the rwo points slope
-
+        // hashmap to store slope str <int, int> <dy, dx> = key, value = freq
+        // dy/dx is unique (so find gcd of dy, dx and divide)
+        // keep track of maxPoints with point[i] as reference for all other points
+        // clear map for every key value pair
 
         int n = points.length;
-        if (n <= 1) return n;
-
+        HashMap<String, Integer> map = new HashMap(); // slope, freq
+        int localMaxPoints = 0;
         int maxPoints = 0;
+        for (int i = 0; i < n; i++) {
+            map.clear();
+            for (int j = i+1; j < n; j++) { // start from next point
+                int[] point1 = points[i];
+                int[] point2 = points[j];
 
-        for (int i = 0; i < n; i++) { // x1
-            for (int j = i+1; j < n; j++) { // x2
-                int count = 2;
+                int dy = point2[1] - point1[1]; // y2 - y1
+                int dx = point2[0] - point1[0]; // x2 - x1
 
-                int dx = points[j][0] - points[i][0]; // x2 - x1
-                int dy = points[j][1] - points[i][1]; // y2 - y1
+                int gcd = gcd(dy, dx);
 
-                for (int k = 0; k < n; k++) {
-                    if (k == i || k == j) continue;
+                dy = dy/gcd;
+                dx = dx/gcd;
 
-                    int dx_ = points[k][0] - points[i][0]; // x3 - x1
-                    int dy_ = points[k][1] - points[i][1]; // y3 - y1
-                    if (dx * dy_ == dy * dx_) count++;
-                }
-
-                maxPoints = Math.max(maxPoints, count);
+                String slope = dy + "-" + dx;
+                
+                map.put(slope, map.getOrDefault(slope, 0) + 1);
+                localMaxPoints = Math.max(map.get(slope), localMaxPoints);
             }
+
+            maxPoints = Math.max(maxPoints, localMaxPoints + 1); // account for point[i];
         }
 
         return maxPoints;
-         
     }
+
+    private int gcd (int a, int b) {
+        if (b == 0) {
+            return a;
+        }
+        return gcd(b, a%b); // err
+    }
+
 }
