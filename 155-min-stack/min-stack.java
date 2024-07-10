@@ -1,41 +1,50 @@
-// https://leetcode.com/problems/min-stack/solutions/49031/share-my-java-solution-with-only-one-stack
-public class MinStack {
-    long min;
+class MinStack {
     Stack<Long> stack;
-
-    public MinStack(){
-        stack=new Stack<>();
+    long min;
+    public MinStack() {
+        this.min = 0;
+        this.stack = new Stack();
     }
     
-    public void push(int x) {
-        if (stack.isEmpty()){
+    public void push(int val) {
+        if (stack.isEmpty()) {
             stack.push(0L);
-            min=x;
-        }else{
-            stack.push(x-min);//Could be negative if min value needs to change
-            if (x<min) min=x;
+            min = val;
+        } else {
+            stack.push((long)(val - min));
+            if (val - min < 0) {
+                min = val;
+            }
         }
     }
-
+    
     public void pop() {
-        if (stack.isEmpty()) return;
-        
-        long pop=stack.pop();
-        
-        if (pop<0)  min=min-pop;//If negative, increase the min value
+        long top = stack.pop();
+        if (top < 0) {
+            min = min - top;
+        }
         
     }
-
+    
     public int top() {
-        long top=stack.peek();
-        if (top>0){
-            return (int)(top+min);
-        }else{
-           return (int)(min);
+        long top = stack.peek();
+        if (top < 0) {
+            return (int)min;
+        } else {
+            return (int)(top + min);
         }
     }
-
+    
     public int getMin() {
         return (int)min;
     }
 }
+
+/**
+ * Your MinStack object will be instantiated and called as such:
+ * MinStack obj = new MinStack();
+ * obj.push(val);
+ * obj.pop();
+ * int param_3 = obj.top();
+ * int param_4 = obj.getMin();
+ */
