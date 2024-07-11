@@ -13,7 +13,9 @@
  *     }
  * }
  */
-//  https://leetcode.com/problems/recover-binary-search-tree/solutions/32535/no-fancy-algorithm-just-simple-and-powerful-in-order-traversal
+//  https://leetcode.com/problems/recover-binary-search-tree/solutions/32559/detail-explain-about-how-morris-traversal-finds-two-incorrect-pointer
+// just replace normal inorder with morris
+// and instead of printing node, process node
 class Solution {
     TreeNode firstNode;
     TreeNode secondNode;
@@ -25,21 +27,47 @@ class Solution {
         secondNode.val = temp;
     }
 
-    public void inorder(TreeNode root) {
+    private void inorder(TreeNode root) {
         if (root == null) {
             return;
         }
 
-        inorder(root.left);
-        if (firstNode == null && prevNode != null && prevNode.val > root.val) {
+        TreeNode cur = root;
+        while (cur != null) {
+            if (cur.left == null) {
+                processNode(cur);
+                cur = cur.right;
+            } else {
+                TreeNode prev = cur.left;
+                while (prev.right != null && prev.right != cur) {
+                    prev = prev.right;
+                }
+
+                if (prev.right == null) {
+                    prev.right = cur;
+                    cur = cur.left;
+                } else {
+                    processNode(cur);
+                    prev.right = null;
+                    cur = cur.right;
+                }
+            }
+        }
+    }
+
+    public void processNode(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+
+        if (firstNode == null && prevNode != null && prevNode.val >= root.val) {
             firstNode = prevNode;
         }
 
-        if (firstNode != null && prevNode != null && prevNode.val > root.val) {
+        if (firstNode != null && prevNode != null && prevNode.val >= root.val) {
             secondNode = root;
         }
 
         prevNode = root;
-        inorder(root.right);
     }
 }
