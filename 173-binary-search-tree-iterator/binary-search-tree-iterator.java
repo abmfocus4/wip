@@ -13,32 +13,46 @@
  *     }
  * }
  */
-//  https://www.youtube.com/watch?v=D2jMcmxU4bs&list=TLPQMDEwNjIwMjSUjnvbX72tSg&index=20&ab_channel=takeUforward
 class BSTIterator {
-    // left node right
-    Stack<TreeNode> stack = new Stack();
+    TreeNode cur; // pointer to current node in iteration
     public BSTIterator(TreeNode root) {
-        pushAllLeft(root);
+        this.cur = root;
     }
     
     public int next() {
-        TreeNode top = stack.pop();
-        if (top.right != null) {
-            pushAllLeft(top.right);
-        }
-        return top.val;
+        TreeNode next = morris(); // run morris to update current pointer
+        return next.val;
     }
     
     public boolean hasNext() {
-        return !stack.isEmpty();
+        return cur != null; // if tree is traversed
     }
 
-    private void pushAllLeft(TreeNode node) {
-        TreeNode cur = node;
+    private TreeNode morris() {
+        TreeNode res = null; // extra pointer to return current spot in traversal
         while (cur != null) {
-            stack.push(cur);
-            cur = cur.left;
+            if (cur.left == null) { // same as original morris. where there is print, set res = null and break after traversal
+                res = cur; // node process
+                cur = cur.right;
+                break;
+            } else {
+                TreeNode prev = cur.left;
+                while (prev.right != null && prev.right != cur) {
+                    prev = prev.right;
+                }
+
+                if (prev.right == null) {
+                    prev.right = cur;
+                    cur = cur.left;
+                } else {
+                    res = cur; // node process
+                    prev.right = null;
+                    cur = cur.right;
+                    break;
+                }
+            }
         }
+        return res;
     }
 }
 
