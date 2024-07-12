@@ -30,24 +30,27 @@ class WordDictionary {
         return search(word, this.root, 0);
     }
 
-    private boolean search(String word, Node curr, int index) {
-        for (int i = index; i < word.length(); i++) {
-            char ch = word.charAt(i);
-            if (ch == '.') {
-                for (char c : curr.children.keySet()) {
-                    Node trieNode = curr.children.get(c);
-                    if (search(word, trieNode, i+1)) // look at the word ahead
+    public boolean search(String word, Node root, int idx) {
+        Node cur = root;
+        for (int i = idx; i < word.length(); i++) {
+            char c = word.charAt(i);
+            if (c == '.') {
+                for (char ch : cur.children.keySet()) {
+                    if (search(word, cur.children.get(ch), i + 1)) {
                         return true;
+                    }
                 }
                 return false;
             } else {
-                if (!curr.children.containsKey(ch))
+                if (cur.children.containsKey(c) == false) {
                     return false;
-                curr = curr.children.get(ch);
+                }
+                cur = cur.children.get(c);
             }
         }
-        return curr.isWord;
+        return cur.isWord;
     }
+
 }
 
 /**
