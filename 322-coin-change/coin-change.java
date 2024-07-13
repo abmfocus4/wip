@@ -1,24 +1,41 @@
-// Code: https://www.youtube.com/watch?v=GfyQ6zzalxk
-// dp min/max path to target
-
-// Explanation: https://www.youtube.com/watch?v=H9bfqozjoqs
-
-// why not greedy? - https://leetcode.com/problems/coin-change/description/comments/2008918
 class Solution {
+    int[] coins;
+    int[] cache;
     public int coinChange(int[] coins, int amount) {
-        int[] cache = new int[amount + 1];
-        Arrays.fill(cache, amount + 1);
-        cache[0] = 0;
-        Arrays.sort(coins);
-        for (int i = 1; i < amount + 1; i++) {
-            for (int coin : coins) {
-                if (i - coin >= 0) {
-                    cache[i] = Math.min(cache[i], cache[i-coin] + 1);
-                } else {
-                    break;
-                }
+        this.coins = coins;
+        this.cache = new int[amount + 1];
+        Arrays.fill(cache, -2); // unfilled is 2
+        return coinChange(amount);
+    }
+
+    private int coinChange(int amount) {
+        if (amount == 0) {
+            return 0;
+        }
+
+        if (amount < 0) {
+            return -1;
+        }
+
+        if (cache[amount] != -2) {
+            return cache[amount];
+        }
+
+        int minCoins = Integer.MAX_VALUE;
+
+        for (int coin : coins) {
+            int diffCoinChange = coinChange(amount - coin);
+            if (diffCoinChange != -1) {
+                minCoins = Math.min(diffCoinChange, minCoins);
             }
         }
-        return cache[amount] == amount + 1 ? -1 : cache[amount];
+
+        if (minCoins == Integer.MAX_VALUE) {
+            cache[amount] = -1;
+        } else {
+            cache[amount] = minCoins + 1;
+        }
+
+        return cache[amount];
     }
 }
