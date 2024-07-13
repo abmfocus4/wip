@@ -1,24 +1,32 @@
-// https://www.youtube.com/watch?v=zzTUtpBQh4k&ab_channel=KnowledgeCenter
-// Counting sort puts the number of occurrences (an integer) in buckets. Each bucket doesn't need to be sorted further.
 class Solution {
     public int hIndex(int[] citations) {
-        // TC, SC = O(N)
+        // 0th paper, 3 citations
+        // 1: 0
+        // 2: 6 ...
+        // i want to know how many papers have x citations
+        // create frequency map for citations
+        // 0...n
+
+        // num >= i return i;
+
+        // return 0
         int n = citations.length;
-        int[] buckets = new int[n + 1];
-        for (int c : citations) {
-            if (c >= n) {
+        int[] buckets = new int[n+1];
+        for (int citation : citations) {
+            if (citation >= n) {
                 buckets[n]++;
             } else {
-                buckets[c]++;
+                buckets[citation]++;
             }
         }
         int count = 0;
-        for (int i = n; i >= 0; i--) { // SCAN FROM BACK BECAUSE WE ARE TRYING TO FIND LARGEST
+        for (int i = n; i >= 0; i--) {
             count += buckets[i];
-            if (count >= i) { // num citations larger than papers
+            if (count >= i) {
                 return i;
             }
         }
+
         return 0;
     }
 }
