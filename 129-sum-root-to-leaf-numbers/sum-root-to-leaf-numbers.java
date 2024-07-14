@@ -1,29 +1,40 @@
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
-class Solution {
-    public int sumNumbers(TreeNode root) {
-        // tree traversal
-        // update running sum
-        return dfs(root, 0);
-    }
+class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+    TreeNode(int x) { val = x; }
+}
 
-    private int dfs(TreeNode root, int runningSum) {
-        if (root == null) return 0;
-        runningSum = 10*runningSum + root.val;
-        if (root.left == null && root.right == null) return runningSum;
-        return dfs(root.left, runningSum) + dfs(root.right, runningSum);
+public class Solution {
+    public int sumNumbers(TreeNode root) {
+        TreeNode cur = root;
+        int sum = 0;
+        int curSum = 0;
+        int depth = 0;
+        while (cur != null) {
+            if (cur.left != null) {
+                TreeNode pre = cur.left;
+                depth = 1; // depth for rolling up
+                while (pre.right != null && pre.right != cur) {
+                    pre = pre.right;
+                    depth++;
+                }
+                if (pre.right == null) {
+                    pre.right = cur;
+                    curSum = curSum * 10 + cur.val; // go down a level
+                    cur = cur.left;
+                } else {
+                    pre.right = null;
+                    if (pre.left == null) sum += curSum; // if right and left are null, leaf node
+                    curSum /= Math.pow(10, depth); // rollback to current node
+                    cur = cur.right;
+                }
+            } else {
+                curSum = curSum * 10 + cur.val; // node process
+                if (cur.right == null) sum += curSum; // left is null, if right is also null
+                cur = cur.right;
+            }
+        }
+        return sum;
     }
 }
