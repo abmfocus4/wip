@@ -1,46 +1,56 @@
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
 class Solution {
-    HashMap<Long, Integer> prefixMap;
-    int count;
+    // A map to store the cumulative sum up to all the ancestors of a node and their respective counts.
+    private Map<Long, Integer> cumulativeSumCount = new HashMap<>();
+    // The target sum to find in the path.
+    private int targetSum;
+
+    // Public function to call the private dfs function and initialize the cumulativeSumCount.
     public int pathSum(TreeNode root, int targetSum) {
-        this.count = 0;
-        prefixMap = new HashMap();
-        backtrack(root, targetSum, 0L);
-        return count;
+        // Initialize the map with zero cumulative sum having a count of one.
+        cumulativeSumCount.put(0L, 1);
+        // Store the target sum in the global variable to use in the dfs function.
+        this.targetSum = targetSum;
+        // Start the DFS traversal.
+        return dfs(root, 0);
     }
 
-    private void backtrack(TreeNode root, int targetSum, long prefixSum) {
-        if (root == null) return;
-
-        prefixSum += root.val;
-        if (prefixSum == targetSum) {
-            count++;
+    // A private function to perform the DFS traversal and find paths with sums equal to targetSum.
+    private int dfs(TreeNode node, long currentSum) {
+        // Base case: If the current node is null, return 0 as there are no paths through this node.
+        if (node == null) {
+            return 0;
         }
+        // Add the current node's value to the cumulative sum.
+        currentSum += node.val;
+        // Find the number of paths that end at this node with a sum equal to targetSum.
+        int pathCount = cumulativeSumCount.getOrDefault(currentSum - targetSum, 0);
+        // Update the map with the new cumulative sum, incrementing its count by 1.
+        cumulativeSumCount.put(currentSum, cumulativeSumCount.getOrDefault(currentSum, 0) + 1);
+        // Recursively call dfs for the left child.
+        pathCount += dfs(node.left, currentSum);
+        // Recursively call dfs for the right child.
+        pathCount += dfs(node.right, currentSum);
+        // After the children have been processed, decrement the count of the currentSum
+        // path count because it should not be counted in other paths.
+        cumulativeSumCount.put(currentSum, cumulativeSumCount.getOrDefault(currentSum, 0) - 1);
+        // Return the total count of valid paths found from this node.
+        return pathCount;
+    }
+}
 
-        if (prefixMap.containsKey(prefixSum - targetSum)) {
-            count += prefixMap.get(prefixSum - targetSum);
-        }
+// Definition for a binary tree node.
+class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
 
-        prefixMap.put(prefixSum, prefixMap.getOrDefault(prefixSum, 0) + 1);
+    TreeNode() {}
 
-        backtrack(root.left, targetSum, prefixSum);
-        backtrack(root.right, targetSum, prefixSum);
+    TreeNode(int val) { this.val = val; }
 
-        prefixMap.put(prefixSum, prefixMap.getOrDefault(prefixSum, 0) - 1);
-
+    TreeNode(int val, TreeNode left, TreeNode right) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
     }
 }
