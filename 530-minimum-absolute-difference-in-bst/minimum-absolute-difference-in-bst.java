@@ -2,10 +2,8 @@ class Solution {
     
     class MorrisIterator implements Iterator<Integer>{
         private TreeNode current;
-        private TreeNode pre;
         public MorrisIterator(TreeNode root){
             current = root;
-            pre = null;
         }
         public boolean hasNext(){
             return current != null;
@@ -19,7 +17,7 @@ class Solution {
                     current = current.right;
                     break;
                 } else {
-                    pre = current.left;
+                    TreeNode pre = current.left;
                     while(pre.right != null && pre.right != current){
                         pre = pre.right;
                     }
