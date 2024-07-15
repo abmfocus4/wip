@@ -5,7 +5,6 @@ class Solution {
         int i = 0;
         int j = 0;
         while (i < chars.length) {
-            j = i;
             while (j < chars.length && chars[i] == chars[j]) {
                 j++;
             }
