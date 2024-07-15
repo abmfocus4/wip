@@ -1,37 +1,33 @@
 class Solution {
-    public String predictPartyVictory(String senate) {
-        int num_r = 0, num_d = 0;
-
-        int n = senate.length();
-
-        for (int i = 0; i < n; i++) {
-            if (senate.charAt(i) == 'R') num_r++;
-            else num_d++;
-        }
-
-        Set<Integer> bannedIdx = new HashSet();
-
-        while (num_r != 0 && num_d != 0) {
-            for (int i = 0; i < n; i++) {
-                if (num_r == 0 || num_d == 0) break;
-                if (bannedIdx.contains(i)) continue;
-                int j = (i + 1)%n;
-                while (j != i) {
-                    if (bannedIdx.contains(j) == false && senate.charAt(i) != senate.charAt(j)) {
-                        bannedIdx.add(j);
-                        if (senate.charAt(j) == 'R') num_r--;
-                        else num_d--;
-                        break;
-                    }
-                    j = (j+1)%n;
-                }
-            }
-        }
-
-        if (num_r == 0) {
-            return "Dire";
-        } else {
-            return "Radiant";
-        }
-    }
+final String radiant = "Radiant";
+final String dire= "Dire";
+final char radiantSenator = 'R';
+final char direSenator = 'D';
+public String predictPartyVictory(String senate) {
+Queue<Integer> rQ = new LinkedList();
+Queue<Integer> dQ = new LinkedList();
+int n = senate.length();
+for (int i=0; i < n; i++) {
+int c = senate.charAt(i);
+if (c == radiantSenator) {
+rQ.add(i);
+} else {
+dQ.add(i);
+}
+}
+while (rQ.isEmpty() == false && dQ.isEmpty() == false) {
+int r_idx = rQ.poll();
+int d_idx = dQ.poll();
+if (r_idx < d_idx) {
+rQ.add(r_idx + n);
+} else {
+dQ.add(d_idx + n);
+}
+}
+if (rQ.size() > dQ.size()) {
+return radiant;
+} else {
+return dire;
+}
+}
 }
