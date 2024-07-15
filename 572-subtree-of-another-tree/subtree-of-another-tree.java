@@ -14,70 +14,37 @@
  * }
  */
 
-// https://leetcode.com/problems/subtree-of-another-tree/solutions/474425/java-python-2-solutions-naive-serialize-in-preorder-then-kmp-o-m-n-clean-concise/?envType=list&envId=pxw54vnt
+ // https://leetcode.com/problems/subtree-of-another-tree/solutions/102724/java-solution-tree-traversal/comments/106046
 
-// search KMP algorithm - used for pattern matching
+ // Tree traversal
 
-// Time Complexity:
-// Serialization takes O(m + n) since you visit each node once
-// kmp worst case take O(m + n) - https://www.youtube.com/watch?v=V5-7GzOfADQ
+ // Time: O(m*m)
 
-    /**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
+ // Space: O(height of first tree) == O(m) worst case and O(logm) balanced tree case
+
+ // Recursive
 class Solution {
     public boolean isSubtree(TreeNode root, TreeNode subRoot) {
-        return kmp(serialize(root), serialize(subRoot));
+        // if node is null return false
+        // check if root matches the subRoot, if yes, return true
+        // else check if root's left matches subRoot or root's right matches subRoot
+
+        // if root is null and subroot is null return true
+        // if root is null or subroot is null return false
+        // if value of root is not same, then return false
+        // else compare left nodes and right nodes of each tree respectively
+
+        if (root == null) return false; // to make sure that when we access left and right of root we don't get error
+        return isSameTree(root, subRoot) || isSubtree(root.left, subRoot) || isSubtree(root.right, subRoot);
+        
     }
 
-    private String serialize(TreeNode node) {
-        StringBuilder sb = new StringBuilder();
-        if (node != null) {
-            preorder(node, sb);
+    private boolean isSameTree(TreeNode node, TreeNode subRoot) {
+        if (node == null && subRoot == null) return true;
+        if (node == null || subRoot == null) return false;
+        if (node.val != subRoot.val) return false;
+        else {
+            return isSameTree(node.left, subRoot.left) && isSameTree(node.right, subRoot.right);
         }
-        return sb.toString();
-    }
-
-    private void preorder(TreeNode node, StringBuilder sb) {
-        if (node == null) {
-            sb.append(",#");
-        } else {
-            sb.append("," + node.val);
-            preorder(node.left, sb);
-            preorder(node.right, sb);
-        }
-    }
-
-    private boolean kmp(String rootStr, String subRootStr) {
-        int[] lps = getLPS(subRootStr);
-        int n = rootStr.length(), m = subRootStr.length();
-        for (int i = 0, j = 0; i < n; i++) { // only move one way in primary string
-            while (rootStr.charAt(i) != subRootStr.charAt(j) && j > 0) j = lps[j-1]; // only j moves
-            if (rootStr.charAt(i) == subRootStr.charAt(j)) ++j;
-            if (j == m) return true;
-        }
-        return false;
-    }
-
-    private int[] getLPS(String subRootStr) {
-        int m = subRootStr.length();
-        int[] lps = new int[m];
-        for (int i = 1, j = 0; i < m; i++) { // pi table or lps table
-            while (subRootStr.charAt(i) != subRootStr.charAt(j) && j > 0) j = lps[j-1];
-            if (subRootStr.charAt(i) == subRootStr.charAt(j)) lps[i] = ++j;
-        }
-        return lps;
     }
 }
