@@ -1,5 +1,11 @@
+// This problem is simple if you think it as min curCost path from source to destination.
+
+// Build a graph by connecting all 4 adjacent edges.
+// Assign wieght 0 to u to v if given direction in grid is u to v, other assign wieght 1( modify sign ).
+// Apply Dijkstra algo on graph to find min curCost from (0,0) to (n,m),
+
 class Solution {
-    int[][] steps = new int[][] {
+    int[][] dirs = new int[][] {
             { 0, 1 },
             { 0, -1 },
             { 1, 0 },
@@ -8,25 +14,28 @@ class Solution {
 
     public int minCost(int[][] grid) {
         PriorityQueue<int[]> pq = new PriorityQueue<>((u, v) -> Integer.compare(u[2], v[2]));
-        pq.add(new int[] { 0, 0, 0 });
+        pq.add(new int[] { 0, 0, 0 }); // i, j, curCost
+
         while (!pq.isEmpty()) {
-            int r = pq.peek()[0];
-            int c = pq.peek()[1];
-            int cost = pq.peek()[2];
+            int curRow = pq.peek()[0];
+            int curCol = pq.peek()[1];
+            int curCost = pq.peek()[2];
             pq.poll();
 
-            if (r + 1 == grid.length && c + 1 == grid[0].length)
-                return cost;
+            if (curRow == grid.length - 1 && curCol == grid[0].length - 1)
+                return curCost;
 
-            if (r < 0 || c < 0 || r >= grid.length || c >= grid[0].length || grid[r][c] == 0)
+            if (curRow < 0 || curCol < 0 || curRow >= grid.length || curCol >= grid[0].length || grid[curRow][curCol] == 0)
                 continue;
-            int sign = grid[r][c];
-            grid[r][c] = 0;
 
-            for (int idx = 0; idx < steps.length; ++idx) {
-                int nr = r + steps[idx][0];
-                int nc = c + steps[idx][1];
-                int ncost = cost + (sign == idx + 1 ? 0 : 1);
+            int cell = grid[curRow][curCol];
+            grid[curRow][curCol] = 0; // visited = true
+
+            for (int i = 0; i < dirs.length; i++) {
+                int[] dir = dirs[i];
+                int nr = curRow + dir[0];
+                int nc = curCol + dir[1];
+                int ncost = curCost + (cell - 1 == i ? 0 : 1); // if moving in same direction: add 0 or else add 1
                 pq.add(new int[] { nr, nc, ncost });
             }
         }
