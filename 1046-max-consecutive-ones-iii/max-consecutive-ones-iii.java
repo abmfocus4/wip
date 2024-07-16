@@ -6,7 +6,7 @@ class Solution {
         for (int end = 0; end < nums.length; end++) {
             count_arr[nums[end]]++;
 
-            if (end - start + 1 - count_arr[1] > k) {
+            while (end - start + 1 - count_arr[1] > k) {
                 count_arr[nums[start]]--;
                 start++;
             }
