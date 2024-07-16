@@ -23,7 +23,7 @@ class Solution {
         TreeNode curr = root;
         while (curr != null) {
             if (curr.left == null) {
-                if(--k == 0) return curr.val;
+                if(--k == 0) return curr.val; // process node
                 curr = curr.right;
             } else {
                 TreeNode temp = curr.left;
@@ -35,7 +35,7 @@ class Solution {
                     curr = curr.left;
                 } else {
                     temp.right = null;
-                    if(--k == 0) return curr.val;
+                    if(--k == 0) return curr.val; // process node
                     curr = curr.right;
                 }
             }
