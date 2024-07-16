@@ -15,31 +15,31 @@
  */
 class Solution {
     public int kthSmallest(TreeNode root, int k) {
-        TreeNode cur = root;
-        int count = k;
-        while (cur != null) {
-            if (cur.left == null) {
-                if (--count == 0) break;
-                cur = cur.right;
+        return morris(root, k);
+    }
+
+    // Morris trav - https://www.youtube.com/watch?v=80Zug6D1_r4&t=1151s&ab_channel=takeUforward
+    private int morris(TreeNode root, int k) {
+        TreeNode curr = root;
+        while (curr != null) {
+            if (curr.left == null) {
+                if(--k == 0) return curr.val;
+                curr = curr.right;
             } else {
-                TreeNode prev = cur.left;
-                while (prev.right != null && prev.right != cur) {
-                    prev = prev.right;
+                TreeNode temp = curr.left;
+                while (temp.right != null && temp.right != curr) {
+                    temp = temp.right;
                 }
-
-                if (prev.right == null) {
-                    prev.right = cur;
-                    cur = cur.left;
-                }
-
-                if (prev.right == cur) {
-                    prev.right = null;
-                    if (--count == 0) break;
-                    cur = cur.right;
+                if (temp.right == null) {
+                    temp.right = curr;
+                    curr = curr.left;
+                } else {
+                    temp.right = null;
+                    if(--k == 0) return curr.val;
+                    curr = curr.right;
                 }
             }
         }
-
-        return cur.val;
+        return -1;
     }
 }
