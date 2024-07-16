@@ -60,6 +60,7 @@ class Solution {
                 // If a shorter path is found, update distance and ways
                 if (dis + edW < dist[(int) adjNode]) {
                     dist[(int) adjNode] = dis + edW;
+                    if (adjNode != n - 1)
                     pq.add(new Pair(dis + edW, adjNode));
                     ways[(int) adjNode] = ways[(int) node];
                 } else if (dis + edW == dist[(int) adjNode]) {
