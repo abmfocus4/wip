@@ -36,7 +36,7 @@ class Solution {
         while(pq.isEmpty() == false) {
             int[] cur = pq.poll();
             int curDist = cur[0], curNode = cur[1];
-            if (curDist > dist.getOrDefault(curNode, 0)) continue;
+            if (curDist > dist.getOrDefault(curNode, Integer.MAX_VALUE)) continue;
             ans++;
             for (Pair<Integer, Integer> neigh : graph.get(curNode)) {
                 int neighNode = neigh.getKey(), neighDist = neigh.getValue();
