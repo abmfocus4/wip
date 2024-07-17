@@ -1,55 +1,51 @@
-// djikstra's with 2d array
-// https://www.youtube.com/watch?v=0ytpZyiZFhA&ab_channel=takeUforward
 class Solution {
-    int INF = (int) 1e9;
-
     class PQElement {
+        int row;
+        int col;
         int diff;
-        int src;
-        int dst;
 
-        public PQElement(int diff, int src, int dst) {
+        PQElement() {};
+        PQElement(int row, int col, int diff) {
+            this.row = row;
+            this.col = col;
             this.diff = diff;
-            this.src = src;
-            this.dst = dst;
         }
     }
 
-    int[][] dirs = new int[][] {{0,1}, {1,0}, {-1,0}, {0,-1}};
+    int[][] dirs = {{0,1}, {1,0}, {-1,0}, {0,-1}};
     public int minimumEffortPath(int[][] heights) {
         int m = heights.length;
         int n = heights[0].length;
-        int[][] minEffort = new int[m][n]; // fully connected (use int[])
-
+        int[][] minEffort = new int[m][n];
         for (int[] row : minEffort) {
-            Arrays.fill(row, INF);
+            Arrays.fill(row, Integer.MAX_VALUE);
         }
+        minEffort[0][0] = 0;
 
         PriorityQueue<PQElement> pq = new PriorityQueue<>((a,b) -> a.diff - b.diff);
-        pq.add(new PQElement(0, 0, 0)); // start at (0,0)
-        minEffort[0][0] = 0;
-        int newEffort = INF;
+        pq.add(new PQElement(0, 0, 0));
 
         while (pq.isEmpty() == false) {
             PQElement cur = pq.poll();
-            if (cur.src == m - 1 && cur.dst == n - 1) {
-                return cur.diff;
+            int curRow = cur.row;
+            int curCol = cur.col;
+            int curDiff = cur.diff;
+
+            if (curRow == m - 1 && curCol == n - 1) {
+                return curDiff;
             }
 
             for (int[] dir : dirs) {
-                int newSrc = cur.src + dir[0];
-                int newDst = cur.dst + dir[1];
-                if (newSrc < 0 || newSrc >= m || newDst < 0 || newDst >= n) continue;
-                newEffort = Math.max(Math.abs(heights[newSrc][newDst] - heights[cur.src][cur.dst]), cur.diff);
-                if (newEffort < minEffort[newSrc][newDst]) {
-                    minEffort[newSrc][newDst] = newEffort;
-                    pq.add(new PQElement(newEffort, newSrc, newDst));
+                int newRow = curRow + dir[0], newCol = curCol + dir[1];
+                if (newRow < 0 || newCol < 0 || newRow >= m || newCol >= n) continue;
+                int newEffort = Math.max(Math.abs(heights[newRow][newCol] - heights[curRow][curCol]), curDiff);
+                if (minEffort[newRow][newCol] > newEffort) {
+                    minEffort[newRow][newCol] = newEffort;
+                    pq.add(new PQElement(newRow, newCol, minEffort[newRow][newCol]));
                 }
-
             }
         }
 
         return -1;
-
     }
 }
