@@ -9,7 +9,7 @@ class Solution {
             if (isVowel(s.charAt(i))) {
                 ++winCnt; 
             }
-            while (i-start+1 == k) { // len of substr
+            if (i-start+1 == k) { // len of substr
                 ans = Math.max(winCnt, ans);
                 if (ans == k) break; // max vowels you can have
                 if (isVowel(s.charAt(start))) // if contains vowels
