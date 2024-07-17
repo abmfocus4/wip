@@ -1,23 +1,26 @@
 class Solution {
         public int maxVowels(String s, int k) {
-        int ans = 0;
-        // Set<Character> vowels = new HashSet<>(Arrays.asList('a', 'e', 'i', 'o', 'u'));
-        // var vowels = Set.of('a', 'e', 'i', 'o', 'u'); // Java 11 Collection factory method, credit to @Sithis
-        int winCnt = 0;
-        int start = 0;
-        for (int i = 0; i < s.length(); ++i) {
-            if (isVowel(s.charAt(i))) {
-                ++winCnt; 
+            // substring of len k
+            int maxVowels = 0;
+            int start = 0;
+            int vowelsCnt = 0;
+            for (int end = 0; end < s.length(); end++) {
+                if (isVowel(s.charAt(end))) {
+                    vowelsCnt++;
+                }
+
+                if (end - start + 1 == k) {
+                    maxVowels = Math.max(vowelsCnt, maxVowels);
+                    if (maxVowels == k) break;
+                    if (isVowel(s.charAt(start))) {
+                        vowelsCnt--;
+                    }
+                    start++;
+                }
+
             }
-            if (i-start+1 == k) { // len of substr
-                ans = Math.max(winCnt, ans);
-                if (ans == k) break; // max vowels you can have
-                if (isVowel(s.charAt(start))) // if contains vowels
-                    --winCnt;
-                start++; // just pop from start of window
-            }
-        }
-        return ans;
+
+            return maxVowels;
     }
 
     private boolean isVowel(char ch) {
