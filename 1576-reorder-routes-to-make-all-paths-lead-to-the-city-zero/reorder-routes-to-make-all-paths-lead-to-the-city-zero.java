@@ -1,43 +1,47 @@
 class Solution {
     public int minReorder(int n, int[][] connections) {
-        int reorder = 0;
-        // graph - int to list of int
-        Map<Integer, List<Integer>> adj_list = new HashMap();
+        // create graph
+        // assign neighbour if connections present
+        // opp direction neighbour with negative sign
+
+        // bfs
+        // use q and visited to traverse the tree
+
+        Map<Integer, List<Integer>> graph = new HashMap();
 
         for (int i = 0; i < n; i++) {
-            if (adj_list.containsKey(i) == false) {
-                adj_list.put(i, new ArrayList());
-            }
+            graph.put(i, new ArrayList());
         }
-
         for (int[] connection : connections) {
-            adj_list.get(connection[0]).add(connection[1]); // current direction
-            adj_list.get(connection[1]).add(-connection[0]); // opp direction 
+            int start = connection[0]; int end = connection[1];
+            graph.get(start).add(end);
+            graph.get(end).add(-start); // child points to parent
         }
 
         Queue<Integer> q = new LinkedList();
-        boolean[] visited = new boolean[n];
-
         q.add(0);
+
+        boolean[] visited = new boolean[n];
+        Arrays.fill(visited, false);
         visited[0] = true;
 
+
+        int minReorder = 0;
         while (q.isEmpty() == false) {
-            int node = q.poll();
-            // go to all neighbours of node
-            // if not visited, add to q
-            // check if it is pos: add to reorder
-            List<Integer> neighs = adj_list.get((node));
-            if (neighs == null || neighs.size() == 0) continue;
-            for (int neigh : neighs) {
-                if (visited[Math.abs(neigh)] == false) {
-                    visited[Math.abs(neigh)] = true;
-                    q.add(Math.abs(neigh));
-                    if (neigh > 0) {
-                        reorder++;
-                    }
+            int curNode = q.poll();
+            for (int neighbour : graph.get(curNode)) {
+                int neighbourNode = Math.abs(neighbour);
+                if (visited[neighbourNode] == true) {
+                    continue;
+                }
+                visited[neighbourNode] = true;
+                q.add(neighbourNode);
+                if (neighbour > 0) {
+                    minReorder++;
                 } 
             }
         }
-        return reorder;
+
+        return minReorder;
     }
 }
