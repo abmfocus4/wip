@@ -1,39 +1,36 @@
-// https://www.youtube.com/watch?v=hbN20guU5pM
-// Time: O(nlogn), Space: O(n)
-
-// verbal explanation of tail arr and replace and insert decision
-// https://leetcode.com/problems/longest-increasing-subsequence/description/comments/1570655
 class Solution {
     public int lengthOfLIS(int[] nums) {
-        int N = nums.length;
-        List<Integer> sub = new ArrayList<>();
-        sub.add(nums[0]);
-        for (int i = 1; i < N; i++) {
-            if (nums[i] > sub.get(sub.size()-1)) { // new size subsequence
-                sub.add(nums[i]);
-            } else { // replace or insert in between
-                int index = binarySearch(nums[i], sub);
-                sub.set(index, nums[i]);
+        List<Integer> tailList = new ArrayList();
+        tailList.add(nums[0]);
+        int n = nums.length;
+
+        for (int i = 1; i < n; i++) {
+            if (nums[i] > tailList.get(tailList.size() - 1)) {
+                tailList.add(nums[i]);
+            } else { // if prev is greater, than start new list or update previous lists
+                int index = binarySearch(tailList, nums[i]);
+                tailList.set(index, nums[i]);
             }
         }
-        return sub.size();
+
+        return tailList.size();
     }
 
-    // checking tail
-    private int binarySearch(int num, List<Integer> sub) {
+    private int binarySearch(List<Integer> list, int target) {
+        int n = list.size();
         int left = 0;
-        int right = sub.size() - 1;
+        int right = n - 1;
         while (left <= right) {
-            int mid = (left + right)/2;
-            if (sub.get(mid) == num) {
-                return mid; // replace
-            }
-            if (sub.get(mid) < num) {
-                left = mid + 1; // insert
-            } else {
+            int mid = left + (right - left)/2;
+            if (list.get(mid) == target) {
+                return mid;
+            } else if (list.get(mid) > target) {
                 right = mid - 1;
+            } else {
+                left = mid + 1;
             }
         }
+
         return left;
     }
 }
