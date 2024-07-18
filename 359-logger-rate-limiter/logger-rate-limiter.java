@@ -3,36 +3,39 @@ class Logger {
     Map<String, Integer> oldMap;
     Map<String, Integer> latestMap;
     int recentMsgTime;
+
     public Logger() {
         this.oldMap = new HashMap();
         this.latestMap = new HashMap();
         this.recentMsgTime = Integer.MIN_VALUE;
     }
-    
+
     public boolean shouldPrintMessage(int timestamp, String message) {
+        
+        // swap maps if 10 secs elapsed
         if (recentMsgTime <= timestamp - 10) {
-            Map<String, Integer> t = oldMap; 
+            Map<String, Integer> t = oldMap;
             oldMap = latestMap;
             latestMap = t;
             latestMap.clear();
             recentMsgTime = timestamp;
         }
 
+        // if string was present before
         if (oldMap.containsKey(message)) {
             int oldTimestamp = oldMap.get(message);
             if (!(oldTimestamp <= timestamp - 10)) {
                 return false;
-            }  
+            }
         }
 
-                        
+        // if string is present in 10 secs
         if (latestMap.containsKey(message)) {
             return false;
+        } else { // if string is not present in 10 secs
+            latestMap.put(message, timestamp);
+            return true;
         }
-
-
-        latestMap.put(message, timestamp);
-        return true;
     }
 }
 
