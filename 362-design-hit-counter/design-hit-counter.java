@@ -14,6 +14,9 @@ class HitCounter {
     }
 
     public void hit(int timestamp) {
+        while (q.isEmpty() == false && q.peek() <= timestamp - 300) {
+            q.poll();
+        }
         q.add(timestamp);
     }
 
