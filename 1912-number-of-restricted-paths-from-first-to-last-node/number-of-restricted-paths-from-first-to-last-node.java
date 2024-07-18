@@ -1,47 +1,61 @@
 class Solution {
-    private Map<Integer, List<int[]>> map = new HashMap<>();
-    private final static int mod = 1_000_000_007;
-    
+    int mod = 1_000_000_007;
     public int countRestrictedPaths(int n, int[][] edges) {
-        for(int[] e : edges) {
-            map.computeIfAbsent(e[0], x -> new ArrayList<>()).add(new int[] { e[1], e[2] }); //create graph with weights
-            map.computeIfAbsent(e[1], x -> new ArrayList<>()).add(new int[] { e[0], e[2] });
+        // graph generate
+        // dijkstra to get dist[n] distance to n from each node
+        // dfs to find all restricted paths
+
+        Map<Integer, List<Pair<Integer, Integer>>> graph = new HashMap();
+        for (int[] edge : edges) {
+            int u = edge[0], v = edge[1], w = edge[2];
+            graph.computeIfAbsent(u, x -> new ArrayList()).add(new Pair<>(v, w));
+            graph.computeIfAbsent(v, x -> new ArrayList()).add(new Pair<>(u, w));
         }
-        PriorityQueue<int[]> pq = new PriorityQueue<>((a,b) -> a[1] - b[1]); //sort based on weight (Dijkstra's)
-        pq.offer(new int[]{ n, 0 });
+
         int[] dist = new int[n+1];
-        Arrays.fill(dist, Integer.MAX_VALUE); 
+        Arrays.fill(dist, Integer.MAX_VALUE);
         dist[n] = 0;
-        
-        while(!pq.isEmpty()) {
-            int[] curr = pq.poll();
-            int node = curr[0];
-			int weight = curr[1];
-            
-            for(int[] neighbor : map.get(node)) {
-                int nei = neighbor[0];
-                int w = weight + neighbor[1];
-                
-                if(w < dist[nei]) { //only traverse if this will create a shorter path. At the end we have all the shortest paths for each node from the last node, n.
-                    dist[nei] = w;
-                    pq.offer(new int[]{ nei, w });
+
+        // node, w
+        PriorityQueue<Pair<Integer, Integer>> pq = new PriorityQueue<>((a,b) -> Integer.compare(a.getValue(), b.getValue()));
+        pq.add(new Pair(n, 0));
+
+
+        while (pq.isEmpty() == false) {
+            Pair<Integer, Integer> cur = pq.poll();
+            int curNode = cur.getKey();
+            int curW = cur.getValue();
+
+            if (graph.get(curNode) == null) continue;
+            for (Pair<Integer, Integer> nei : graph.get(curNode)) {
+                int neiNode = nei.getKey();
+                int neiW = nei.getValue();
+                if (dist[neiNode] > curW + neiW) {
+                    dist[neiNode] = curW + neiW;
+                    pq.add(new Pair(neiNode, dist[neiNode]));
                 }
             }
         }
-        Integer[] dp = new Integer[n+1];
-        return dfs(1, n, dist, dp);
+
+        Integer[] dp = new Integer[n+1]; // number of restricted paths from node to n
+        return dfs(1, n, dist, dp, graph);
     }
-    public int dfs(int node, int end, int[] dist, Integer[] dp) {
-        if(node == end) return 1;
-        if(dp[node] != null) return dp[node];
-        long res = 0;
-        for(int[] neighbor : map.get(node)) {
-            int nei = neighbor[0];
-            if(dist[node] > dist[nei]) { //use our calculations from Dijkstra's to determine if we can travel to a neighbor.
-                res += dfs(nei, end, dist, dp);
+
+    private int dfs(int startNode, int endNode, int[] dist, Integer[] dp, Map<Integer, List<Pair<Integer, Integer>>> graph) {
+        if (startNode == endNode) {
+            return 1;
+        }
+        if (dp[startNode] != null) {
+            return dp[startNode];
+        }
+        long paths = 0;
+        for (Pair<Integer, Integer> nei : graph.get(startNode)) {
+            if (dist[startNode] > dist[nei.getKey()]) {
+                paths += dfs(nei.getKey(), endNode, dist, dp, graph);
             }
         }
-        res = (res % mod);
-        return dp[node] = (int) res; //memoize for looking up values that have already been computed.
+
+        paths %= mod;
+        return dp[startNode] = (int) paths;
     }
 }
