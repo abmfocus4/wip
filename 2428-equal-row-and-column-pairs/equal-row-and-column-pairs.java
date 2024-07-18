@@ -1,22 +1,31 @@
 class Solution {
     public int equalPairs(int[][] grid) {
-        int n = grid.length, ans = 0;
-        Map<Integer, Integer> mp = new HashMap<>();
-
-        for (int i = 0; i < n; i++) {
-            int hashVal = 0;
+        HashMap<String, Integer> map = new HashMap();
+        StringBuilder sb = new StringBuilder();
+        int m = grid.length;
+        int n = grid[0].length;
+        for (int i = 0; i < m; i++) {
+            sb.setLength(0);
             for (int j = 0; j < n; j++) {
-                hashVal = grid[i][j] + 11 * hashVal;
+                sb.append(grid[i][j]).append("#");
             }
-            mp.put(hashVal, mp.getOrDefault(hashVal, 0) + 1);
+            String rowStr = sb.toString();
+            if (map.containsKey(rowStr) == false) {
+                map.put(rowStr, 0);
+            }
+            map.put(rowStr, map.get(rowStr) + 1);
         }
+        
+        int pairs = 0;
         for (int j = 0; j < n; j++) {
-            int hashVal = 0;
-            for (int i = 0; i < n; i++) {
-                hashVal = grid[i][j] + 11 * hashVal;
+            sb.setLength(0);
+            for (int i = 0; i < m; i++) {
+                sb.append(grid[i][j]).append("#");
             }
-            ans += mp.getOrDefault(hashVal,0);
+            String colStr = sb.toString();
+            pairs += map.getOrDefault(colStr, 0);            
         }
-        return ans;
+
+        return pairs;
     }
 }
