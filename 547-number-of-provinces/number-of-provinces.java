@@ -10,24 +10,19 @@ class Solution {
         for (int i = 0; i < n; i++) {
             if (visited[i] == false) {
                 provinces++;
-                bfs(i, isConnected, visited);
+                dfs(i, isConnected, visited);
             }
         }
 
         return provinces;
     }
 
-    private void bfs(int node, int[][] isConnected, boolean[] visited) {
-        Queue<Integer> q = new LinkedList();
-        q.add(node);
-        while (q.isEmpty() == false) {
-            int curNode = q.poll();
-            // visit all neighbours and add them to q for traversal
-            for (int i = 0; i < isConnected.length; i++) {
-                if (isConnected[curNode][i] == 1 && visited[i] == false) {
-                    q.add(i);
-                    visited[i] = true;
-                }
+    private void dfs(int node, int[][] isConnected, boolean[] visited) {
+        // visit all neighbours and add them to q for traversal
+        for (int i = 0; i < isConnected.length; i++) {
+            if (isConnected[node][i] == 1 && visited[i] == false) {
+                visited[i] = true;
+                dfs(i, isConnected, visited);
             }
         }
     }
