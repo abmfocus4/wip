@@ -38,7 +38,7 @@ class Solution {
         for(int[] neighbor : map.get(node)) {
             int nei = neighbor[0];
             if(dist[node] > dist[nei]) { //use our calculations from Dijkstra's to determine if we can travel to a neighbor.
-                res = (res + (dfs(nei, end, dist, dp)) % mod);
+                res += dfs(nei, end, dist, dp);
             }
         }
         res = (res % mod);
