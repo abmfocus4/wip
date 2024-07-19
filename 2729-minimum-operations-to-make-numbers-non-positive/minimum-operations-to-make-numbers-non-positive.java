@@ -32,7 +32,7 @@ class Solution {
             int numOps = (num + y - 1) / y;
             if (numOps > maxOps) { // if more y ops needed to decrease num that what we can perform
                 // decrease num by x to fulfil the remaining
-                remainingOps -= (num - maxOps * y + x - 1) / x; // num x operations
+                remainingOps -= (num - maxOps * y + x - 1) / x; // num x operations: ax + by = num && b = maxOps - a
                 if (remainingOps < 0)
                     return false;
             }
