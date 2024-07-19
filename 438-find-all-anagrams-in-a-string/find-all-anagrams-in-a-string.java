@@ -10,15 +10,18 @@ class Solution {
         int sLen = s.length();
         int start = 0;
         int[] sMap = new int[26];
+
         for (int end = 0; end < sLen; end++) {
             sMap[s.charAt(end) - 'a']++;
+
             if (end - start + 1 == pLen) {
-                if (Arrays.equals(sMap, pMap)) {
+                if (Arrays.equals(sMap, pMap)) { // compare freq maps
                     res.add(start);
                 }
-                sMap[s.charAt(start) - 'a']--;
+                sMap[s.charAt(start) - 'a']--; // pop from window start
                 start++;
             }
+
         }
 
         return res;
