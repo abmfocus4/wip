@@ -19,48 +19,50 @@ class Solution {
             return false;
         }
 
-        TreeNode pCur = p;
-        TreeNode qCur = q;
+        TreeNode curP = p;
+        TreeNode curQ = q;
 
-        while (pCur != null && qCur != null) {
-            if (pCur.val != qCur.val) {
+        while (curP != null && curQ != null) {
+            if (curP.val != curQ.val) {
                 return false;
             }
-            TreeNode pPrev = pCur.left, qPrev = qCur.left;
 
-            while (pPrev != null && pPrev.right != null && pPrev.right != pCur) {
-                pPrev = pPrev.right;
+            TreeNode prevP = curP.left; 
+            TreeNode prevQ = curQ.left;
+
+            while(prevP != null && prevP.right != null && prevP.right != curP) {
+                prevP = prevP.right;
             }
 
-            while (qPrev != null && qPrev.right != null && qPrev.right != qCur) {
-                qPrev = qPrev.right;
+            while(prevQ != null && prevQ.right != null && prevQ.right != curQ) {
+                prevQ = prevQ.right;
             }
 
-            if (pPrev == null ^ qPrev == null) return false;
+            if (prevP == null ^ prevQ == null) {
+                return false;
+            } 
 
-            if (pPrev == null) {
-                pCur = pCur.right;
-            } else if (pPrev.right == null) {
-                pPrev.right = pCur;
-                pCur = pCur.left;
+            if (prevP == null) {
+                curP = curP.right;
+            } else if (prevP.right == null) {
+                prevP.right = curP;
+                curP = curP.left;
             } else {
-                pPrev.right = null;
-                pCur = pCur.right;
+                prevP.right = null;
+                curP = curP.right;
             }
 
-            if (qPrev == null) {
-                qCur = qCur.right;
-            } else if (qPrev.right == null) {
-                qPrev.right = qCur;
-                qCur = qCur.left;
+            if (prevQ == null) {
+                curQ = curQ.right;
+            } else if (prevQ.right == null) {
+                prevQ.right = curQ;
+                curQ = curQ.left;
             } else {
-                qPrev.right = null;
-                qCur = qCur.right;
+                prevQ.right = null;
+                curQ = curQ.right;
             }
         }
 
-        return pCur == null && qCur == null;
-
-
+        return curP == null && curQ == null;
     }
 }
