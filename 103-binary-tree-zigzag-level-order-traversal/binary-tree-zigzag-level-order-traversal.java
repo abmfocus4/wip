@@ -13,14 +13,14 @@ class Solution {
             int levelSize = dq.size();
             List<Integer> levelList = new ArrayList<>();
             while (levelSize-- > 0) {
-                TreeNode cur = flag ? dq.removeFirst() : dq.removeLast();
+                TreeNode cur = flag ? dq.pollFirst() : dq.pollLast();
                 levelList.add(cur.val);
                 if (flag) {
-                    if (cur.left != null) dq.offer(cur.left);
-                    if (cur.right != null) dq.offer(cur.right);
+                    if (cur.left != null) dq.addLast(cur.left);
+                    if (cur.right != null) dq.addLast(cur.right);
                 } else {
-                    if (cur.right != null) dq.offerFirst(cur.right);
-                    if (cur.left != null) dq.offerFirst(cur.left);
+                    if (cur.right != null) dq.addFirst(cur.right);
+                    if (cur.left != null) dq.addFirst(cur.left);
                 }
             }
             result.add(levelList);
