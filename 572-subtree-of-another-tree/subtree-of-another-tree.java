@@ -13,38 +13,47 @@
  *     }
  * }
  */
-
- // https://leetcode.com/problems/subtree-of-another-tree/solutions/102724/java-solution-tree-traversal/comments/106046
-
- // Tree traversal
-
- // Time: O(m*m)
-
- // Space: O(height of first tree) == O(m) worst case and O(logm) balanced tree case
-
- // Recursive
 class Solution {
     public boolean isSubtree(TreeNode root, TreeNode subRoot) {
-        // if node is null return false
-        // check if root matches the subRoot, if yes, return true
-        // else check if root's left matches subRoot or root's right matches subRoot
+        return kmp(serialize(root), serialize(subRoot));
+    }
 
-        // if root is null and subroot is null return true
-        // if root is null or subroot is null return false
-        // if value of root is not same, then return false
-        // else compare left nodes and right nodes of each tree respectively
-
-        if (root == null) return false; // to make sure that when we access left and right of root we don't get error
-        return isSameTree(root, subRoot) || isSubtree(root.left, subRoot) || isSubtree(root.right, subRoot);
+    private String serialize(TreeNode root) {
+        StringBuilder sb = new StringBuilder();
+        preorder(root, sb);
+        return sb.toString();
+    }
+    String nullStr = "#";
+    String delimit = ",";
+    private void preorder(TreeNode root, StringBuilder sb) {
+        if (root == null) {
+            sb.append(delimit).append(nullStr);
+        } else {
+            sb.append(delimit).append(root.val);
+            preorder(root.left, sb);
+            preorder(root.right, sb);
+        }
         
     }
 
-    private boolean isSameTree(TreeNode node, TreeNode subRoot) {
-        if (node == null && subRoot == null) return true;
-        if (node == null || subRoot == null) return false;
-        if (node.val != subRoot.val) return false;
-        else {
-            return isSameTree(node.left, subRoot.left) && isSameTree(node.right, subRoot.right);
+    private boolean kmp(String word, String pattern) {
+        int[] lps = getLPS(pattern);
+        for (int i = 0, j = 0; i < word.length(); i++) {
+            while (word.charAt(i) != pattern.charAt(j) && j > 0) j = lps[j-1];
+            if (word.charAt(i) == pattern.charAt(j)) ++j;
+            if (j == pattern.length())  return true;
         }
+
+        return false;
+    }
+
+    private int[] getLPS(String pattern) {
+        int n = pattern.length();
+        int[] lps = new int[n];
+        for (int i = 1, j = 0; i < n; i++) {
+            while(pattern.charAt(i) != pattern.charAt(j) && j > 0) j = lps[j-1];
+            if (pattern.charAt(i) == pattern.charAt(j)) lps[i] = ++j;
+        }
+        return lps;
     }
 }
