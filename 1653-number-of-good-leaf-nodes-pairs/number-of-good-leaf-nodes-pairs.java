@@ -25,35 +25,37 @@ class Solution {
         // run bfs for distance
         // count number of leaf nodes encountered
         for (TreeNode leaf : leafNodes) {
-            Queue<TreeNode> q = new LinkedList();
-            HashSet<TreeNode> seen = new HashSet();
-            q.add(leaf);
-            seen.add(leaf);
+            ans += bfs(leaf, leafNodes, graph, distance);
+        }
 
-            for (int i = 0; i <= distance; i++) {
-                int size = q.size();
-                while (size-- > 0) { // at each level
-                    TreeNode curNode = q.poll();
-                    // process level
-                    if (curNode != leaf && leafNodes.contains(curNode)) {
-                        ans++;
-                    }
+        return ans/2;
+    }
 
-                    // add neighbours
-                    if (graph.get(curNode) == null) continue;
-                    for (TreeNode nei : graph.get(curNode)) {
-                        if (seen.contains(nei) == false) {
-                            q.add(nei);
-                            seen.add(nei);
-                        }
+    private int bfs(TreeNode node, Set<TreeNode> leafNodes, Map<TreeNode, List<TreeNode>> graph, int dist) {
+        int count = 0;
+        Queue<TreeNode> q = new LinkedList();
+        HashSet<TreeNode> visited = new HashSet();
+        q.add(node);
+        visited.add(node);
 
+        for (int i = 0; i <= dist; i++) {
+            int levelSize = q.size();
+            while (levelSize-- > 0) {
+                TreeNode cur = q.poll();
+                if (leafNodes.contains(cur) && node != cur) {
+                    count++;
+                }
+
+                if (graph.get(cur) == null || graph.get(cur).isEmpty()) continue;
+                for (TreeNode neigh : graph.get(cur)) {
+                    if (!visited.contains(neigh)) {
+                        visited.add(neigh);
+                        q.add(neigh);
                     }
                 }
             }
         }
-
-
-        return ans/2;
+        return count;        
     }
 
     private void traverseTree(TreeNode curNode, TreeNode prevNode, Map<TreeNode, List<TreeNode>> graph, Set<TreeNode> leafNodes) {
