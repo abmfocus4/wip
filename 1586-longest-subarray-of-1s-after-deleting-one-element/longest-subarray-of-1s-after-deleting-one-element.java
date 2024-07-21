@@ -1,17 +1,22 @@
 class Solution {
     public int longestSubarray(int[] nums) {
-        int[] count_arr = new int[2];
-        int max_len = 0;
-        int start = 0;
-        for (int end = 0; end < nums.length; end++) {
-            count_arr[nums[end]]++;
+        int maxLen = Integer.MIN_VALUE;
 
-            if (end - start + 1 - count_arr[1] > 1) {
-                count_arr[nums[start]]--;
+        int start = 0;
+        int end = 0;
+
+        int[] count = new int[2];
+
+        while (end < nums.length) {
+            count[nums[end]]++;
+            while (end - start + 1 - count[1] > 1) {
+                count[nums[start]]--;
                 start++;
             }
-            max_len = Math.max(max_len, end - start + 1);
+            maxLen = Math.max(maxLen, end - start + 1);
+            end++;
         }
-        return max_len-1; // delete one 0
+
+        return maxLen == Integer.MIN_VALUE ? 0 : maxLen - 1;
     }
 }
