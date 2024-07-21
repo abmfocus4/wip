@@ -1,29 +1,33 @@
 class Solution {
-        public int maxVowels(String s, int k) {
-            // substring of len k
-            int maxVowels = 0;
-            int start = 0;
-            int vowelsCnt = 0;
-            for (int end = 0; end < s.length(); end++) {
-                if (isVowel(s.charAt(end))) {
-                    vowelsCnt++;
-                }
+    private boolean isVowel(char c) {
+        return c == 'a' || c == 'A' || c == 'e' || c == 'E' || c == 'i' || c == 'I' || c == 'o' || c == 'O' || c == 'u' || c == 'U';
+    }
+    public int maxVowels(String s, int k) {
+        int maxVowels = Integer.MIN_VALUE;
 
-                if (end - start + 1 == k) {
-                    maxVowels = Math.max(vowelsCnt, maxVowels);
-                    if (maxVowels == k) break;
-                    if (isVowel(s.charAt(start))) {
-                        vowelsCnt--;
-                    }
-                    start++;
-                }
+        int start = 0;
+        int end = 0;
 
+        int count = 0;
+
+        while (end < s.length()) {
+            if (isVowel(s.charAt(end))) {
+                count++;
             }
 
-            return maxVowels;
-    }
+            if (end - start + 1 == k) {
+                maxVowels = Math.max(maxVowels, count);
+                if (maxVowels == k) {
+                    return k;
+                }
+                if (isVowel(s.charAt(start))) {
+                    count--;
+                }
+                start++;
+            }
+            end++;
+        }
 
-    private boolean isVowel(char ch) {
-        return ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u';
+        return maxVowels == Integer.MIN_VALUE ? 0 : maxVowels;
     }
 }
