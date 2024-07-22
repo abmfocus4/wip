@@ -14,7 +14,7 @@ class Solution {
         }
 
         // row : first row and last row traversal dfs
-        for (int j = 1; j < n - 1; j++) {
+        for (int j = 0; j < n; j++) {
             if (board[0][j] == 'O') dfs(board, 0, j);
             if (board[m - 1][j] == 'O') dfs(board, m - 1, j);
         }
