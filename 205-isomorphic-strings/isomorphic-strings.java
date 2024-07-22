@@ -1,12 +1,23 @@
-// https://leetcode.com/problems/isomorphic-strings/solutions/57810/short-java-solution-without-maps
-public class Solution {
-    public boolean isIsomorphic(String s1, String s2) {
-        int[] m = new int[512];
-        for (int i = 0; i < s1.length(); i++) {
-            if (m[s1.charAt(i)] != m[s2.charAt(i)+256])
-                return false;
-            m[s1.charAt(i)] = m[s2.charAt(i)+256] = i+1;
+class Solution {
+    // can also use transformString as key when grouping isomorphic strings
+    private String transformString(String s) {
+        Map<Character, Integer> indexMapping = new HashMap<>();
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < s.length(); ++i) {
+            char c1 = s.charAt(i);
+
+            if (!indexMapping.containsKey(c1)) {
+                indexMapping.put(c1, i);
+            }
+            builder.append("#");
+            builder.append(Integer.toString(indexMapping.get(c1)));
+
         }
-        return true;
+        return builder.toString();
+    }
+
+    public boolean isIsomorphic(String s, String t) {
+        return transformString(s).equals(transformString(t));
     }
 }
