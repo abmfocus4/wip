@@ -1,65 +1,63 @@
-class TrieNode {
-	String name;
-	int value;
-	Map<String, TrieNode> children;
-
-	TrieNode(String name, int value) {
-		this.name = name;
-		this.value = value;
-		this.children = new HashMap<>();
-	}
-}
-
 class FileSystem {
-	private TrieNode root;
+    class Trie {
+        Map<String, Trie> children;
+        String name;
+        int value;
 
+        public Trie(String name) {
+            this.children = new HashMap<>();
+            this.name = name;
+            this.value = -1;
+        }
+    }
+
+    Trie root;
     public FileSystem() {
-        this.root = new TrieNode("/", -1);
+        this.root = new Trie("/");
     }
     
     public boolean createPath(String path, int value) {
+        Trie cur = root;
         String[] dirs = path.split("/");
 
-        TrieNode currNode = this.root;
-        String name = dirs[dirs.length - 1];
-
-        // stop at the second last dir
         for (int i = 0; i < dirs.length - 1; i++) {
-            if (dirs[i].equals("")) {
-                continue;
+            String dir = dirs[i];
+            if (dir.isEmpty()) continue;
+            if (cur.children.containsKey(dir) == false) {
+                return false;
             }
-        	if (currNode.children.containsKey(dirs[i])) {
-        		currNode = currNode.children.get(dirs[i]);
-        	} else {
-        		return false;
-        	}
+            cur = cur.children.get(dir);
         }
-        
-        // trying to create new directory
-        // check if the path exists
-        if (currNode.children.containsKey(name)) {
+
+        String newDir = dirs[dirs.length - 1];
+        if (cur.children.containsKey(newDir)) {
             return false;
         }
 
-        currNode.children.put(name, new TrieNode(name, value));
+        cur.children.put(newDir, new Trie(newDir));
+        cur = cur.children.get(newDir);
+        cur.value = value;
         return true;
     }
     
     public int get(String path) {
+        Trie cur = root;
         String[] dirs = path.split("/");
-        TrieNode currNode = this.root;
-
-        for (String dir: dirs) {
-            if (dir.equals("")) {
-                continue;
+        for (String dir : dirs) {
+            if (dir.isEmpty()) continue;
+            if (cur.children.containsKey(dir) == false) {
+                return -1;
             }
-        	if (currNode.children.containsKey(dir)) {
-        		currNode = currNode.children.get(dir);
-        	} else {
-        		return -1;
-        	}
+            cur = cur.children.get(dir);
         }
 
-        return currNode.value;
+        return cur.value;
     }
 }
+
+/**
+ * Your FileSystem object will be instantiated and called as such:
+ * FileSystem obj = new FileSystem();
+ * boolean param_1 = obj.createPath(path,value);
+ * int param_2 = obj.get(path);
+ */
