@@ -1,44 +1,49 @@
 class TimeMap {
-// key: string
-// value: List<string, int>
-
-// ds:
-// 1. stores key value pair
-// 2. return "" if key does not exist. return value if key exists and timestamp_prev <= timestamp
-
-// quick lookups : hash map
-// key is string and value: some sort of ordering needs to be maintained
-
-    Map<String, TreeMap<Integer, String>> keyTimeValMap;
+    HashMap<String, ArrayList<Pair<Integer, String>>> keyTimeMap;
+    
     public TimeMap() {
-        this.keyTimeValMap = new HashMap();
+        keyTimeMap = new HashMap();
     }
     
     public void set(String key, String value, int timestamp) {
-        if (!keyTimeValMap.containsKey(key)) {
-            keyTimeValMap.put(key, new TreeMap<>());
+        if (!keyTimeMap.containsKey(key)) {
+            keyTimeMap.put(key, new ArrayList());
         }
-
-        keyTimeValMap.get(key).put(timestamp, value);
+        
+        // Store '(timestamp, value)' pair in 'key' bucket.
+        keyTimeMap.get(key).add(new Pair(timestamp, value));
     }
     
     public String get(String key, int timestamp) {
-        if (keyTimeValMap.containsKey(key) == false) {
+        // If the 'key' does not exist in map we will return empty string.
+        if (!keyTimeMap.containsKey(key)) {
             return "";
         }
         
-        Integer floorKey = keyTimeValMap.get(key).floorKey(timestamp);
-        if (floorKey != null) {
-            return keyTimeValMap.get(key).get(floorKey);
+        if (timestamp < keyTimeMap.get(key).get(0).getKey()) {
+            return "";
+        }
+        
+        // Using binary search on the list of pairs.
+        int ans = -1;
+        int left = 0;
+        int right = keyTimeMap.get(key).size() - 1;
+        
+        while (left <= right) {
+            int mid = (left + right) / 2;
+            if (keyTimeMap.get(key).get(mid).getKey() <= timestamp) {
+                ans = mid;
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
         }
 
-        return "";
+        // If iterator points to first element it means, no time <= timestamp exists.
+        if (ans == -1) {
+            return "";
+        }
+                
+        return keyTimeMap.get(key).get(ans).getValue();
     }
 }
-
-/**
- * Your TimeMap object will be instantiated and called as such:
- * TimeMap obj = new TimeMap();
- * obj.set(key,value,timestamp);
- * String param_2 = obj.get(key,timestamp);
- */
