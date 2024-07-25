@@ -1,36 +1,28 @@
 class HitCounter {
-
-    // Idea 1: use treemap : navigable map interface
-    // https://leetcode.com/problems/design-hit-counter/editorial/comments/998191
-    // Idea failed: don't need logn search since the qs says that timestamps are
-    // recieved in monotonically increasing order
-
-
-    // read editorial for explanation and time complexity
-    Queue<Integer> q;
+    private int total;
+    private Deque<Pair<Integer, Integer>> hits; 
 
     public HitCounter() {
-        this.q = new LinkedList();
+        this.total = 0;
+        this.hits = new LinkedList<Pair<Integer, Integer>>();
     }
-
+    
     public void hit(int timestamp) {
-        while (q.isEmpty() == false && q.peek() <= timestamp - 300) {
-            q.poll();
+        if (this.hits.isEmpty() || this.hits.peekLast().getKey() != timestamp) {
+            this.hits.add(new Pair<Integer, Integer>(timestamp, 1));
+        } else {
+            int prevCount = this.hits.peekLast().getValue();
+            this.hits.pollLast();
+            this.hits.addLast(new Pair<Integer, Integer>(timestamp, prevCount + 1));
         }
-        q.add(timestamp);
+        this.total++;
     }
-
+    
     public int getHits(int timestamp) {
-        while (q.isEmpty() == false && q.peek() <= timestamp - 300) {
-            q.poll();
+        while (!this.hits.isEmpty() && hits.peekFirst().getKey() <= timestamp - 300) {
+            this.total -= this.hits.peekFirst().getValue();
+            this.hits.pollFirst();
         }
-        return q.size();
+        return this.total;
     }
 }
-
-/**
- * Your HitCounter object will be instantiated and called as such:
- * HitCounter obj = new HitCounter();
- * obj.hit(timestamp);
- * int param_2 = obj.getHits(timestamp);
- */
