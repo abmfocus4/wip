@@ -1,29 +1,35 @@
 class Solution {
     public List<Integer> findAnagrams(String s, String p) {
-        List<Integer> res = new ArrayList();
-        int pLen = p.length();
-        int[] pMap = new int[26];
+        // create a freq map for p
+        // create a freq map for s substring
+        // iterate through s in a sliding window fashion
+        // update the s map
+        // when end - start + 1 == p.length:
+        // compare both maps
+        // if equals: add start index to list
+        // else: update freq map of s and start++
+
+
+        int[] pFreqMap = new int[26];
         for (char c : p.toCharArray()) {
-            pMap[c - 'a']++;
+            pFreqMap[c - 'a']++;
         }
+        int pLen = p.length();
+        List<Integer> startIdxList = new ArrayList();
 
-        int sLen = s.length();
+        int[] sFreqMap = new int[26];
         int start = 0;
-        int[] sMap = new int[26];
-
-        for (int end = 0; end < sLen; end++) {
-            sMap[s.charAt(end) - 'a']++;
-
+        for (int end = 0; end < s.length(); end++) {
+            sFreqMap[s.charAt(end) - 'a']++;
             if (end - start + 1 == pLen) {
-                if (Arrays.equals(sMap, pMap)) { // compare freq maps
-                    res.add(start);
+                if (Arrays.equals(sFreqMap, pFreqMap)) {
+                    startIdxList.add(start);
                 }
-                sMap[s.charAt(start) - 'a']--; // pop from window start
+                sFreqMap[s.charAt(start) - 'a']--;
                 start++;
             }
-
         }
 
-        return res;
+        return startIdxList;
     }
 }
