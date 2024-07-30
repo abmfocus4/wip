@@ -12,10 +12,8 @@ class Solution {
         this.memo = new int[n];
         Arrays.fill(memo, -1);
 
-        this.startTimeArr = new int[n];
-        for (int i = 0; i < n; i++) {
-            startTimeArr[i] = jobs[i][0];
-        }
+        Arrays.sort(startTime);
+        this.startTimeArr = startTime;
 
         return maxProfit(jobs, 0);
     }
@@ -30,15 +28,15 @@ class Solution {
             return memo[curIdx];
         }
 
-        int take = jobs[curIdx][2] + maxProfit(jobs, binarySearch(jobs[curIdx][1], startTimeArr));
+        int take = jobs[curIdx][2] + maxProfit(jobs, binarySearch(jobs[curIdx][1], startTimeArr, curIdx + 1));
         int notTake = 0 + maxProfit(jobs, curIdx + 1);
         int maxProfit = Math.max(take, notTake);
 
         return memo[curIdx] = maxProfit;
     }
 
-    private int binarySearch(int target, int[] arr) { // get greater than or equal end time
-        int left = 0;
+    private int binarySearch(int target, int[] arr, int curIdx) { // get greater than or equal end time
+        int left = curIdx;
         int right = arr.length - 1;
 
         int ans = arr.length; // max value as default
