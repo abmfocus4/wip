@@ -1,45 +1,51 @@
 class Solution {
     public int minimumTime(int n, int[][] relations, int[] time) {
-        Map<Integer, List<Integer>> graph = new HashMap<>();
+        // create graph: Map<Integer, List<Integer>
+        // indegree populate
+        // add to q
+        // iterate over q
+        // find max time it takes to complete any one course
+
+        Map<Integer, List<Integer>> graph = new HashMap();
         for (int i = 0; i < n; i++) {
-            graph.put(i, new ArrayList<>());
+            graph.put(i, new ArrayList());
         }
-        
+
         int[] indegree = new int[n];
-        for (int[] edge: relations) {
-            int x = edge[0] - 1;
-            int y = edge[1] - 1;
-            graph.get(x).add(y);
-            indegree[y]++;
+
+        for (int[] relation : relations) {
+            int start = relation[0] - 1;
+            int end = relation[1] - 1;
+            graph.get(start).add(end);
+            indegree[end]++;
         }
-        
-        Queue<Integer> queue = new LinkedList<>();
+
+        Queue<Integer> q = new LinkedList();
         int[] minTime = new int[n];
-        
-        for (int node = 0; node < n; node++) {
-            if (indegree[node] == 0) {
-                queue.add(node);
-                minTime[node] = time[node];
+
+        for (int i = 0; i < n; i++) {
+            if (indegree[i] == 0) {
+                q.add(i);
+                minTime[i] = time[i];
             }
         }
-        
-        while (!queue.isEmpty()) {
-            int node = queue.remove();
-            for (int neighbor: graph.get(node)) {
-                minTime[neighbor] = Math.max(minTime[neighbor], minTime[node] + time[neighbor]);
-                indegree[neighbor]--;
-                if (indegree[neighbor] == 0) {
-                    queue.add(neighbor);
+
+        while (q.isEmpty() == false) {
+            int curNode = q.poll();
+            for (int nei : graph.get(curNode)) {
+                minTime[nei] = Math.max(minTime[nei], minTime[curNode] + time[nei]);
+                indegree[nei]--;
+                if (indegree[nei] == 0) {
+                    q.add(nei);
                 }
             }
         }
-        
-        int ans = 0;
-        for (int node = 0; node < n; node++) {
-            ans = Math.max(ans, minTime[node]);
+
+        int finalTime = Integer.MIN_VALUE;
+        for (int i = 0; i < n; i++) {
+            finalTime = Math.max(finalTime, minTime[i]);
         }
 
-        return ans;
+        return finalTime;
     }
-    
 }
