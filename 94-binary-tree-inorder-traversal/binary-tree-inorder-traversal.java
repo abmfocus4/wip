@@ -13,35 +13,32 @@
  *     }
  * }
  */
-//  https://www.youtube.com/watch?v=80Zug6D1_r4&list=TLPQMTYwNjIwMjTwkIyyJmy5Kg&index=1&ab_channel=takeUforward
-// Morris Traversal
-// Threaded Binary Tree Concept
-// O(n) amortized time, O(1) space
 class Solution {
     public List<Integer> inorderTraversal(TreeNode root) {
-        List<Integer> res = new ArrayList();
+        // morris
+        List<Integer> list = new ArrayList();
         TreeNode cur = root;
         while (cur != null) {
-            if (cur.left == null) { // case 1:
-                res.add(cur.val);
+            if (cur.left == null) {
+                list.add(cur.val);
                 cur = cur.right;
             } else {
-                TreeNode prev = cur.left; // left subtree
+                TreeNode prev = cur.left;
                 while (prev.right != null && prev.right != cur) {
-                    prev = prev.right; // go to the rightmost child of left subtree
-                }
-                if (prev.right == null) { // case 2: first visit
-                    prev.right = cur; // make the threaded connection
-                    cur = cur.left; // traverse left
-                } else { // case 3: threaded connection already exists
-                    prev.right = null; // remove connection
-                    res.add(cur.val);
-                    cur = cur.right; // move to right (LN)R
+                    prev = prev.right;
                 }
 
+                if (prev.right == null) {
+                    prev.right = cur;
+                    cur = cur.left;
+                } else {
+                    prev.right = null;
+                    list.add(cur.val);
+                    cur = cur.right;
+                }
             }
         }
 
-        return res;
+        return list;
     }
 }
