@@ -1,34 +1,16 @@
 class Solution {
+    // use min heap
+    // sort by start time
+    // return size of pq
     public int minMeetingRooms(int[][] intervals) {
-        
-    // Check for the base case. If there are no intervals, return 0
-    if (intervals.length == 0) {
-      return 0;
+        Arrays.sort(intervals, (a,b) -> a[0] - b[0]);
+        PriorityQueue<Integer> pq = new PriorityQueue();
+        for (int[] interval : intervals) {
+            if (pq.isEmpty() == false && pq.peek() <= interval[0]) {
+                pq.poll();
+            }
+            pq.add(interval[1]);
+        }
+        return pq.size();
     }
-
-    // Min heap
-    PriorityQueue<Integer> allocator = new PriorityQueue();
-
-    // Sort the intervals by start time
-    Arrays.sort(intervals, (a,b) -> a[0] - b[0]);
-
-    // Add the first meeting
-    allocator.add(intervals[0][1]);
-
-    // Iterate over remaining intervals
-    for (int i = 1; i < intervals.length; i++) {
-
-      // If the room due to free up the earliest is free, assign that room to this meeting.
-      if (allocator.peek() <= intervals[i][0]) {
-        allocator.poll();
-      }
-
-      // If a new room is to be assigned, then also we add to the heap,
-      // If an old room is allocated, then also we have to add to the heap with updated end time.
-      allocator.add(intervals[i][1]);
-    }
-
-    // The size of the heap tells us the minimum rooms required for all the meetings.
-    return allocator.size();
-  }
 }
