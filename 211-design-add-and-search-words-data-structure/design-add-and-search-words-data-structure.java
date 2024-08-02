@@ -1,47 +1,45 @@
-// Ref: https://leetcode.com/problems/design-add-and-search-words-data-structure/solutions/1725207/java-simulation-complete-explanation-brute-force-optimised-solution/?envType=list&envId=pxw54vnt
-// Idea: Modified Trie data structure (handling of '.')
-
-class Node {
-    HashMap<Character, Node> children;
+class Trie {
+    Map<Character, Trie> children;
     boolean isWord;
-    Node() {
+    Trie() {
         this.children = new HashMap();
         this.isWord = false;
     }
 }
-
 class WordDictionary {
-    private Node root;
+    Trie root;
     public WordDictionary() {
-        this.root = new Node();
+        this.root = new Trie();
     }
     
     public void addWord(String word) {
-        Node curr = this.root;
-        for (char ch : word.toCharArray()) {
-            if (!curr.children.containsKey(ch))
-                curr.children.put(ch, new Node());
-            curr = curr.children.get(ch);
+        Trie cur = root;
+        for (char c : word.toCharArray()) {
+            if (cur.children.containsKey(c) == false) {
+                cur.children.put(c, new Trie());
+            }
+            cur = cur.children.get(c);
         }
-        curr.isWord = true;
+        cur.isWord = true;
     }
     
     public boolean search(String word) {
-        return search(word, this.root, 0);
+        return search(word, 0, root);
     }
 
-    public boolean search(String word, Node root, int idx) {
-        Node cur = root;
-        for (int i = idx; i < word.length(); i++) {
+    private boolean search(String word, int curIdx, Trie node) {
+        Trie cur = node;
+        for (int i = curIdx; i < word.length(); i++) {
             char c = word.charAt(i);
             if (c == '.') {
-                for (char ch : cur.children.keySet()) {
-                    if (search(word, cur.children.get(ch), i + 1)) {
+                // match with all letters and see which one return true
+                for (char child : cur.children.keySet()) {
+                    if (search(word, i+1, cur.children.get(child)) == true) {
                         return true;
                     }
                 }
                 return false;
-            } else {
+            } else  {
                 if (cur.children.containsKey(c) == false) {
                     return false;
                 }
@@ -50,7 +48,6 @@ class WordDictionary {
         }
         return cur.isWord;
     }
-
 }
 
 /**
