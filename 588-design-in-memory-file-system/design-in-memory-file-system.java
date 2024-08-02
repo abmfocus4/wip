@@ -1,80 +1,78 @@
-public class FileSystem {
-    private class TrieNode {
-        private HashMap<String, TrieNode> children;
-        private StringBuilder content;
-        private String name;
+class Trie {
+    Map<String, Trie> children;
+    String name;
+    StringBuilder content;
 
-        public TrieNode(String name) {
-            children = new HashMap<>();
-            content = new StringBuilder();
-            this.name = name;
-        }
-
-        public String getContent() {
-            return content.toString();
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void addContent(String content) {
-            this.content.append(content);
-        }
-
-        public boolean isFile() {
-            return this.content.length() > 0;
-        }
+    Trie(String name) {
+        this.children = new HashMap();
+        this.name = name;
+        this.content = new StringBuilder();
+    }
+    boolean isFile() {
+        return content.isEmpty() == false;
     }
 
-    private TrieNode root;
-
+    void addContent(String extraContent) {
+        content.append(extraContent);
+    }
+}
+class FileSystem {
+    Trie root;
     public FileSystem() {
-        root = new TrieNode("");
+        this.root = new Trie("/");
     }
 
+    private Trie findNode(String path) {
+        Trie cur = root;
+        String[] dirs = path.split("/");
+        for (String dir : dirs) {
+            if (dir.isEmpty()) {
+                continue;
+            }
+            if (cur.children.containsKey(dir) == false) {
+                cur.children.put(dir, new Trie(dir));
+            }
+            cur = cur.children.get(dir);
+            if (cur.isFile()) {
+                break;
+            }
+        }
+        return cur;
+    }
+    
     public List<String> ls(String path) {
-        TrieNode cur = findNode(path);
-        List<String> list = new ArrayList<>();
+        Trie cur = findNode(path);
+        List<String> list = new ArrayList();
         if (cur.isFile()) {
-            list.add(cur.getName());
+            list.add(cur.name);
+            return list;
         } else {
             list.addAll(cur.children.keySet());
+            Collections.sort(list);
+            return list;
         }
-
-        Collections.sort(list); // return in lexi
-        return list;
     }
-
+    
     public void mkdir(String path) {
         findNode(path);
     }
-
+    
     public void addContentToFile(String filePath, String content) {
-        findNode(filePath).addContent(content);
+        Trie node = findNode(filePath);
+        node.addContent(content);
     }
-
+    
     public String readContentFromFile(String filePath) {
-        return findNode(filePath).getContent();
-    }
-
-    private TrieNode findNode(String path) {
-        TrieNode cur = root;
-        
-        String[] files = path.split("/");
-        for (String file : files) {
-            if (file.length() == 0)
-                continue;
-
-            if (cur.children.get(file) == null) {
-                cur.children.put(file, new TrieNode(file));
-            }
-            cur = cur.children.get(file);
-
-            if (cur.isFile())
-                break;
-        }
-
-        return cur;
+        Trie node = findNode(filePath);
+        return node.content.toString();
     }
 }
+
+/**
+ * Your FileSystem object will be instantiated and called as such:
+ * FileSystem obj = new FileSystem();
+ * List<String> param_1 = obj.ls(path);
+ * obj.mkdir(path);
+ * obj.addContentToFile(filePath,content);
+ * String param_4 = obj.readContentFromFile(filePath);
+ */
