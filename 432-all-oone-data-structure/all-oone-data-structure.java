@@ -1,109 +1,112 @@
-public class AllOne {
-    // maintain a doubly linked list of Nodes
+class AllOne {
     private Node head;
     private Node tail;
-    // for accessing a specific Node among the Node list in O(1) time
-    private Map<Integer, Node> countNodeMap;
-    // keep track of count of keys
-    private Map<String, Integer> keyCountMap;
+    Map<String, Node> map;
 
-    // each Node contains all the keys with the same count
-    private class Node {
-        int count;
-        Set<String> keySet;
-        Node next;
-        Node prev;
-        public Node(int cnt) {
-            count = cnt;
-            keySet = new HashSet<>();
-        }
-    }
-
-    /** Initialize your data structure here. */
     public AllOne() {
-        head = new Node(Integer.MIN_VALUE);
-        tail = new Node(Integer.MAX_VALUE);
+        this.head = new Node("", -1);
+        this.tail = new Node("", -1);
         head.next = tail;
-        tail.prev = head;
-        countNodeMap = new HashMap<>();
-        keyCountMap = new HashMap<>();
+        tail.pre  = head;
+        this.map = new HashMap<>();
     }
     
-    /** Inserts a new key <Key> with value 1. Or increments an existing key by 1. */
     public void inc(String key) {
-        if (keyCountMap.containsKey(key)) {
-            changeKey(key, 1);
-        } else {
-            keyCountMap.put(key, 1);
-            if (head.next.count != 1)  {
-                addNodeAfter(new Node(1), head);
-                countNodeMap.put(1, head.next);
-            }
-            head.next.keySet.add(key);
+        if(map.containsKey(key)){
+            Node node = map.get(key);
+            node.freq++;
+            moveUp(node);
+        }else{
+            Node node = new Node(key, 1);
+            map.put(key, node);
+            addLast(node);
         }
     }
     
-    /** Decrements an existing key by 1. If Key's value is 1, remove it from the data structure. */
     public void dec(String key) {
-        if (keyCountMap.containsKey(key)) {
-            int count = keyCountMap.get(key);
-            if (count == 1) {
-                keyCountMap.remove(key);
-                removeKeyFromNode(countNodeMap.get(count), key);
-            } else {
-                changeKey(key, -1);
+        if(map.containsKey(key)){
+            Node node = map.get(key);
+            if(node.freq==1){
+                map.remove(key);
+                remove(node);    
+            }else{
+                node.freq = node.freq-1;
+                moveDown(node);
             }
         }
     }
     
-    /** Returns one of the keys with maximal value. */
     public String getMaxKey() {
-        return tail.prev == head ? "" : (String) tail.prev.keySet.iterator().next();
+        return head.next.key;
     }
     
-    /** Returns one of the keys with Minimal value. */
     public String getMinKey() {
-        return head.next == tail ? "" : (String) head.next.keySet.iterator().next();        
+        return tail.pre.key;
     }
-    
-    // helper function to make change on given key according to offset
-    private void changeKey(String key, int offset) { // offset = 1 for inc and -1 for dec
-        int count = keyCountMap.get(key);
-        keyCountMap.put(key, count + offset);
-        Node curNode = countNodeMap.get(count);
-        Node newNode;
-        if (countNodeMap.containsKey(count + offset)) {
-            // target Node already exists
-            newNode = countNodeMap.get(count + offset);
-        } else {
-            // add new Node
-            newNode = new Node(count + offset);
-            countNodeMap.put(count + offset, newNode);
-            addNodeAfter(newNode, offset == 1 ? curNode : curNode.prev);
-        }
-        newNode.keySet.add(key);
-        removeKeyFromNode(curNode, key);
+
+    private void remove(Node node){
+        Node pre = node.pre;
+        Node next = node.next;
+        next.pre = pre;
+        pre.next = next;
+        node.next = null;
+        node.pre = null;
     }
-    
-    private void removeKeyFromNode(Node node, String key) {
-        node.keySet.remove(key); // update node
-        if (node.keySet.size() == 0) { // if node does not need to exist
-            removeNodeFromList(node);
-            countNodeMap.remove(node.count);
+
+    private void moveUp(Node node){
+        while(node.pre.pre !=null && node.freq > node.pre.freq){
+            Node pre = node.pre;
+            Node next = node.next;
+            pre.next = next;
+            next.pre = pre;
+
+            node.next = pre;
+            pre.pre.next = node;
+            node.pre = pre.pre;
+            pre.pre = node;
         }
     }
-    
-    private void removeNodeFromList(Node node) {
-        node.prev.next = node.next;
-        node.next.prev = node.prev;
+
+    private void moveDown(Node node){
+        while(node.next.next !=null && node.freq< node.next.freq){
+            Node pre = node.pre;
+            Node next = node.next;
+            pre.next = next;
+            next.pre = pre;
+
+            node.pre = next;
+            next.next.pre = node;
+            node.next = next.next;
+            next.next = node;
+        }
     }
-    
-    // add newNode after prevNode
-    private void addNodeAfter(Node newNode, Node prevNode) {
-        Node prevNext = prevNode.next;
-        prevNode.next = newNode;
-        newNode.prev = prevNode;
-        newNode.next = prevNext;
-        prevNext.prev = newNode;
+
+    private void addLast(Node node){
+        node.pre = tail.pre;
+        node.next = tail;
+        tail.pre.next = node;
+        tail.pre = node;
     }
 }
+
+class Node{
+    int freq;
+    Node pre;
+    Node next;
+    String key;
+
+
+    public Node(String key, int freq){
+        this.key = key;
+        this.freq = freq;
+    }
+}
+
+/**
+ * Your AllOne object will be instantiated and called as such:
+ * AllOne obj = new AllOne();
+ * obj.inc(key);
+ * obj.dec(key);
+ * String param_3 = obj.getMaxKey();
+ * String param_4 = obj.getMinKey();
+ */
