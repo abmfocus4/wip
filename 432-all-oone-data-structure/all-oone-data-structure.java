@@ -67,7 +67,7 @@ public class AllOne {
     }
     
     // helper function to make change on given key according to offset
-    private void changeKey(String key, int offset) {
+    private void changeKey(String key, int offset) { // offset = 1 for inc and -1 for dec
         int count = keyCountMap.get(key);
         keyCountMap.put(key, count + offset);
         Node curNode = countNodeMap.get(count);
@@ -86,8 +86,8 @@ public class AllOne {
     }
     
     private void removeKeyFromNode(Node node, String key) {
-        node.keySet.remove(key);
-        if (node.keySet.size() == 0) {
+        node.keySet.remove(key); // update node
+        if (node.keySet.size() == 0) { // if node does not need to exist
             removeNodeFromList(node);
             countNodeMap.remove(node.count);
         }
@@ -100,9 +100,10 @@ public class AllOne {
     
     // add newNode after prevNode
     private void addNodeAfter(Node newNode, Node prevNode) {
-        newNode.prev = prevNode;
-        newNode.next = prevNode.next;
-        prevNode.next.prev = newNode;
+        Node prevNext = prevNode.next;
         prevNode.next = newNode;
+        newNode.prev = prevNode;
+        newNode.next = prevNext;
+        prevNext.prev = newNode;
     }
 }
