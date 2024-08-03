@@ -14,35 +14,41 @@
  * }
  */
 class Solution {
-    public int widthOfBinaryTree(TreeNode root) {
-        if (root == null) {
-            return 0;
+    class Pair {
+        TreeNode node;
+        int id;
+        Pair(TreeNode node, int id) {
+            this.node = node;
+            this.id = id;
         }
+    }
+    public int widthOfBinaryTree(TreeNode root) {
+        // assign index to each node
+        // left: 2x
+        // right: 2x + 1
+        // root : x = 1
 
-        Deque<Pair<TreeNode, Integer>> q = new LinkedList(); // int[0] val; int[1] index
+        // dq: at each level diff of last and first element and max of each level
 
-        q.add(new Pair(root, 0)); // start index at 1 and level at 0
 
-        int maxWidth = 0;
+        Deque<Pair> dq = new LinkedList();
+        if (root == null) return 0;
+        dq.add(new Pair(root, 1));
 
-        while(q.isEmpty() == false) {
-            int levelSize = q.size();
+        int maxWidth = 1;
 
-            int leftMostIdx = q.peekFirst().getValue();
-            int rightMostIdx = q.peekLast().getValue();
-            maxWidth = Math.max(maxWidth, rightMostIdx - leftMostIdx + 1);
-
-            for (int i = 0; i < levelSize; i++) {
-                Pair<TreeNode, Integer> cur = q.pollFirst();
-                int curIdx = cur.getValue();
-                TreeNode curNode = cur.getKey();
-
-                if (curNode.left != null) {
-                    q.add(new Pair(curNode.left, 2*curIdx));
+        while (dq.isEmpty() == false) {
+            int levelSize = dq.size();
+            maxWidth = Math.max(maxWidth, Math.abs(dq.peekFirst().id - dq.peekLast().id) + 1);
+            while (levelSize-- > 0) {
+                Pair cur = dq.poll();
+                TreeNode curNode = cur.node;
+                int idx = cur.id;
+                if (cur.node.left != null) {
+                    dq.add(new Pair(cur.node.left, cur.id * 2));
                 }
-
-                if (curNode.right != null) {
-                    q.add(new Pair(curNode.right, 2*curIdx + 1));
+                if (cur.node.right != null) {
+                    dq.add(new Pair(cur.node.right, cur.id * 2 + 1));
                 }
             }
         }
