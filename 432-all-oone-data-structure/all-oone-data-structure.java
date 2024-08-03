@@ -35,10 +35,11 @@ public class AllOne {
             changeKey(key, 1);
         } else {
             keyCountMap.put(key, 1);
-            if (head.next.count != 1) 
+            if (head.next.count != 1)  {
                 addNodeAfter(new Node(1), head);
+                countNodeMap.put(1, head.next);
+            }
             head.next.keySet.add(key);
-            countNodeMap.put(1, head.next);
         }
     }
     
