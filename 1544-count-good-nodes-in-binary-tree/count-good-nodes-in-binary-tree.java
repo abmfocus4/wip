@@ -16,8 +16,9 @@
 class Solution {
     int totalGoodNodes;
     public int goodNodes(TreeNode root) {
+        if (root == null) return 0;
         totalGoodNodes = 0;
-        calculateGoodNodes(root, Integer.MIN_VALUE); // keep track of max value seen so far
+        calculateGoodNodes(root, root.val); // keep track of max value seen so far
         return totalGoodNodes;
     }
     
