@@ -1,25 +1,38 @@
-// Code Ref: https://leetcode.com/problems/leaf-similar-trees/solutions/4531517/99-39-easy-solution-with-explanation
-
-// Expl: https://www.youtube.com/watch?v=Nr8dbnL0_cM&ab_channel=NeetCodeIO
-public class Solution {
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
     public boolean leafSimilar(TreeNode root1, TreeNode root2) {
-        List<Integer> leafValues1 = new ArrayList<>();
-        List<Integer> leafValues2 = new ArrayList<>();
-        
-        collectLeafValues(root1, leafValues1);
-        collectLeafValues(root2, leafValues2);
+        // get leaves from left to right for both nodes
+        // compare
 
-        return leafValues1.equals(leafValues2);
+        List<Integer> list1 = getLeafNodes(root1);
+        List<Integer> list2 = getLeafNodes(root2);
+        return list1.equals(list2);
     }
 
-    private void collectLeafValues(TreeNode root, List<Integer> leafValues) {
-        if (root == null) {
-            return;
-        }
+    private List<Integer> getLeafNodes(TreeNode root) {
+        List<Integer> list = new ArrayList();
+        if (root == null) return list;
         if (root.left == null && root.right == null) {
-            leafValues.add(root.val);
+            list.add(root.val);
+        } else {
+            list.addAll(getLeafNodes(root.left));
+            list.addAll(getLeafNodes(root.right));
         }
-        collectLeafValues(root.left, leafValues);
-        collectLeafValues(root.right, leafValues);
+
+        return list;
     }
 }
