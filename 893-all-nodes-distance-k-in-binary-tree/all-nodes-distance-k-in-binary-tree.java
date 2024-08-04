@@ -8,32 +8,35 @@
  * }
  */
 class Solution {
-    HashMap<TreeNode, List<TreeNode>> graph;
-    HashSet<TreeNode> visited;
+    Map<TreeNode, List<TreeNode>> graph;
     public List<Integer> distanceK(TreeNode root, TreeNode target, int k) {
+        // construct graph
+        // dfs or bfs
+        if (k == 0) return List.of(target.val);
         this.graph = new HashMap();
         buildGraph(root, null);
-        this.visited = new HashSet();
+        Queue<TreeNode> q = new LinkedList();
+        q.add(target);
+        HashSet<TreeNode> visited = new HashSet();
         visited.add(target);
-        List<Integer> res = new ArrayList();
-        dfs(target, k, 0, res);
-        return res;
+        List<Integer> list = new ArrayList();
+        bfs(q, visited, k, list);
+        return list;
     }
 
-    private void dfs(TreeNode node, int k, int distance, List<Integer> res) {
-        if (distance == k) {
-            res.add(node.val);
-            return;
-        }
-
-        if (graph.get(node) == null || graph.get(node).isEmpty()) {
-            return;
-        }
-        
-        for (TreeNode neigh : graph.get(node)) {
-            if (!visited.contains(neigh)) {
-                visited.add(neigh);
-                dfs(neigh, k, distance + 1, res);
+    private void bfs(Queue<TreeNode> q, HashSet<TreeNode> visited, int k, List<Integer> res) {
+        while (q.isEmpty() == false) {
+            int levelSize = q.size();
+            k--;
+            while (levelSize-- > 0) {
+                TreeNode cur = q.poll();
+                if (graph.get(cur) == null || graph.get(cur).size() == 0) continue;
+                for (TreeNode neigh : graph.get(cur)) {
+                    if (visited.contains(neigh)) continue;
+                    if (k == 0) res.add(neigh.val);
+                    q.add(neigh);
+                    visited.add(neigh);
+                }
             }
         }
     }
@@ -43,7 +46,6 @@ class Solution {
             graph.computeIfAbsent(cur, x -> new ArrayList()).add(parent);
             graph.computeIfAbsent(parent, x -> new ArrayList()).add(cur);
         }
-
         if (cur.left != null) {
             buildGraph(cur.left, cur);
         }
