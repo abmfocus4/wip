@@ -8,7 +8,7 @@ class Solution {
         int arrows = 1;
         int preEndPoint = points[0][1];
 
-        for (int i = 0; i < n; i++) {
+        for (int i = 1; i < n; i++) {
             // within range
             if (points[i][0] <= preEndPoint && preEndPoint <= points[i][1]) {
                 continue;
