@@ -8,7 +8,8 @@ class Solution {
         for (int i = 0; i < n; i++) {
             Map<Double, Integer> mp = new HashMap<>();
 
-            for (int j = i + 1; j < n; j++) {
+            for (int j = 0; j < n; j++) {
+                if (j == i) continue;
                 /*if (points[i][0] == points[j][0] && points[i][1] == points[j][1]) {
 					duplicate++;
 					continue;
