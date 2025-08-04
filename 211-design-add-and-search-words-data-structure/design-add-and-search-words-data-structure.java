@@ -1,52 +1,49 @@
-class Trie {
-    Map<Character, Trie> children;
+class TrieNode {
     boolean isWord;
-    Trie() {
-        this.children = new HashMap();
+    HashMap<Character, TrieNode> children;
+    public TrieNode() {
         this.isWord = false;
+        this.children = new HashMap();
     }
 }
 class WordDictionary {
-    Trie root;
+    TrieNode root;
     public WordDictionary() {
-        this.root = new Trie();
+        this.root = new TrieNode();
     }
     
     public void addWord(String word) {
-        Trie cur = root;
+        TrieNode node = root;
         for (char c : word.toCharArray()) {
-            if (cur.children.containsKey(c) == false) {
-                cur.children.put(c, new Trie());
+            if (node.children.containsKey(c) == false) {
+                node.children.put(c, new TrieNode());
             }
-            cur = cur.children.get(c);
+            node = node.children.get(c);
         }
-        cur.isWord = true;
-    }
-    
-    public boolean search(String word) {
-        return search(word, 0, root);
+        node.isWord = true;
     }
 
-    private boolean search(String word, int curIdx, Trie node) {
-        Trie cur = node;
-        for (int i = curIdx; i < word.length(); i++) {
+    public boolean search(String word) {
+        return search(word, root, 0);
+    }
+    
+    public boolean search(String word, TrieNode node, int index) {
+        for (int i = index; i < word.length(); i++) {
             char c = word.charAt(i);
             if (c == '.') {
-                // match with all letters and see which one return true
-                for (char child : cur.children.keySet()) {
-                    if (search(word, i+1, cur.children.get(child)) == true) {
+                for (char ch : node.children.keySet()) {
+                    if (search(word, node.children.get(ch), i+1)) // not index + 1
                         return true;
-                    }
                 }
                 return false;
-            } else  {
-                if (cur.children.containsKey(c) == false) {
+            } else {
+                if (node.children.containsKey(c) == false) {
                     return false;
                 }
-                cur = cur.children.get(c);
+                node = node.children.get(c);
             }
         }
-        return cur.isWord;
+        return node.isWord;
     }
 }
 
