@@ -772,8 +772,31 @@ function startGameAfterTos() {
   }
 }
 
-if (elBtnTosAgree) elBtnTosAgree.addEventListener('click', startGameAfterTos);
 if (elBtnTosStronglyAgree) elBtnTosStronglyAgree.addEventListener('click', startGameAfterTos);
+if (elBtnTosAgree) elBtnTosAgree.addEventListener('click', () => {
+  // Play bummer sound and prompt for more enthusiasm
+  const srcEl = document.getElementById('sfx-bummer');
+  if (srcEl && srcEl.querySelector('source')?.getAttribute('src')) {
+    try { srcEl.currentTime = 0; srcEl.volume = 0.85; srcEl.play(); } catch (_) {}
+  } else {
+    const ctx = initAudio();
+    if (ctx) {
+      const osc = ctx.createOscillator();
+      osc.type = 'sawtooth';
+      const gain = ctx.createGain();
+      const now = ctx.currentTime;
+      osc.frequency.setValueAtTime(520, now);
+      osc.frequency.exponentialRampToValueAtTime(160, now + 0.32);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.22, now + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.34);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.36);
+    }
+  }
+  showToast('Try again with a little more enthusiasm!');
+});
 
 // ---------- Confetti ----------
 function playConfettiSound() {
