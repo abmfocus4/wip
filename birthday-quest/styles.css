@@ -45,6 +45,63 @@ body {
 
 .app { max-width: 980px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 28px) 40px; }
 
+/* Welcome overlay */
+.welcome-overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(2px);
+  z-index: 60;
+}
+.welcome-overlay.show { display: flex; animation: overlayIn .2s ease both; }
+.welcome-card {
+  width: min(780px, 94vw);
+  background: linear-gradient(180deg, var(--panel), var(--panel-2));
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 16px;
+  padding: clamp(16px, 3vw, 22px);
+  box-shadow: 0 10px 30px var(--shadow);
+}
+.welcome-emoji { font-size: 36px; text-align: center; }
+.welcome-title { text-align: center; margin: 10px 0 6px; font-size: clamp(22px, 4vw, 30px); }
+.welcome-sub { text-align: center; color: var(--text-dim); margin: 0 0 12px; }
+.welcome-list { margin: 0 0 12px; padding-left: 18px; color: var(--text-dim); }
+.welcome-list li { margin: 6px 0; }
+.welcome-tos { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 12px; margin: 10px 0; }
+.welcome-tos .tos-title { margin: 0 0 8px; font-weight: 700; }
+.welcome-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 12px; }
+
+/* Confetti */
+.confetti-container { position: fixed; inset: 0; pointer-events: none; z-index: 70; overflow: hidden; }
+.confetti-piece {
+  position: absolute;
+  width: 8px; height: 14px;
+  border-radius: 2px;
+  opacity: 0;
+  will-change: transform, opacity;
+  /* default animation can be overridden inline */
+  animation: confettiBurst 1s ease-out forwards;
+}
+@keyframes confettiBurst {
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 0; }
+  12% { opacity: 1; }
+  100% { transform: translate(var(--dx, 0), var(--dy, 0)) scale(1) rotate(var(--rot, 360deg)); opacity: 0; }
+}
+
+/* Screen shake for extra pop */
+.app.shake { animation: screenShake 260ms ease-in-out; }
+@keyframes screenShake {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-3px, -2px); }
+  40% { transform: translate(3px, 2px); }
+  60% { transform: translate(-2px, 3px); }
+  80% { transform: translate(2px, -3px); }
+  100% { transform: translate(0, 0); }
+}
+
 .hud { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: end; margin-bottom: clamp(12px, 3vw, 24px); }
 
 .progress { background: var(--panel); border-radius: var(--radius); padding: 14px; box-shadow: 0 10px 30px var(--shadow); }

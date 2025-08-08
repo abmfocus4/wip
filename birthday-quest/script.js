@@ -183,6 +183,12 @@ const elSfxBlow = document.getElementById('sfx-blow');
 const elCongrats = document.getElementById('congrats-overlay');
 const elBtnSavePdf = document.getElementById('btn-save-pdf');
 const elBtnCongratsClose = document.getElementById('btn-congrats-close');
+const elWelcome = document.getElementById('welcome');
+const elBtnTosAgree = document.getElementById('btn-tos-agree');
+const elBtnTosStronglyAgree = document.getElementById('btn-tos-strongly-agree');
+const elConfetti = document.getElementById('confetti');
+const elAppRoot = document.getElementById('app');
+const elSfxConfetti = document.getElementById('sfx-confetti');
 
 // ---------- Utils ----------
 function clamp(min, value, max) { return Math.max(min, Math.min(value, max)); }
@@ -748,7 +754,140 @@ if (elBtnCongratsClose) {
 
 // ---------- Init ----------
 (function init() {
-  if (!tryLoadPlanFromUrl()) {
+  // Gate with welcome/ToS unless already accepted
+  const alwaysShowTos = true; // per requirement, always show ToS on launch
+  if (alwaysShowTos) {
+    if (elWelcome) elWelcome.classList.add('show');
+  } else if (!tryLoadPlanFromUrl()) {
     resetGame();
   }
 })();
+
+function startGameAfterTos() {
+  localStorage.setItem('bq_tos_accepted', '1');
+  if (elWelcome) elWelcome.classList.remove('show');
+  // If URL has plan, load it; else start fresh
+  if (!tryLoadPlanFromUrl()) {
+    resetGame();
+  }
+}
+
+if (elBtnTosAgree) elBtnTosAgree.addEventListener('click', startGameAfterTos);
+if (elBtnTosStronglyAgree) elBtnTosStronglyAgree.addEventListener('click', startGameAfterTos);
+
+// ---------- Confetti ----------
+function playConfettiSound() {
+  // Try DOM audio first if a source is provided
+  if (elSfxConfetti && elSfxConfetti.querySelector('source')?.getAttribute('src')) {
+    try { elSfxConfetti.currentTime = 0; elSfxConfetti.volume = 0.8; elSfxConfetti.play(); return; } catch (_) {}
+  }
+  // Fallback synth: celebratory burst (noise + chord + sparkles)
+  const ctx = initAudio();
+  if (!ctx) return;
+  const now = ctx.currentTime;
+
+  const master = ctx.createGain();
+  master.gain.setValueAtTime(0.6, now);
+  master.connect(ctx.destination);
+
+  // Noise layer (confetti whoosh)
+  const nDuration = 0.28;
+  const nBuf = ctx.createBuffer(1, ctx.sampleRate * nDuration, ctx.sampleRate);
+  const nData = nBuf.getChannelData(0);
+  for (let i = 0; i < nData.length; i += 1) {
+    // light taper
+    const t = i / nData.length;
+    const env = Math.pow(1 - t, 0.8);
+    nData[i] = (Math.random() * 2 - 1) * env;
+  }
+  const nSrc = ctx.createBufferSource();
+  nSrc.buffer = nBuf;
+  const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 700;
+  const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 3500;
+  const nGain = ctx.createGain();
+  nGain.gain.setValueAtTime(0.0001, now);
+  nGain.gain.exponentialRampToValueAtTime(0.28, now + 0.01);
+  nGain.gain.exponentialRampToValueAtTime(0.002, now + nDuration);
+  nSrc.connect(hp).connect(lp).connect(nGain).connect(master);
+  nSrc.start(now);
+  nSrc.stop(now + nDuration + 0.02);
+
+  // Chord layer (festive)
+  const chordFreqs = [880, 1318.5]; // A5, E6
+  chordFreqs.forEach((freq, idx) => {
+    const osc = ctx.createOscillator();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(freq, now);
+    const oGain = ctx.createGain();
+    oGain.gain.setValueAtTime(0.0001, now);
+    oGain.gain.exponentialRampToValueAtTime(0.12, now + 0.01);
+    oGain.gain.exponentialRampToValueAtTime(0.003, now + 0.4 + idx * 0.02);
+    osc.connect(oGain).connect(master);
+    osc.start(now);
+    osc.stop(now + 0.45 + idx * 0.02);
+  });
+
+  // Sparkle pings
+  [2000, 2400, 3000].forEach((freq, i) => {
+    const start = now + 0.05 * i;
+    const ping = ctx.createOscillator();
+    ping.type = 'sine';
+    ping.frequency.setValueAtTime(freq, start);
+    const pGain = ctx.createGain();
+    pGain.gain.setValueAtTime(0.0001, start);
+    pGain.gain.exponentialRampToValueAtTime(0.08, start + 0.006);
+    pGain.gain.exponentialRampToValueAtTime(0.001, start + 0.12);
+    ping.connect(pGain).connect(master);
+    ping.start(start);
+    ping.stop(start + 0.14);
+  });
+}
+
+function spawnConfettiBurst(centerX = window.innerWidth / 2, count = 120) {
+  if (!elConfetti) return;
+  const colors = ['#8b5cf6', '#22d3ee', '#f43f5e', '#f59e0b', '#10b981', '#e9ebf1'];
+  // radial burst from a center top area
+  const originY = Math.max(40, window.innerHeight * 0.18);
+  for (let i = 0; i < count; i += 1) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    const size = 7 + Math.random() * 7;
+    piece.style.width = `${size}px`;
+    piece.style.height = `${size * 1.2}px`;
+    piece.style.left = `${centerX}px`;
+    piece.style.top = `${originY}px`;
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    // Trajectory
+    const angle = (Math.random() * Math.PI * 2);
+    const distance = 120 + Math.random() * 260;
+    const dx = Math.cos(angle) * distance;
+    const dy = Math.sin(angle) * distance;
+    piece.style.setProperty('--dx', `${dx}px`);
+    piece.style.setProperty('--dy', `${dy}px`);
+    piece.style.setProperty('--rot', `${(Math.random() * 2 - 1) * 720}deg`);
+    piece.style.animationDuration = `${0.9 + Math.random() * 0.4}s`;
+    piece.style.animationDelay = `${Math.random() * 0.06}s`;
+    elConfetti.appendChild(piece);
+    // cleanup each piece
+    setTimeout(() => piece.remove(), 1400);
+  }
+  playConfettiSound();
+  if (elAppRoot) {
+    elAppRoot.classList.remove('shake');
+    // restart animation by forcing reflow
+    void elAppRoot.offsetWidth;
+    elAppRoot.classList.add('shake');
+    setTimeout(() => elAppRoot.classList.remove('shake'), 320);
+  }
+}
+
+// Enhance ToS acceptance with confetti + quick fade of overlay
+function startGameAfterTos() {
+  localStorage.setItem('bq_tos_accepted', '1');
+  if (elWelcome) elWelcome.classList.remove('show');
+  spawnConfettiBurst(window.innerWidth / 2, 140);
+  // If URL has plan, load it; else start fresh
+  if (!tryLoadPlanFromUrl()) {
+    resetGame();
+  }
+}

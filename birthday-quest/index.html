@@ -24,6 +24,35 @@
     </header>
 
     <main id="app" class="app">
+      <div id="confetti" class="confetti-container" aria-hidden="true"></div>
+      <!-- Welcome / ToS overlay -->
+      <section id="welcome" class="welcome-overlay" aria-hidden="true">
+        <div class="welcome-card" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
+          <div class="welcome-emoji" aria-hidden="true">🎉🎂</div>
+          <h2 id="welcome-title" class="welcome-title">Welcome to Birthday Quest</h2>
+          <p class="welcome-sub">Curate your perfect birthday in four quick stages. Every choice scores points and vibes with earlier picks to boost your mood meter. Finish strong to unlock your plan!</p>
+          <ul class="welcome-list">
+            <li><strong>Stages</strong>: Dinner, Outfit, Bar, Cake</li>
+            <li><strong>Points</strong>: Base score + synergy with previous choices</li>
+            <li><strong>Mood Meter</strong>: Higher points = happier meter</li>
+            <li><strong>Heads up</strong>: The bottom banner shows points and fun facts</li>
+            <li><strong>Finale</strong>: Reveal your plan, save as PDF, share the joy</li>
+          </ul>
+          <div class="welcome-tos">
+            <p class="tos-title">Terms of Seriousness (Not Really)</p>
+            <ol>
+              <li>You agree to have an excessively delightful time.</li>
+              <li>You acknowledge cake is a fundamental human right.</li>
+              <li>You accept that synergy is just friendship between choices.</li>
+              <li>Refusal to celebrate triggers spontaneous confetti deployment.</li>
+            </ol>
+          </div>
+          <div class="welcome-actions">
+            <button id="btn-tos-agree" class="ghost">Agree</button>
+            <button id="btn-tos-strongly-agree" class="primary">Strongly Agree</button>
+          </div>
+        </div>
+      </section>
       <section class="hud">
         <div class="progress">
           <div class="progress-label">
@@ -121,6 +150,10 @@
     <!-- Preload SFX -->
     <audio id="sfx-blow" preload="auto">
       <source src="./blowing-out-candlewav-14441.mp3" type="audio/mpeg" />
+    </audio>
+    <audio id="sfx-confetti" preload="auto">
+      <!-- If you add a confetti mp3 later, update this src; we also have a gentle synth fallback -->
+      <source src="" type="audio/mpeg" />
     </audio>
 
     <dialog id="stats-dialog" class="stats-dialog">
