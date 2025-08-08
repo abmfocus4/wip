@@ -184,6 +184,8 @@ const elCongrats = document.getElementById('congrats-overlay');
 const elBtnSavePdf = document.getElementById('btn-save-pdf');
 const elBtnCongratsClose = document.getElementById('btn-congrats-close');
 const elWelcome = document.getElementById('welcome');
+const elHeader = document.getElementById('app-header');
+const elHud = document.getElementById('hud');
 const elBtnTosAgree = document.getElementById('btn-tos-agree');
 const elBtnTosStronglyAgree = document.getElementById('btn-tos-strongly-agree');
 const elConfetti = document.getElementById('confetti');
@@ -754,13 +756,13 @@ if (elBtnCongratsClose) {
 
 // ---------- Init ----------
 (function init() {
-  // Gate with welcome/ToS unless already accepted
-  const alwaysShowTos = true; // per requirement, always show ToS on launch
-  if (alwaysShowTos) {
-    if (elWelcome) elWelcome.classList.add('show');
-  } else if (!tryLoadPlanFromUrl()) {
-    resetGame();
-  }
+  // Always show welcome page first as a dedicated page
+  if (elWelcome) elWelcome.classList.add('show');
+  // Hide app chrome until accepted
+  if (elHeader) elHeader.classList.add('hidden');
+  if (elHud) elHud.classList.add('hidden');
+  if (elStageSection) elStageSection.classList.add('hidden');
+  if (elFinal) elFinal.classList.add('hidden');
 })();
 
 function startGameAfterTos() {
@@ -908,9 +910,14 @@ function spawnConfettiBurst(centerX = window.innerWidth / 2, count = 120) {
 function startGameAfterTos() {
   localStorage.setItem('bq_tos_accepted', '1');
   if (elWelcome) elWelcome.classList.remove('show');
+  if (elHeader) elHeader.classList.remove('hidden');
+  if (elHud) elHud.classList.remove('hidden');
+  if (elStageSection) elStageSection.classList.remove('hidden');
   spawnConfettiBurst(window.innerWidth / 2, 140);
-  // If URL has plan, load it; else start fresh
-  if (!tryLoadPlanFromUrl()) {
-    resetGame();
-  }
+  // Start fresh or load shared plan after small delay for confetti impact
+  setTimeout(() => {
+    if (!tryLoadPlanFromUrl()) {
+      resetGame();
+    }
+  }, 200);
 }

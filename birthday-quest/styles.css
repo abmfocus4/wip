@@ -47,16 +47,9 @@ body {
 
 /* Welcome overlay */
 .welcome-overlay {
-  position: fixed;
-  inset: 0;
   display: none;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0,0,0,.55);
-  backdrop-filter: blur(2px);
-  z-index: 60;
 }
-.welcome-overlay.show { display: flex; animation: overlayIn .2s ease both; }
+.welcome-overlay.show { display: block; }
 .welcome-card {
   width: min(780px, 94vw);
   background: linear-gradient(180deg, var(--panel), var(--panel-2));
@@ -64,6 +57,7 @@ body {
   border-radius: 16px;
   padding: clamp(16px, 3vw, 22px);
   box-shadow: 0 10px 30px var(--shadow);
+  margin: 24px auto;
 }
 .welcome-emoji { font-size: 36px; text-align: center; }
 .welcome-title { text-align: center; margin: 10px 0 6px; font-size: clamp(22px, 4vw, 30px); }
