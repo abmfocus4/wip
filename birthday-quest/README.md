@@ -45,7 +45,5 @@ MIT. Make birthdays magical ✨
 
 // todo:
 - record voice with kiss in final transition
-- replace save as pdf with finalize
-- and this should download custom letter
 - update all the options/text
 - add sound effects to everything

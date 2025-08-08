@@ -734,14 +734,45 @@ function hideCongratsOverlay() {
   elCongrats.classList.remove('show');
 }
 
+function buildLoveLetterText() {
+  const lines = [];
+  lines.push('My Love,');
+  lines.push('');
+  lines.push('Today I designed a perfect birthday just for you. Every choice was a little love note.');
+  lines.push('');
+  for (const stage of stages) {
+    const optId = state.choicesByStage[stage.id];
+    if (!optId) continue;
+    const opt = getOption(stage.id, optId);
+    if (!opt) continue;
+    const stageTitle = stage.title.replace(/Stage \d+ — /, '');
+    lines.push(`${stageTitle}: ${opt.title} — ${opt.desc}`);
+  }
+  lines.push('');
+  lines.push(`Our mood meter says ${state.mood}% happy, but my heart says 100%.`);
+  lines.push(`Total points: ${state.points} (but who’s counting when it’s love?)`);
+  lines.push('');
+  lines.push('I love you—today, tomorrow, and for every birthday that follows.');
+  lines.push('');
+  lines.push('Yours,');
+  lines.push('Your Partner');
+  return lines.join('\n');
+}
+
 async function onSavePdf() {
-  const doc = await generatePdfFromChoices();
-  if (!doc) return;
+  // Build a custom love letter as a PDF
+  const { jsPDF } = window.jspdf || {};
+  if (!jsPDF) { showToast('PDF library failed to load.'); return; }
+  const doc = new jsPDF();
+  const text = buildLoveLetterText();
+  const margin = 16;
+  doc.setFont('times', 'normal');
+  doc.setFontSize(14);
+  const wrapped = doc.splitTextToSize(text, 210 - margin * 2);
+  doc.text(wrapped, margin, 24);
   try {
-    doc.save('Perfect-Day.pdf');
-    setTimeout(() => {
-      showCongratsOverlay();
-    }, 400);
+    doc.save('A-Love-Letter.pdf');
+    setTimeout(() => { showCongratsOverlay(); }, 400);
   } catch (_) {
     showToast('Could not save PDF.');
   }
@@ -797,7 +828,7 @@ if (elBtnTosAgree) elBtnTosAgree.addEventListener('click', () => {
       osc.stop(now + 0.36);
     }
   }
-  showToast('Try again with a little more enthusiasm!');
+  showToast('Try again mister, there\'s only one option 🔫');
 });
 
 // ---------- Confetti ----------
