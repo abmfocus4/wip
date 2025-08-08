@@ -94,6 +94,29 @@ button.icon { background: transparent; border: 0; font-size: 16px; color: var(--
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: 20px; background: #0b0c12; color: var(--text); border: 1px solid rgba(255,255,255,.1); padding: 12px 16px; border-radius: 12px; opacity: 0; pointer-events: none; transition: opacity .25s ease, transform .25s ease; box-shadow: 0 10px 30px var(--shadow); max-width: 90vw; }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(-2px); }
 
+/* Effects Layer */
+.fx-layer { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 50; }
+.confetti { position: absolute; width: 10px; height: 16px; opacity: 0; transform: translateY(-40px) rotate(0deg); border-radius: 2px; }
+@keyframes confetti-fall {
+  0% { opacity: 0; transform: translateY(-40px) rotate(0deg); }
+  10% { opacity: 1; }
+  100% { opacity: 1; transform: translateY(100vh) rotate(720deg); }
+}
+
+.overlay-center { position: absolute; inset: 0; display: grid; place-items: center; }
+.overlay-card { background: rgba(15,16,22,.9); border: 1px solid rgba(255,255,255,.1); border-radius: 16px; padding: 20px; box-shadow: 0 10px 40px var(--shadow); animation: pop-in .25s ease; }
+@keyframes pop-in { from { transform: scale(.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+/* Cake with candles */
+.cake-wrap { width: min(360px, 90vw); }
+.cake-svg { width: 100%; height: auto; display: block; }
+.flame { transform-origin: center; animation: flame-flicker .6s infinite ease-in-out; }
+@keyframes flame-flicker { 0%,100% { transform: scale(1) translateY(0); } 50% { transform: scale(1.07) translateY(-1px); } }
+.flame.out { opacity: 0; animation: none; }
+.smoke { opacity: 0; animation: smoke-rise 1s ease forwards; }
+@keyframes smoke-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(-18px); } }
+
+/* Final */
 .final.hidden { display: none; }
 .final .final-card { background: linear-gradient(180deg, var(--panel), var(--panel-2)); padding: 18px; border-radius: var(--radius); border: 1px solid rgba(255,255,255,.06); box-shadow: 0 10px 30px var(--shadow); }
 .final-top h2 { margin: 0 0 6px; font-size: clamp(22px, 4vw, 28px); }

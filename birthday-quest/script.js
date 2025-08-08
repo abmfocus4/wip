@@ -177,6 +177,142 @@ const elBtnStats = document.getElementById('btn-stats');
 const elStatsDialog = document.getElementById('stats-dialog');
 const elStatsContent = document.getElementById('stats-content');
 const elBtnShare = document.getElementById('btn-share');
+const elFxLayer = document.getElementById('fx-layer');
+
+// ---------- Audio (WebAudio) ----------
+let audioCtx = null;
+function ensureAudio() {
+  if (!audioCtx) {
+    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+    catch { audioCtx = null; }
+  }
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function now() { return audioCtx ? audioCtx.currentTime : 0; }
+
+function playBeep(freq = 660, duration = 0.1, type = 'sine', gain = 0.04) {
+  if (!audioCtx) return;
+  const t0 = now();
+  const osc = audioCtx.createOscillator();
+  osc.type = type;
+  osc.frequency.value = freq;
+  const g = audioCtx.createGain();
+  g.gain.setValueAtTime(0, t0);
+  g.gain.linearRampToValueAtTime(gain, t0 + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
+  osc.connect(g).connect(audioCtx.destination);
+  osc.start(t0);
+  osc.stop(t0 + duration + 0.02);
+}
+
+function playClick() { playBeep(520, 0.07, 'square', 0.03); }
+function playSparkle() { playBeep(1100, 0.12, 'triangle', 0.035); setTimeout(() => playBeep(1500, 0.08, 'triangle', 0.03), 60); }
+function playChime() { playBeep(880, 0.14, 'sine', 0.04); setTimeout(() => playBeep(1175, 0.18, 'sine', 0.035), 90); }
+
+function playWhoosh(duration = 0.25, gain = 0.08) {
+  if (!audioCtx) return;
+  const t0 = now();
+  const bufferSize = audioCtx.sampleRate * duration;
+  const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+  const src = audioCtx.createBufferSource();
+  src.buffer = buffer;
+  const filter = audioCtx.createBiquadFilter();
+  filter.type = 'lowpass'; filter.frequency.setValueAtTime(1800, t0);
+  const g = audioCtx.createGain();
+  g.gain.setValueAtTime(gain, t0);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
+  src.connect(filter).connect(g).connect(audioCtx.destination);
+  src.start(t0);
+}
+
+function playBlow() { playWhoosh(0.5, 0.09); setTimeout(() => playChime(), 260); }
+
+// Prime audio on first interaction
+['click','keydown','pointerdown','touchstart'].forEach(evt => {
+  window.addEventListener(evt, () => { if (!audioCtx) { ensureAudio(); } }, { once: true, passive: true });
+});
+
+// ---------- Visual FX ----------
+function confettiBurst({ count = 24, colors = ['#f43f5e','#22d3ee','#8b5cf6','#10b981','#f59e0b'] } = {}) {
+  if (!elFxLayer) return;
+  const rect = elFxLayer.getBoundingClientRect();
+  for (let i = 0; i < count; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti';
+    const left = Math.random() * rect.width;
+    const delay = Math.random() * 0.2;
+    const duration = 0.9 + Math.random() * 0.6;
+    const color = colors[i % colors.length];
+    const rotate = Math.floor(Math.random() * 720);
+    piece.style.left = `${left}px`;
+    piece.style.top = `-20px`;
+    piece.style.background = color;
+    piece.style.animation = `confetti-fall ${duration}s ease-in forwards`;
+    piece.style.animationDelay = `${delay}s`;
+    piece.style.transform = `translateY(-40px) rotate(${rotate}deg)`;
+    elFxLayer.appendChild(piece);
+    setTimeout(() => piece.remove(), (delay + duration) * 1000 + 100);
+  }
+}
+
+function showCakeBlowAnimation(onDone) {
+  if (!elFxLayer) { onDone?.(); return; }
+  const container = document.createElement('div');
+  container.className = 'overlay-center';
+  container.innerHTML = `
+    <div class="overlay-card cake-wrap">
+      <svg class="cake-svg" viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cake with candles">
+        <defs>
+          <linearGradient id="g1" x1="0" x2="1">
+            <stop offset="0%" stop-color="#8b5cf6"/>
+            <stop offset="100%" stop-color="#22d3ee"/>
+          </linearGradient>
+        </defs>
+        <!-- plate -->
+        <ellipse cx="100" cy="140" rx="70" ry="10" fill="#0b0c12" opacity="0.6"/>
+        <!-- cake body -->
+        <rect x="45" y="70" width="110" height="50" rx="8" fill="#2a2c3b" stroke="rgba(255,255,255,.12)"/>
+        <rect x="50" y="60" width="100" height="20" rx="6" fill="url(#g1)"/>
+        <!-- candles -->
+        <g id="candles">
+          <rect x="80" y="40" width="6" height="20" fill="#f59e0b"/>
+          <circle cx="83" cy="38" r="3" class="flame" fill="#fbbf24"/>
+          <rect x="98" y="40" width="6" height="20" fill="#22d3ee"/>
+          <circle cx="101" cy="38" r="3" class="flame" fill="#fbbf24"/>
+          <rect x="116" y="40" width="6" height="20" fill="#10b981"/>
+          <circle cx="119" cy="38" r="3" class="flame" fill="#fbbf24"/>
+        </g>
+        <!-- smoke puffs hidden initially -->
+        <g id="smoke" opacity="0">
+          <circle cx="83" cy="32" r="3" class="smoke" fill="#b3b8c7"/>
+          <circle cx="101" cy="32" r="3" class="smoke" fill="#b3b8c7"/>
+          <circle cx="119" cy="32" r="3" class="smoke" fill="#b3b8c7"/>
+        </g>
+      </svg>
+    </div>
+  `;
+  elFxLayer.appendChild(container);
+
+  // blow sequence
+  setTimeout(() => {
+    container.querySelectorAll('.flame').forEach(f => f.classList.add('out'));
+    const smoke = container.querySelector('#smoke');
+    smoke.setAttribute('opacity', '1');
+    container.querySelectorAll('.smoke').forEach((s, idx) => {
+      s.style.animationDelay = `${idx * 0.06}s`;
+    });
+    playBlow();
+  }, 80);
+
+  // confetti after blow
+  setTimeout(() => confettiBurst({ count: 36 }), 300);
+
+  // cleanup
+  setTimeout(() => { container.remove(); onDone?.(); }, 1400);
+}
 
 // ---------- Utils ----------
 function clamp(min, value, max) { return Math.max(min, Math.min(value, max)); }
@@ -424,6 +560,8 @@ function selectOption(stageId, optionId) {
   const option = getOption(stageId, optionId);
   if (!stage || !option) return;
 
+  ensureAudio();
+
   const stageIndex = getStageIndexById(stageId);
   const tempChoices = { ...state.choicesByStage, [stageId]: optionId };
   const synergy = computeSynergyBonusAgainstPrevious(stageIndex, tempChoices, stageId);
@@ -436,48 +574,44 @@ function selectOption(stageId, optionId) {
   renderStage();
   updateMood();
 
+  playClick();
+  if (synergy > 0) playSparkle();
+
   showToast(`+${awarded} pts · ${sample(funFacts)}`);
 
   elBtnNext.disabled = false;
 }
 
-function toFinal() {
-  elFinal.classList.remove('hidden');
-
-  // Build summary
-  const items = [];
-  for (const stage of stages) {
-    const opt = getOption(stage.id, state.choicesByStage[stage.id]);
-    if (!opt) continue;
-    items.push({ stage, opt });
+function runStageCelebrationIfAny(stage, proceed) {
+  // Minimal confetti for all stages; special cake blow for cake stage
+  if (stage.id === 'cake') {
+    showCakeBlowAnimation(proceed);
+  } else {
+    confettiBurst({ count: 24 });
+    playChime();
+    setTimeout(proceed, 550);
   }
-
-  const summaryHtml = items.map(({ stage, opt }) => `
-    <div class="final-item">
-      <span class="icon">${opt.icon}</span>
-      <div>
-        <div class="title">${stage.title.replace(/Stage \d+ — /, '')}: ${opt.title}</div>
-        <div class="desc">${opt.desc}</div>
-      </div>
-    </div>
-  `).join('');
-
-  elFinalSummary.innerHTML = summaryHtml;
-  elFinalScore.textContent = String(state.points);
-  elFinalMoodFill.style.width = `${state.mood}%`;
-
-  recordPlayComplete();
-  renderStats();
 }
 
-function nextStage() {
+async function nextStage() {
+  const current = stages[state.index];
+  if (!current) return;
+
+  // disable navigation during effect
+  elBtnNext.disabled = true; elBtnBack.disabled = true;
+
+  await new Promise(resolve => runStageCelebrationIfAny(current, resolve));
+
   if (state.index < stages.length - 1) {
     state.index += 1;
     renderStage();
+    elBtnBack.disabled = state.index === 0 ? true : false;
+    elBtnNext.disabled = !state.choicesByStage[stages[state.index].id];
   } else {
-    // final
     elProgressFill.style.width = '100%';
-    toFinal();
+    confettiBurst({ count: 40 });
+    playChime();
+    setTimeout(() => toFinal(), 450);
   }
 }
 
