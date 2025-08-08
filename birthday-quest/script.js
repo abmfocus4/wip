@@ -179,6 +179,7 @@ const elStatsDialog = document.getElementById('stats-dialog');
 const elStatsContent = document.getElementById('stats-content');
 const elBtnShare = document.getElementById('btn-share');
 const elCakeOverlay = document.getElementById('cake-overlay');
+const elSfxBlow = document.getElementById('sfx-blow');
 const elCongrats = document.getElementById('congrats-overlay');
 const elBtnSavePdf = document.getElementById('btn-save-pdf');
 const elBtnCongratsClose = document.getElementById('btn-congrats-close');
@@ -459,7 +460,17 @@ function initAudio() {
   return audioCtx;
 }
 
-function playBlowWhoosh() {
+async function playBlowWhoosh() {
+  if (elSfxBlow) {
+    try {
+      elSfxBlow.currentTime = 0;
+      elSfxBlow.volume = 0.6;
+      await elSfxBlow.play();
+      return;
+    } catch (_) {
+      // will fallback to synthesized sound below
+    }
+  }
   const ctx = initAudio();
   if (!ctx) return;
   const duration = 0.55;
@@ -497,6 +508,7 @@ function triggerCandleBlowEffect() {
 
     setTimeout(() => {
       elCakeOverlay.classList.add('blown');
+      // Try to play after the visual change; if blocked, we also prime on first click elsewhere
       playBlowWhoosh();
     }, 350);
 
