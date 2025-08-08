@@ -167,6 +167,7 @@ const elProgressFill = document.getElementById('progress-bar-fill');
 const elMoodFill = document.getElementById('mood-bar-fill');
 const elMoodValue = document.getElementById('mood-value');
 const elToast = document.getElementById('toast');
+let toastHideTimeout = null;
 const elFinal = document.getElementById('final');
 const elFinalSummary = document.getElementById('final-summary');
 const elFinalMoodFill = document.getElementById('final-mood-fill');
@@ -532,7 +533,11 @@ function renderStage() {
 function showToast(message) {
   elToast.textContent = message;
   elToast.classList.add('show');
-  setTimeout(() => elToast.classList.remove('show'), 2000);
+  if (toastHideTimeout) clearTimeout(toastHideTimeout);
+  toastHideTimeout = setTimeout(() => {
+    elToast.classList.remove('show');
+    toastHideTimeout = null;
+  }, 4200);
 }
 
 function updateMood() {
