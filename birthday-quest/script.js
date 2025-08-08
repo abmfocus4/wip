@@ -191,6 +191,8 @@ const elBtnTosStronglyAgree = document.getElementById('btn-tos-strongly-agree');
 const elConfetti = document.getElementById('confetti');
 const elAppRoot = document.getElementById('app');
 const elSfxConfetti = document.getElementById('sfx-confetti');
+const elCoach = document.getElementById('cheer-coach');
+const elCoachText = document.getElementById('coach-text');
 
 // ---------- Utils ----------
 function clamp(min, value, max) { return Math.max(min, Math.min(value, max)); }
@@ -353,6 +355,7 @@ function renderStage() {
   if (!stage) return;
 
   elFinal.classList.add('hidden');
+  if (elCoach) elCoach.classList.remove('hidden');
 
   elStageTitle.textContent = stage.title;
   elStageDesc.textContent = stage.desc;
@@ -405,6 +408,31 @@ function renderStage() {
   const total = stages.length;
   elProgressText.textContent = `Stage ${state.index + 1} / ${total}`;
   elProgressFill.style.width = `${((state.index) / total) * 100}%`;
+
+  // Update coach text
+  if (elCoachText) {
+    const prompts = [
+      'You got this! 💪',
+      'Trust your vibe ✨',
+      'Great pick! 😍',
+      'I believe in you 🙌',
+      'Chef’s kiss 👩🏻‍🍳💋',
+      'Whatever my booba says 💋'
+    ];
+    const perStage = {
+      dinner: 'Mmm, yummy pick… 🍝',
+      outfit: 'Serve the look! 👗',
+      bar: 'Time to toast? 🥂',
+      cake: 'Save room for cake 🎂',
+    };
+    const stageId = stage.id;
+    const chosen = state.choicesByStage[stageId];
+    if (chosen) {
+      elCoachText.textContent = prompts[Math.floor(Math.random() * prompts.length)];
+    } else {
+      elCoachText.textContent = perStage[stageId] || 'You got this!';
+    }
+  }
 }
 
 let toastTimer = null;
@@ -532,6 +560,7 @@ function toFinal() {
   elFinal.classList.remove('hidden');
   if (elStageSection) elStageSection.classList.add('hidden');
   if (elStageSection) elStageSection.classList.add('hidden');
+  if (elCoach) elCoach.classList.add('hidden');
 
   // Build summary
   const items = [];
@@ -591,6 +620,7 @@ function resetGame() {
   state.mood = 0;
   elFinal.classList.add('hidden');
   if (elStageSection) elStageSection.classList.remove('hidden');
+   if (elCoach) elCoach.classList.remove('hidden');
   updateMood();
   renderStage();
 }
@@ -794,6 +824,7 @@ if (elBtnCongratsClose) {
   if (elHud) elHud.classList.add('hidden');
   if (elStageSection) elStageSection.classList.add('hidden');
   if (elFinal) elFinal.classList.add('hidden');
+  if (elCoach) elCoach.classList.add('hidden');
 })();
 
 function startGameAfterTos() {
@@ -944,6 +975,7 @@ function startGameAfterTos() {
   if (elHeader) elHeader.classList.remove('hidden');
   if (elHud) elHud.classList.remove('hidden');
   if (elStageSection) elStageSection.classList.remove('hidden');
+  if (elCoach) elCoach.classList.remove('hidden');
   spawnConfettiBurst(window.innerWidth / 2, 140);
   // Start fresh or load shared plan after small delay for confetti impact
   setTimeout(() => {
