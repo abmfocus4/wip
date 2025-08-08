@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Birthday Quest: Pick Your Perfect Day</title>
+    <meta name="description" content="A cute game to design the perfect birthday day by making choices across fun stages. Built with ❤️ for you." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="app-brand">
+        <span class="brand-emoji" aria-hidden="true">🎉</span>
+        <h1>Birthday Quest</h1>
+        <span class="brand-sub">Pick Your Perfect Day</span>
+      </div>
+      <div class="header-actions">
+        <button id="btn-stats" class="linkish" aria-label="View your stats">Stats</button>
+        <button id="btn-share" class="primary" aria-label="Copy a shareable link">Share</button>
+      </div>
+    </header>
+
+    <main id="app" class="app">
+      <section class="hud">
+        <div class="progress">
+          <div class="progress-label">
+            <span id="progress-text">Stage 1 / 4</span>
+          </div>
+          <div class="progress-bar">
+            <div id="progress-bar-fill" class="progress-fill" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <div class="mood">
+          <div class="mood-top">
+            <span class="mood-title">Mood Meter</span>
+            <span id="mood-value" class="mood-value">0%</span>
+          </div>
+          <div class="mood-bar">
+            <div id="mood-bar-fill" class="mood-fill" style="width: 0%"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="stage" class="stage">
+        <h2 id="stage-title" class="stage-title">Loading…</h2>
+        <p id="stage-desc" class="stage-desc"></p>
+        <div id="options" class="options-grid"></div>
+
+        <div class="stage-actions">
+          <button id="btn-back" class="ghost">Back</button>
+          <button id="btn-next" class="primary" disabled>Next</button>
+        </div>
+      </section>
+
+      <section id="final" class="final hidden" aria-live="polite">
+        <div class="final-card">
+          <div class="final-top">
+            <h2>Perfect Day Unlocked ✨</h2>
+            <p id="final-subtitle" class="final-subtitle">Here’s your curated birthday plan.</p>
+          </div>
+          <div id="final-summary" class="final-summary"></div>
+          <div class="final-stats">
+            <div class="final-meter">
+              <span>Overall Mood</span>
+              <div class="mood-bar small">
+                <div id="final-mood-fill" class="mood-fill" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="final-score">
+              <span>Total Points</span>
+              <strong id="final-score">0</strong>
+            </div>
+          </div>
+          <div class="final-actions">
+            <button id="btn-edit" class="ghost">Edit Choices</button>
+            <button id="btn-replay" class="primary">Replay</button>
+          </div>
+        </div>
+      </section>
+
+      <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    </main>
+
+    <dialog id="stats-dialog" class="stats-dialog">
+      <form method="dialog">
+        <header class="stats-header">
+          <h3>Your Trends</h3>
+          <button class="icon" title="Close" aria-label="Close">✖</button>
+        </header>
+        <div id="stats-content" class="stats-content"></div>
+      </form>
+    </dialog>
+
+    <footer class="app-footer">
+      <span>Made with 💖 for a special birthday.</span>
+      <span class="dot">·</span>
+      <a href="https://pages.github.com/" target="_blank" rel="noreferrer">Free hosting via GitHub Pages</a>
+    </footer>
+
+    <script src="./script.js" defer></script>
+  </body>
+</html>
