@@ -77,10 +77,43 @@
           </div>
           <div class="final-actions">
             <button id="btn-edit" class="ghost">Edit Choices</button>
+            <button id="btn-save-pdf" class="ghost">Save as PDF</button>
             <button id="btn-replay" class="primary">Replay</button>
           </div>
         </div>
       </section>
+
+      <!-- Cake candle overlay (visual only, shown on Cake selection) -->
+      <div id="cake-overlay" class="cake-overlay" aria-hidden="true">
+        <div class="cake-visual">
+          <div class="cake-base"></div>
+          <div class="candles">
+            <div class="candle"><div class="flame"></div><div class="smoke"></div></div>
+            <div class="candle"><div class="flame"></div><div class="smoke"></div></div>
+            <div class="candle"><div class="flame"></div><div class="smoke"></div></div>
+            <div class="candle"><div class="flame"></div><div class="smoke"></div></div>
+            <div class="candle"><div class="flame"></div><div class="smoke"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Congrats overlay after saving PDF -->
+      <div id="congrats-overlay" class="congrats-overlay" aria-hidden="true">
+        <div class="congrats-card">
+          <div class="congrats-emoji">💋</div>
+          <h2 class="congrats-title">Congrats on your front lobe developing</h2>
+          <p class="congrats-sub">Wishing you wisdom, wonder, and lots of cake.</p>
+          <div class="hearts">
+            <span class="heart" style="--i:0">❤️</span>
+            <span class="heart" style="--i:1">💜</span>
+            <span class="heart" style="--i:2">💖</span>
+            <span class="heart" style="--i:3">💙</span>
+            <span class="heart" style="--i:4">🧡</span>
+            <span class="heart" style="--i:5">💗</span>
+          </div>
+          <button id="btn-congrats-close" class="primary">Continue</button>
+        </div>
+      </div>
 
       <div id="toast" class="toast" role="status" aria-live="polite"></div>
     </main>
@@ -101,6 +134,7 @@
       <a href="https://pages.github.com/" target="_blank" rel="noreferrer">Free hosting via GitHub Pages</a>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
     <script src="./script.js" defer></script>
   </body>
 </html>

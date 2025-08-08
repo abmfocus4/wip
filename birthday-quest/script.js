@@ -159,6 +159,7 @@ const state = {
 // ---------- DOM ----------
 const elStageTitle = document.getElementById('stage-title');
 const elStageDesc = document.getElementById('stage-desc');
+const elStageSection = document.getElementById('stage');
 const elOptions = document.getElementById('options');
 const elBtnNext = document.getElementById('btn-next');
 const elBtnBack = document.getElementById('btn-back');
@@ -177,6 +178,10 @@ const elBtnStats = document.getElementById('btn-stats');
 const elStatsDialog = document.getElementById('stats-dialog');
 const elStatsContent = document.getElementById('stats-content');
 const elBtnShare = document.getElementById('btn-share');
+const elCakeOverlay = document.getElementById('cake-overlay');
+const elCongrats = document.getElementById('congrats-overlay');
+const elBtnSavePdf = document.getElementById('btn-save-pdf');
+const elBtnCongratsClose = document.getElementById('btn-congrats-close');
 
 // ---------- Utils ----------
 function clamp(min, value, max) { return Math.max(min, Math.min(value, max)); }
@@ -393,10 +398,14 @@ function renderStage() {
   elProgressFill.style.width = `${((state.index) / total) * 100}%`;
 }
 
+let toastTimer = null;
 function showToast(message) {
   elToast.textContent = message;
   elToast.classList.add('show');
-  setTimeout(() => elToast.classList.remove('show'), 2000);
+  if (toastTimer) clearTimeout(toastTimer);
+  // Base 2.8s + 45ms per character, clamped 3s–7s
+  const duration = clamp(3000, 2800 + message.length * 45, 7000);
+  toastTimer = setTimeout(() => elToast.classList.remove('show'), duration);
 }
 
 function updateMood() {
@@ -441,8 +450,68 @@ function selectOption(stageId, optionId) {
   elBtnNext.disabled = false;
 }
 
+// ---------- Cake Effects ----------
+let audioCtx = null;
+function initAudio() {
+  if (!audioCtx) {
+    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (_) { audioCtx = null; }
+  }
+  return audioCtx;
+}
+
+function playBlowWhoosh() {
+  const ctx = initAudio();
+  if (!ctx) return;
+  const duration = 0.55;
+  const noiseBuffer = ctx.createBuffer(1, ctx.sampleRate * duration, ctx.sampleRate);
+  const data = noiseBuffer.getChannelData(0);
+  for (let i = 0; i < data.length; i += 1) {
+    data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 1.1);
+  }
+  const noise = ctx.createBufferSource();
+  noise.buffer = noiseBuffer;
+  const highpass = ctx.createBiquadFilter();
+  highpass.type = 'highpass';
+  highpass.frequency.value = 180;
+  const lowpass = ctx.createBiquadFilter();
+  lowpass.type = 'lowpass';
+  lowpass.frequency.value = 900;
+  const gain = ctx.createGain();
+  const now = ctx.currentTime;
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(0.08, now + 0.06);
+  gain.gain.exponentialRampToValueAtTime(0.006, now + duration);
+  noise.connect(highpass).connect(lowpass).connect(gain).connect(ctx.destination);
+  noise.start();
+  noise.stop(now + duration);
+}
+
+function triggerCandleBlowEffect() {
+  return new Promise((resolve) => {
+    if (!elCakeOverlay) { resolve(); return; }
+    elCakeOverlay.classList.remove('blown');
+    elCakeOverlay.classList.add('show');
+
+    const smokes = elCakeOverlay.querySelectorAll('.smoke');
+    smokes.forEach((s, i) => s.style.setProperty('--i', String(i)));
+
+    setTimeout(() => {
+      elCakeOverlay.classList.add('blown');
+      playBlowWhoosh();
+    }, 350);
+
+    setTimeout(() => {
+      elCakeOverlay.classList.remove('show');
+      elCakeOverlay.classList.remove('blown');
+      resolve();
+    }, 1900);
+  });
+}
+
 function toFinal() {
   elFinal.classList.remove('hidden');
+  if (elStageSection) elStageSection.classList.add('hidden');
+  if (elStageSection) elStageSection.classList.add('hidden');
 
   // Build summary
   const items = [];
@@ -475,9 +544,16 @@ function nextStage() {
     state.index += 1;
     renderStage();
   } else {
-    // final
+    // final step from last stage
     elProgressFill.style.width = '100%';
-    toFinal();
+    const currentStage = stages[state.index];
+    if (currentStage?.id === 'cake') {
+      triggerCandleBlowEffect().then(() => {
+        toFinal();
+      });
+    } else {
+      toFinal();
+    }
   }
 }
 
@@ -494,6 +570,7 @@ function resetGame() {
   state.points = 0;
   state.mood = 0;
   elFinal.classList.add('hidden');
+  if (elStageSection) elStageSection.classList.remove('hidden');
   updateMood();
   renderStage();
 }
@@ -543,6 +620,7 @@ elBtnReplay.addEventListener('click', resetGame);
 
 elBtnEdit.addEventListener('click', () => {
   elFinal.classList.add('hidden');
+  if (elStageSection) elStageSection.classList.remove('hidden');
   editChoices();
 });
 
@@ -556,6 +634,105 @@ elStatsDialog.addEventListener('close', () => {
 });
 
 elBtnShare.addEventListener('click', copyShareLink);
+
+// ---------- PDF Generation & Congrats Flow ----------
+async function generatePdfFromChoices() {
+  const { jsPDF } = window.jspdf || {};
+  if (!jsPDF) {
+    showToast('PDF library failed to load.');
+    return null;
+  }
+  const doc = new jsPDF();
+  const margin = 16;
+  let y = 20;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(18);
+  doc.text('Perfect Day — Birthday Quest', margin, y);
+  y += 8;
+  doc.setDrawColor(150);
+  doc.line(margin, y, 210 - margin, y);
+  y += 10;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(12);
+  for (const stage of stages) {
+    const optId = state.choicesByStage[stage.id];
+    if (!optId) continue;
+    const opt = getOption(stage.id, optId);
+    if (!opt) continue;
+    const stageTitle = stage.title.replace(/Stage \d+ — /, '');
+    doc.setFont('helvetica', 'bold');
+    doc.text(`${stageTitle}: ${opt.title}`, margin, y);
+    y += 6;
+    doc.setFont('helvetica', 'normal');
+    const descLines = doc.splitTextToSize(opt.desc, 210 - margin * 2);
+    doc.text(descLines, margin, y);
+    y += descLines.length * 6 + 6;
+    if (y > 280) { doc.addPage(); y = 20; }
+  }
+  y += 4;
+  doc.setFont('helvetica', 'bold');
+  doc.text(`Total Points: ${state.points}`, margin, y);
+  return doc;
+}
+
+function playKissSound() {
+  const ctx = initAudio();
+  if (!ctx) return;
+  // Kiss: a short filtered noise burst with quick pitchy pop
+  const duration = 0.22;
+  const noiseBuffer = ctx.createBuffer(1, ctx.sampleRate * duration, ctx.sampleRate);
+  const data = noiseBuffer.getChannelData(0);
+  for (let i = 0; i < data.length; i += 1) {
+    data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 1.4);
+  }
+  const noise = ctx.createBufferSource();
+  noise.buffer = noiseBuffer;
+  const bp = ctx.createBiquadFilter();
+  bp.type = 'bandpass';
+  bp.frequency.value = 1500;
+  bp.Q.value = 2.5;
+  const gain = ctx.createGain();
+  const now = ctx.currentTime;
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(0.12, now + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.004, now + duration);
+  noise.connect(bp).connect(gain).connect(ctx.destination);
+  noise.start();
+  noise.stop(now + duration);
+}
+
+function showCongratsOverlay() {
+  if (!elCongrats) return;
+  elCongrats.classList.add('show');
+  // trigger hearts float loop restart by reflow (optional)
+  void elCongrats.offsetWidth;
+  playKissSound();
+}
+
+function hideCongratsOverlay() {
+  if (!elCongrats) return;
+  elCongrats.classList.remove('show');
+}
+
+async function onSavePdf() {
+  const doc = await generatePdfFromChoices();
+  if (!doc) return;
+  try {
+    doc.save('Perfect-Day.pdf');
+    setTimeout(() => {
+      showCongratsOverlay();
+    }, 400);
+  } catch (_) {
+    showToast('Could not save PDF.');
+  }
+}
+
+if (elBtnSavePdf) {
+  elBtnSavePdf.addEventListener('click', onSavePdf);
+}
+if (elBtnCongratsClose) {
+  elBtnCongratsClose.addEventListener('click', hideCongratsOverlay);
+}
 
 // ---------- Init ----------
 (function init() {

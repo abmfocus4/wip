@@ -26,6 +26,9 @@ body {
   color: var(--text);
 }
 
+/* Utility */
+.hidden { display: none !important; }
+
 .app-header {
   display: flex;
   align-items: center;
@@ -121,3 +124,139 @@ button.icon { background: transparent; border: 0; font-size: 16px; color: var(--
 
 .app-footer { padding: 20px; text-align: center; color: var(--text-dim); }
 .app-footer .dot { margin: 0 8px; opacity: .6; }
+
+/* Cake candle overlay */
+.cake-overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(2px);
+  background: rgba(0,0,0,.35);
+  z-index: 40;
+}
+.cake-overlay.show { display: flex; animation: overlayIn .25s ease forwards; }
+@keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
+
+.cake-visual {
+  position: relative;
+  width: min(320px, 90vw);
+  height: 200px;
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 16px;
+  padding-top: 48px;
+  box-shadow: 0 10px 30px var(--shadow);
+}
+
+.cake-base {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  width: 220px;
+  height: 60px;
+  background: linear-gradient(180deg, #5e3b8a, #3a2357);
+  border-radius: 16px 16px 12px 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.35) inset;
+}
+
+.candles {
+  position: absolute;
+  left: 50%;
+  bottom: 84px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 14px;
+}
+.candle {
+  width: 10px;
+  height: 34px;
+  background: linear-gradient(180deg, #ffd8d8, #ff9db2);
+  border-radius: 4px;
+  position: relative;
+  box-shadow: 0 2px 0 rgba(0,0,0,.25) inset;
+}
+.flame {
+  position: absolute;
+  left: 50%;
+  top: -12px;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 14px;
+  background: radial-gradient(circle at 50% 30%, #fff6a3, #ffb703 60%, rgba(0,0,0,0) 61%);
+  border-radius: 50% 50% 60% 60%;
+  animation: flicker .12s infinite alternate ease-in-out;
+}
+@keyframes flicker {
+  from { transform: translateX(-50%) scale(1); filter: drop-shadow(0 0 6px #ffcf33); }
+  to { transform: translateX(-52%) scale(0.92); filter: drop-shadow(0 0 8px #ffe066); }
+}
+
+.smoke {
+  position: absolute;
+  left: 50%;
+  top: -6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,.7), rgba(255,255,255,0));
+  transform: translateX(-50%);
+  opacity: 0;
+}
+
+/* When blown, flames fade and smoke rises */
+.cake-overlay.blown .flame { animation: flameOut .18s ease forwards; }
+@keyframes flameOut { to { opacity: 0; transform: translateX(-50%) translateY(-6px) scale(.6); filter: none; } }
+.cake-overlay.blown .smoke {
+  animation: smokeRise 1.2s ease forwards;
+  animation-delay: calc(var(--i, 0) * .05s);
+}
+@keyframes smokeRise {
+  0% { opacity: 0; transform: translateX(-50%) translateY(0) scale(1); }
+  10% { opacity: .9; }
+  100% { opacity: 0; transform: translateX(-60%) translateY(-40px) scale(1.6); }
+}
+
+/* Congrats overlay */
+.congrats-overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,.45);
+  backdrop-filter: blur(2px);
+  z-index: 45;
+}
+.congrats-overlay.show { display: flex; animation: overlayIn .25s ease forwards; }
+
+.congrats-card {
+  width: min(560px, 92vw);
+  background: linear-gradient(180deg, var(--panel), var(--panel-2));
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 16px;
+  padding: 18px;
+  text-align: center;
+  box-shadow: 0 10px 30px var(--shadow);
+}
+.congrats-emoji { font-size: 46px; }
+.congrats-title { margin: 8px 0 6px; font-size: clamp(22px, 4vw, 28px); }
+.congrats-sub { margin: 0 0 10px; color: var(--text-dim); }
+
+.hearts { position: relative; height: 80px; margin: 8px 0 12px; overflow: visible; }
+.heart {
+  position: absolute;
+  left: calc(10% + var(--i) * 12%);
+  bottom: -6px;
+  font-size: 22px;
+  opacity: 0;
+  animation: floatHeart 1.6s ease-in forwards;
+  animation-delay: calc(var(--i) * .12s);
+}
+@keyframes floatHeart {
+  0% { transform: translateY(0) scale(.8) rotate(-6deg); opacity: 0; }
+  15% { opacity: .9; }
+  100% { transform: translateY(-72px) scale(1.2) rotate(6deg); opacity: 0; }
+}
