@@ -16,6 +16,7 @@ const stages = [
         desc: 'Homemade pasta, candlelight, soft jazz.',
         tags: ['casual', 'romantic'],
         base: 12,
+        toast: 'Cozy pasta night incoming!'
       },
       {
         id: 'sushi',
@@ -24,6 +25,7 @@ const stages = [
         desc: 'Omakase elegance with sparkling mocktails.',
         tags: ['classy', 'refined'],
         base: 14,
+        toast: 'Omakase elegance on deck.'
       },
       {
         id: 'tacos',
@@ -32,6 +34,7 @@ const stages = [
         desc: 'Street tacos, neon lights, and laughter.',
         tags: ['playful', 'casual'],
         base: 11,
+        toast: 'Street taco fiesta time!'
       },
     ],
   },
@@ -47,6 +50,7 @@ const stages = [
         desc: 'Sneakers, denim, cozy sweater.',
         tags: ['casual'],
         base: 10,
+        toast: 'Comfy and cute—chef’s kiss.'
       },
       {
         id: 'date-night',
@@ -55,6 +59,7 @@ const stages = [
         desc: 'Dressy with a touch of sparkle.',
         tags: ['classy', 'refined'],
         base: 13,
+        toast: 'Serving looks tonight.'
       },
       {
         id: 'quirky-fun',
@@ -63,6 +68,7 @@ const stages = [
         desc: 'Bold colors and playful accessories.',
         tags: ['playful'],
         base: 11,
+        toast: 'Bold and playful—own it!'
       },
     ],
   },
@@ -78,6 +84,7 @@ const stages = [
         desc: 'Dim lights, velvet seats, smooth tunes.',
         tags: ['classy', 'romantic'],
         base: 13,
+        toast: 'Secrets and sips await.'
       },
       {
         id: 'rooftop',
@@ -86,6 +93,7 @@ const stages = [
         desc: 'Open air, city lights, clinking glasses.',
         tags: ['refined'],
         base: 12,
+        toast: 'Skyline views, let’s go!'
       },
       {
         id: 'arcade',
@@ -94,6 +102,7 @@ const stages = [
         desc: 'Games, neon, and high scores.',
         tags: ['playful', 'casual'],
         base: 11,
+        toast: 'Game on, high scores only.'
       },
     ],
   },
@@ -109,6 +118,7 @@ const stages = [
         desc: 'Rich, glossy, decadent.',
         tags: ['classy'],
         base: 12,
+        toast: 'Decadence unlocked.'
       },
       {
         id: 'funfetti',
@@ -117,6 +127,7 @@ const stages = [
         desc: 'Sprinkles, smiles, instant party.',
         tags: ['playful'],
         base: 11,
+        toast: 'Sprinkles = instant party.'
       },
       {
         id: 'tiramisu',
@@ -125,6 +136,7 @@ const stages = [
         desc: 'Coffee-kissed classic.',
         tags: ['refined', 'classy'],
         base: 13,
+        toast: 'Classy coffee-kissed bliss.'
       },
     ],
   },
@@ -511,7 +523,9 @@ function selectOption(stageId, optionId) {
   renderStage();
   updateMood();
 
-  showToast(`+${awarded} pts · ${sample(funFacts)}`);
+  const customToast = option.toast || null;
+  const message = customToast ? `+${awarded} pts · ${customToast}` : `+${awarded} pts · ${sample(funFacts)}`;
+  showToast(message);
 
   elBtnNext.disabled = false;
 }
