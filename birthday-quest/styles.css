@@ -169,6 +169,24 @@ body {
 .card-tags { display: flex; flex-wrap: wrap; gap: 6px; }
 .tag { background: rgba(255,255,255,.06); color: var(--text-dim); border: 1px solid rgba(255,255,255,.08); padding: 2px 8px; border-radius: 999px; font-size: 12px; }
 
+.card-links {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+}
+.card-links a {
+  pointer-events: auto;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  color: var(--text);
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  transition: background .15s ease, border-color .15s ease;
+}
+.card-links a:hover { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.18); }
+
 .stage-actions { display: flex; justify-content: space-between; margin-top: 16px; }
 
 button { cursor: pointer; border: 0; border-radius: 14px; padding: 10px 14px; font-weight: 600; }
