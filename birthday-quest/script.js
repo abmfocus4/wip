@@ -403,39 +403,12 @@ function renderStage() {
       tags.appendChild(tag);
     }
 
-    // Links: Google Maps + Website (or search fallback)
-    const links = document.createElement('div');
-    links.className = 'card-links';
-    const query = option.mapsQuery || `${option.title} near me`;
-    const mapsUrl = option.mapsUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
-    const aMaps = document.createElement('a');
-    aMaps.href = mapsUrl;
-    aMaps.target = '_blank';
-    aMaps.rel = 'noopener noreferrer';
-    aMaps.textContent = 'Open in Maps';
-    links.appendChild(aMaps);
+    
 
-    const websiteUrl = option.website || '';
-    const aWeb = document.createElement('a');
-    aWeb.target = '_blank';
-    aWeb.rel = 'noopener noreferrer';
-    if (websiteUrl) {
-      aWeb.href = websiteUrl;
-      aWeb.textContent = 'Website';
-      links.appendChild(aWeb);
-    } else {
-      // Fallback: Google search to help find a site
-      const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(option.title + ' official site')}`;
-      aWeb.href = searchUrl;
-      aWeb.textContent = 'Website';
-      links.appendChild(aWeb);
-    }
-
-    card.appendChild(hero);
-    card.appendChild(title);
-    card.appendChild(desc);
-    card.appendChild(tags);
-    card.appendChild(links);
+       card.appendChild(hero);
+   card.appendChild(title);
+   card.appendChild(desc);
+   card.appendChild(tags);
 
     card.addEventListener('click', () => selectOption(stage.id, option.id));
     card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectOption(stage.id, option.id); } });
