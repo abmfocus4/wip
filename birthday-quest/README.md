@@ -41,7 +41,3 @@ No server. All data stays in your browser (localStorage) or in a shareable URL y
 ## License
 
 MIT. Make birthdays magical ✨
-
-
-// todo:
-// i love you even though you think justin beiber is better than the BAND 1D. it's tought but i love you still
