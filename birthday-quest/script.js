@@ -381,6 +381,7 @@ function renderStage() {
     card.tabIndex = 0;
     card.setAttribute('role', 'button');
     card.setAttribute('aria-pressed', selectedOptionId === option.id ? 'true' : 'false');
+    card.setAttribute('data-option-id', option.id);
 
     const hero = document.createElement('div');
     hero.className = 'card-hero';
@@ -492,6 +493,16 @@ function selectOption(stageId, optionId) {
   state.choicesByStage[stageId] = optionId;
   state.points = computeTotalPoints(state.choicesByStage);
   recordSelection(stageId, optionId, awarded);
+
+  // Video game side effect: flash the selected card + sound
+  const selectedCard = document.querySelector(`[data-option-id="${optionId}"]`);
+  if (selectedCard) {
+    selectedCard.classList.add('choice-flash');
+    setTimeout(() => selectedCard.classList.remove('choice-flash'), 300);
+  }
+  
+  // Play choice sound effect
+  playChoiceSound();
 
   renderStage();
   updateMood();
@@ -739,6 +750,40 @@ async function generatePdfFromChoices() {
   doc.setFont('helvetica', 'bold');
   doc.text(`Total Points: ${state.points}`, margin, y);
   return doc;
+}
+
+function playChoiceSound() {
+  const ctx = initAudio();
+  if (!ctx) return;
+  // Choice sound: a bright, satisfying "ding" with harmonics
+  const duration = 0.15;
+  const now = ctx.currentTime;
+  
+  // Create a bright fundamental tone
+  const osc1 = ctx.createOscillator();
+  osc1.type = 'sine';
+  osc1.frequency.setValueAtTime(800, now);
+  const gain1 = ctx.createGain();
+  gain1.gain.setValueAtTime(0.0001, now);
+  gain1.gain.exponentialRampToValueAtTime(0.08, now + 0.01);
+  gain1.gain.exponentialRampToValueAtTime(0.002, now + duration);
+  
+  // Add a harmonic for brightness
+  const osc2 = ctx.createOscillator();
+  osc2.type = 'sine';
+  osc2.frequency.setValueAtTime(1200, now);
+  const gain2 = ctx.createGain();
+  gain2.gain.setValueAtTime(0.0001, now);
+  gain2.gain.exponentialRampToValueAtTime(0.04, now + 0.01);
+  gain2.gain.exponentialRampToValueAtTime(0.001, now + duration);
+  
+  // Connect and play
+  osc1.connect(gain1).connect(ctx.destination);
+  osc2.connect(gain2).connect(ctx.destination);
+  osc1.start(now);
+  osc2.start(now);
+  osc1.stop(now + duration);
+  osc2.stop(now + duration);
 }
 
 function playKissSound() {
