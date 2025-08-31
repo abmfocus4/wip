@@ -47,6 +47,4 @@ MIT. Make birthdays magical ✨
 - record voice with kiss in final transition
 - update all the options/text
 - add sound effects to everything
-// remove map and website
-// gift wrap
 // i love you even though you think justin beiber is better than the BAND 1D. it's tought but i love you still

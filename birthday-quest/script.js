@@ -7,34 +7,34 @@ const stages = [
   {
     id: 'dinner',
     title: 'Stage 1 — Dinner',
-    desc: 'Pick tonight\'s dinner vibe.',
+    desc: 'Pick bday dinner vibe',
     options: [
       {
-        id: 'trattoria',
-        icon: '🍝',
-        title: 'Cozy Trattoria',
-        desc: 'Homemade pasta, candlelight, soft jazz.',
-        tags: ['casual', 'romantic'],
-        base: 12,
-        toast: 'Cozy pasta night incoming!'
-      },
-      {
-        id: 'sushi',
-        icon: '🍣',
-        title: 'Sushi Star',
-        desc: 'Omakase elegance with sparkling mocktails.',
-        tags: ['classy', 'refined'],
+        id: 'chinese',
+        icon: '🥢',
+        title: 'Chinese',
+        desc: 'Dim sum, hotpot, or maybe handpulled noodles?!',
+        tags: ['hearty', 'flavourful'],
         base: 14,
-        toast: 'Omakase elegance on deck.'
+        toast: 'Chinese feast incoming!'
       },
       {
-        id: 'tacos',
+        id: 'italian',
+        icon: '🍝',
+        title: 'Italian',
+        desc: 'el dente pasta, candlelight, soft jazz (without cheese...obviously!)',
+        tags: ['fancy', 'romantic'],
+        base: 12,
+        toast: 'Italian romance in the house for my lactose intolerant booba!'
+      },
+      {
+        id: 'mexican',
         icon: '🌮',
-        title: 'Taco Truck Fiesta',
-        desc: 'Street tacos, neon lights, and laughter.',
+        title: 'Mexican',
+        desc: 'Dripping tacos, neon lights, and laughter.',
         tags: ['playful', 'casual'],
         base: 11,
-        toast: 'Street taco fiesta time!'
+        toast: 'Mexican fiesta time!'
       },
     ],
   },
@@ -96,49 +96,49 @@ const stages = [
         toast: 'Skyline views, let’s go!'
       },
       {
-        id: 'arcade',
-        icon: '🕹️',
-        title: 'Retro Arcade Bar',
-        desc: 'Games, neon, and high scores.',
+        id: 'karaoke',
+        icon: '🎤',
+        title: 'Karaoke Bar',
+        desc: 'Sing your heart out, neon lights, and laughter.',
         tags: ['playful', 'casual'],
         base: 11,
-        toast: 'Game on, high scores only.'
+        toast: 'Time to shine on the mic!'
       },
     ],
   },
   {
     id: 'cake',
     title: 'Stage 4 — Dessert',
-    desc: 'Choose the sweet finale.',
-    options: [
-      {
-        id: 'choc-ganache',
-        icon: '🍫',
-        title: 'Chocolate Ganache',
-        desc: 'Rich, glossy, decadent.',
-        tags: ['classy'],
-        base: 12,
-        toast: 'Decadence unlocked.'
-      },
-      {
-        id: 'funfetti',
-        icon: '🎂',
-        title: 'Funfetti',
-        desc: 'Sprinkles, smiles, instant party.',
-        tags: ['playful'],
-        base: 11,
-        toast: 'Sprinkles = instant party.'
-      },
-      {
-        id: 'tiramisu',
-        icon: '☕',
-        title: 'Tiramisu',
-        desc: 'Coffee-kissed classic.',
-        tags: ['refined', 'classy'],
-        base: 13,
-        toast: 'Classy coffee-kissed bliss.'
-      },
-    ],
+    desc: 'Choose the sweet finale for the ceremonial candle blowing!',
+          options: [
+        {
+          id: 'cake',
+          icon: '🎂',
+          title: 'Cake',
+          desc: 'It\'s a classic for a reason and definitely no sprinkles. PROMISE',
+          tags: ['classic', 'celebration'],
+          base: 12,
+          toast: 'Maybe I\'ll decide to keep the ice-cream cake tradition going 👀'
+        },
+        {
+          id: 'pastry',
+          icon: '🥐',
+          title: 'Pastry',
+          desc: 'Flaky, buttery pastries for a sweet treat.',
+          tags: ['refined', 'elegant'],
+          base: 11,
+          toast: 'Pastry perfection awaits! But it\'s definitely not going to be a croissant dw'
+        },
+        {
+          id: 'surprise',
+          icon: '🎁',
+          title: 'Surprise',
+          desc: 'A mystery dessert that will hopefully delight and amaze.',
+          tags: ['mysterious', 'exciting'],
+          base: 13,
+          toast: 'Toronto is creative and so am I!'
+        },
+      ],
   },
 ];
 
