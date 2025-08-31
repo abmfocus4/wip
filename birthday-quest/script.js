@@ -195,6 +195,8 @@ const elSfxBlow = document.getElementById('sfx-blow');
 const elCongrats = document.getElementById('congrats-overlay');
 const elBtnSavePdf = document.getElementById('btn-save-pdf');
 const elBtnCongratsClose = document.getElementById('btn-congrats-close');
+const elVirusWarning = document.getElementById('virus-warning');
+const elBtnVirusClose = document.getElementById('btn-virus-close');
 const elWelcome = document.getElementById('welcome');
 const elHeader = document.getElementById('app-header');
 const elHud = document.getElementById('hud');
@@ -769,21 +771,48 @@ function playChoiceSound() {
   gain1.gain.exponentialRampToValueAtTime(0.002, now + duration);
   
   // Add a harmonic for brightness
-  const osc2 = ctx.createOscillator();
-  osc2.type = 'sine';
-  osc2.frequency.setValueAtTime(1200, now);
-  const gain2 = ctx.createGain();
-  gain2.gain.setValueAtTime(0.0001, now);
-  gain2.gain.exponentialRampToValueAtTime(0.04, now + 0.01);
-  gain2.gain.exponentialRampToValueAtTime(0.001, now + duration);
+  osc1.connect(gain1).connect(ctx.destination);
+  osc1.start(now);
+  osc1.stop(now + duration);
+}
+
+function playVirusWarningSound() {
+  const ctx = initAudio();
+  if (!ctx) return;
+  // Creepy, ominous warning sound
+  const duration = 2.5;
+  const now = ctx.currentTime;
+  
+  // Low ominous drone
+  const drone = ctx.createOscillator();
+  drone.type = 'sawtooth';
+  drone.frequency.setValueAtTime(80, now);
+  drone.frequency.exponentialRampToValueAtTime(60, now + duration);
+  
+  const droneGain = ctx.createGain();
+  droneGain.gain.setValueAtTime(0.0001, now);
+  droneGain.gain.exponentialRampToValueAtTime(0.15, now + 0.5);
+  droneGain.gain.exponentialRampToValueAtTime(0.08, now + duration);
+  
+  // High warning tone
+  const warning = ctx.createOscillator();
+  warning.type = 'square';
+  warning.frequency.setValueAtTime(400, now);
+  warning.frequency.exponentialRampToValueAtTime(300, now + duration);
+  
+  const warningGain = ctx.createGain();
+  warningGain.gain.setValueAtTime(0.0001, now);
+  warningGain.gain.exponentialRampToValueAtTime(0.12, now + 0.3);
+  warningGain.gain.exponentialRampToValueAtTime(0.06, now + 1.5);
+  warningGain.gain.exponentialRampToValueAtTime(0.001, now + duration);
   
   // Connect and play
-  osc1.connect(gain1).connect(ctx.destination);
-  osc2.connect(gain2).connect(ctx.destination);
-  osc1.start(now);
-  osc2.start(now);
-  osc1.stop(now + duration);
-  osc2.stop(now + duration);
+  drone.connect(droneGain).connect(ctx.destination);
+  warning.connect(warningGain).connect(ctx.destination);
+  drone.start(now);
+  warning.start(now);
+  drone.stop(now + duration);
+  warning.stop(now + duration);
 }
 
 function playKissSound() {
@@ -812,6 +841,42 @@ function playKissSound() {
   noise.stop(now + duration);
 }
 
+function showVirusWarning() {
+  if (!elVirusWarning) return;
+  elVirusWarning.classList.remove('hidden');
+  elVirusWarning.classList.add('show');
+  
+  // Play creepy warning sound
+  playVirusWarningSound();
+  
+  // Start countdown
+  startVirusCountdown();
+}
+
+function hideVirusWarning() {
+  if (!elVirusWarning) return;
+  elVirusWarning.classList.remove('show');
+  elVirusWarning.classList.add('hidden');
+}
+
+function startVirusCountdown() {
+  let count = 10;
+  const countdownEl = elVirusWarning?.querySelector('.virus-countdown');
+  if (!countdownEl) return;
+  
+  const timer = setInterval(() => {
+    count--;
+    countdownEl.textContent = count;
+    
+    if (count <= 0) {
+      clearInterval(timer);
+      countdownEl.textContent = '0';
+      countdownEl.style.color = '#ff0000';
+      countdownEl.style.animation = 'none';
+    }
+  }, 1000);
+}
+
 function showCongratsOverlay() {
   if (!elCongrats) return;
   elCongrats.classList.add('show');
@@ -827,6 +892,8 @@ function hideCongratsOverlay() {
 
 function buildLoveLetterText() {
   const lines = [];
+  lines.push('JK, I would never install a virus on booba\'s PC, only in his heart <3');
+  lines.push('');
   lines.push('To my beloved Pookie,');
   lines.push('');
   lines.push('I can\'t wait to design a perfect birthday just for you. Every choice was a little love note for my adodable, handsome cutiepie.');
@@ -848,6 +915,8 @@ function buildLoveLetterText() {
   lines.push('');
   lines.push('Yours,');
   lines.push('Forever Admirer');
+  lines.push('');
+  lines.push('Now, hands where I can see them, Mister! Slowly turn to your girlfriend and give her a kiss *pew pew*');
   return lines.join('\n');
 }
 
@@ -857,14 +926,60 @@ async function onSavePdf() {
   if (!jsPDF) { showToast('PDF library failed to load.'); return; }
   const doc = new jsPDF();
   const text = buildLoveLetterText();
-  const margin = 16;
+  const margin = 25;
+  const pageWidth = 210;
+  const textWidth = pageWidth - margin * 2;
+  
+  // Ensure white background and black text
+  doc.setFillColor(255, 255, 255);
+  doc.rect(0, 0, pageWidth, 297, 'F');
+  doc.setTextColor(0, 0, 0);
+  
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(14);
-  const wrapped = doc.splitTextToSize(text, 210 - margin * 2);
-  doc.text(wrapped, margin, 24);
+  doc.setFontSize(11);
+  
+  // Split text into lines
+  const lines = text.split('\n');
+  
+  let y = 30;
+  
+  // First line regular text
+  if (lines.length > 0) {
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+    const wrappedFirst = doc.splitTextToSize(lines[0], textWidth);
+    doc.text(wrappedFirst, margin, y);
+    y += wrappedFirst.length * 6 + 4;
+  }
+  
+  // Process the rest of the lines
+  for (let i = 1; i < lines.length; i++) {
+    if (lines[i].trim() === '') {
+      y += 6; // Empty line spacing
+    } else {
+      // Regular content
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(11);
+      const wrapped = doc.splitTextToSize(lines[i], textWidth);
+      doc.text(wrapped, margin, y);
+      y += wrapped.length * 6 + 4;
+    }
+    
+    // Check if we need a new page
+    if (y > 280) {
+      doc.addPage();
+      y = 30;
+      // Ensure white background on new page
+      doc.setFillColor(255, 255, 255);
+      doc.rect(0, 0, pageWidth, 297, 'F');
+      doc.setTextColor(0, 0, 0);
+    }
+  }
+  
   try {
     doc.save('VIRUS.pdf');
-    setTimeout(() => { showCongratsOverlay(); }, 400);
+    // Show virus warning instead of congrats
+    setTimeout(() => { showVirusWarning(); }, 400);
   } catch (_) {
     showToast('Could not save PDF.');
   }
@@ -875,6 +990,9 @@ if (elBtnSavePdf) {
 }
 if (elBtnCongratsClose) {
   elBtnCongratsClose.addEventListener('click', hideCongratsOverlay);
+}
+if (elBtnVirusClose) {
+  elBtnVirusClose.addEventListener('click', hideVirusWarning);
 }
 
 // ---------- Init ----------

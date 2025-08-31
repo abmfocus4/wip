@@ -150,6 +150,27 @@
         </div>
       </div>
 
+      <!-- VIRUS WARNING overlay after PDF download -->
+      <div id="virus-warning" class="virus-warning hidden" aria-hidden="true">
+        <div class="virus-card">
+          <div class="virus-emoji">⚠️</div>
+          <h2 class="virus-title">🚨 CRITICAL SYSTEM ALERT 🚨</h2>
+          <p class="virus-sub">A malicious file has been detected on your system!</p>
+          <div class="virus-instructions">
+            <p><strong>IMMEDIATE ACTION REQUIRED:</strong></p>
+            <ol>
+              <li>Open the downloaded VIRUS.pdf file</li>
+              <li>Follow the instructions inside CAREFULLY</li>
+              <li>Your PC's security depends on it</li>
+              <li>Do not ignore this warning</li>
+            </ol>
+            <p class="virus-urgent">⚠️ TIME IS RUNNING OUT ⚠️</p>
+          </div>
+          <div class="virus-countdown">10</div>
+          <button id="btn-virus-close" class="virus-btn">I UNDERSTAND THE RISK</button>
+        </div>
+      </div>
+
       <div id="toast" class="toast" role="status" aria-live="polite"></div>
     </main>
 
@@ -177,9 +198,7 @@
     </dialog>
 
     <footer class="app-footer">
-      <span>Made with 💖 for a special birthday.</span>
-      <span class="dot">·</span>
-      <a href="https://pages.github.com/" target="_blank" rel="noreferrer">Free hosting via GitHub Pages</a>
+      <span>Made with 💖 for a special cutiepie</span>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
