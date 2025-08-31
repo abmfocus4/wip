@@ -108,7 +108,7 @@ const stages = [
   },
   {
     id: 'cake',
-    title: 'Stage 4 — Cake',
+    title: 'Stage 4 — Dessert',
     desc: 'Choose the sweet finale.',
     options: [
       {
