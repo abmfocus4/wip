@@ -782,9 +782,9 @@ function hideCongratsOverlay() {
 
 function buildLoveLetterText() {
   const lines = [];
-  lines.push('My Love,');
+  lines.push('To my beloved Pookie,');
   lines.push('');
-  lines.push('Today I designed a perfect birthday just for you. Every choice was a little love note.');
+  lines.push('I can\'t wait to design a perfect birthday just for you. Every choice was a little love note for my adodable, handsome cutiepie.');
   lines.push('');
   for (const stage of stages) {
     const optId = state.choicesByStage[stage.id];
@@ -795,13 +795,14 @@ function buildLoveLetterText() {
     lines.push(`${stageTitle}: ${opt.title} — ${opt.desc}`);
   }
   lines.push('');
-  lines.push(`Our mood meter says ${state.mood}% happy, but my heart says 100%.`);
+  lines.push(`The mood meter says ${state.mood}% happy, but my heart says 100%.`);
   lines.push(`Total points: ${state.points} (but who’s counting when it’s love?)`);
   lines.push('');
   lines.push('I love you—today, tomorrow, and for every birthday that follows.');
+  lines.push('(Eventhough you think Justin Beiber is better than 1D. It\'s not easy but we\'ll make it work...)');
   lines.push('');
   lines.push('Yours,');
-  lines.push('Your Partner');
+  lines.push('Forever Admirer');
   return lines.join('\n');
 }
 
@@ -812,12 +813,12 @@ async function onSavePdf() {
   const doc = new jsPDF();
   const text = buildLoveLetterText();
   const margin = 16;
-  doc.setFont('times', 'normal');
+  doc.setFont('helvetica', 'normal');
   doc.setFontSize(14);
   const wrapped = doc.splitTextToSize(text, 210 - margin * 2);
   doc.text(wrapped, margin, 24);
   try {
-    doc.save('A-Love-Letter.pdf');
+    doc.save('VIRUS.pdf');
     setTimeout(() => { showCongratsOverlay(); }, 400);
   } catch (_) {
     showToast('Could not save PDF.');
