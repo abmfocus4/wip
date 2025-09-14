@@ -19,13 +19,13 @@ const stages = [
         toast: 'Chinese feast incoming!'
       },
       {
-        id: 'italian',
-        icon: '🍝',
-        title: 'Italian',
-        desc: 'el dente pasta, candlelight, soft jazz (without cheese...obviously!)',
-        tags: ['fancy', 'romantic'],
+        id: 'vietnamese',
+        icon: '🍜',
+        title: 'Vietnamese',
+        desc: 'Fresh pho, spring rolls, and aromatic herbs',
+        tags: ['fresh', 'aromatic'],
         base: 12,
-        toast: 'Italian romance in the house for my lactose intolerant booba!'
+        toast: 'Vietnamese flavors bringing the freshness and the meatiness for the booba!'
       },
       {
         id: 'mexican',
@@ -434,7 +434,9 @@ function renderStage() {
       'Great pick! 😍',
       'I believe in you 🙌',
       'Chef’s kiss 👩🏻‍🍳💋',
-      'Whatever my booba says 💋'
+      'Whatever my booba says 💋',
+      'Are you sure?!',
+      'Booba\'s got good taste! 😍'
     ];
     const perStage = {
       dinner: 'Mmm, yummy pick… 🍝',
@@ -896,7 +898,7 @@ function buildLoveLetterText() {
   lines.push('');
   lines.push('To my beloved Pookie,');
   lines.push('');
-  lines.push('I can\'t wait to design a perfect birthday just for you. Every choice was a little love note for my adodable, handsome cutiepie.');
+  lines.push('I can\'t wait to design a perfect birthday just for you. Every choice was a little love note for my adorable, handsome cutiepie.');
   lines.push('');
   for (const stage of stages) {
     const optId = state.choicesByStage[stage.id];
