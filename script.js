@@ -198,6 +198,8 @@ const elBtnCongratsClose = document.getElementById('btn-congrats-close');
 const elVirusWarning = document.getElementById('virus-warning');
 const elBtnVirusClose = document.getElementById('btn-virus-close');
 const elWelcome = document.getElementById('welcome');
+const elVolume = document.getElementById('volume-overlay');
+const elVolumeCount = document.getElementById('volume-count');
 const elHeader = document.getElementById('app-header');
 const elHud = document.getElementById('hud');
 const elBtnTosAgree = document.getElementById('btn-tos-agree');
@@ -999,15 +1001,38 @@ if (elBtnVirusClose) {
 
 // ---------- Init ----------
 (function init() {
-  // Always show welcome page first as a dedicated page
-  if (elWelcome) elWelcome.classList.add('show');
-  // Hide app chrome until accepted
+  // Start with volume overlay -> then ToS -> then game
   if (elHeader) elHeader.classList.add('hidden');
   if (elHud) elHud.classList.add('hidden');
   if (elStageSection) elStageSection.classList.add('hidden');
   if (elFinal) elFinal.classList.add('hidden');
   if (elCoach) elCoach.classList.add('hidden');
+  if (elVolume) {
+    elVolume.classList.add('show');
+    startVolumeCountdown(3, () => {
+      elVolume.classList.remove('show');
+      if (elWelcome) elWelcome.classList.add('show');
+    });
+  } else {
+    if (elWelcome) elWelcome.classList.add('show');
+  }
 })();
+
+function startVolumeCountdown(seconds, onDone) {
+  if (!elVolumeCount) { if (typeof onDone === 'function') onDone(); return; }
+  let remaining = seconds;
+  elVolumeCount.textContent = String(remaining);
+  const timer = setInterval(() => {
+    remaining -= 1;
+    if (remaining <= 0) {
+      clearInterval(timer);
+      elVolumeCount.textContent = '0';
+      if (typeof onDone === 'function') onDone();
+    } else {
+      elVolumeCount.textContent = String(remaining);
+    }
+  }, 1000);
+}
 
 function startGameAfterTos() {
   localStorage.setItem('bq_tos_accepted', '1');

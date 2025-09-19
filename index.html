@@ -25,6 +25,14 @@
 
     <main id="app" class="app">
       <div id="confetti" class="confetti-container" aria-hidden="true"></div>
+      <!-- Volume countdown overlay -->
+      <section id="volume-overlay" class="volume-overlay" aria-hidden="true">
+        <div class="volume-card" role="dialog" aria-modal="true" aria-labelledby="volume-title">
+          <div class="volume-emoji" aria-hidden="true">🔊</div>
+          <h2 id="volume-title" class="volume-title">Crank it up!</h2>
+          <div id="volume-count" class="volume-count">3</div>
+        </div>
+      </section>
       <!-- Welcome / ToS overlay -->
       <section id="welcome" class="welcome-overlay" aria-hidden="true">
         <div class="welcome-card" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
