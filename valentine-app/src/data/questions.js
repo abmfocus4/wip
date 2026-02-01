@@ -16,7 +16,7 @@ export const QUESTIONS = [
     image: "/spongebob-please.png",
     yesImage: "/loaf-you.png",
     yesResponse: "You're the best. Seriously. 😭💖",
-    noResponse: "My code only has two buttons and you picked that one? Try again below.",
+    noResponse: "My code only has two buttons and you picked that one? Try again.",
   },
   {
     id: 2,
@@ -24,7 +24,7 @@ export const QUESTIONS = [
     subtext: "I made you an entire app for this.",
     image: "/oliver-please.png",
     yesResponse: "THANK YOU. My heart is so full. 💗",
-    noResponse: "I'm not giving up. Keep scrolling. 🐌",
+    noResponse: "I'm not giving up. Keep going. 🐌",
   },
   {
     id: 3,
@@ -33,7 +33,7 @@ export const QUESTIONS = [
     image: "/lisa-crying.png",
     yesImage: "/orangutan-kiss.png",
     yesResponse: "Finally! You're stuck with me now. 💘",
-    noResponse: "Okay, you're committed to the bit. I respect it. Scroll for more.",
+    noResponse: "Okay, you're committed to the bit. I respect it.",
   },
   {
     id: 4,
@@ -42,7 +42,7 @@ export const QUESTIONS = [
     image: "/bernie-asking.png",
     yesImage: "/things-i-love.png",
     yesResponse: "Snacks AND love? Deal. You're the best Valentine. 🍫❤️",
-    noResponse: "Even the snacks couldn't sway you? There's more below...",
+    noResponse: "Even the snacks couldn't sway you? If you are persistent, I'm more persistent...",
   },
   {
     id: 5,
@@ -51,7 +51,7 @@ export const QUESTIONS = [
     image: "/meme-man-guns.png",
     yesImage: "/frog-for-you.png",
     yesResponse: "That's the spirit! Forever your Valentine. 🌹",
-    noResponse: "I'll interpret that as 'ask me again below.'",
+    noResponse: "I'll interpret that as 'ask me again'",
   },
   {
     id: 6,

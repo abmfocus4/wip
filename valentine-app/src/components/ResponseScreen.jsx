@@ -8,7 +8,7 @@ export default function ResponseScreen({ message, image, isYes }) {
 
   useEffect(() => {
     if (isYes) {
-      const t = setTimeout(() => dispatch(continueToNext()), 2000)
+      const t = setTimeout(() => dispatch(continueToNext()), 3000)
       return () => clearTimeout(t)
     }
   }, [isYes, dispatch])
@@ -18,17 +18,16 @@ export default function ResponseScreen({ message, image, isYes }) {
       <div className="response-content">
         <p className="response-text">{message}</p>
         {image && <img src={image} alt="" className="response-image" />}
-        {!isYes && (
+        {isYes ? (
+          <p className="auto-continue">Taking you to the final page...</p>
+        ) : (
           <button
             type="button"
             className="btn-continue"
             onClick={() => dispatch(continueToNext())}
           >
-            Next question →
+            Again →
           </button>
-        )}
-        {isYes && (
-          <p className="auto-continue">Next question in a moment...</p>
         )}
       </div>
     </section>

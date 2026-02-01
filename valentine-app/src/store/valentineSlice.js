@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
+  started: false,
   currentStep: 0,
   answers: [], // each entry: { stepIndex, answer: 'yes' | 'no' }
   hasSaidYes: false,
@@ -11,11 +12,14 @@ export const valentineSlice = createSlice({
   name: 'valentine',
   initialState,
   reducers: {
+    start: (state) => {
+      state.started = true
+    },
     answerYes: (state, action) => {
-      const stepIndex = action.payload
+      const { stepIndex, totalQuestions } = action.payload
       state.answers.push({ stepIndex, answer: 'yes' })
       state.hasSaidYes = true
-      state.currentStep += 1
+      state.currentStep = totalQuestions // skip to final page
       state.showingResponse = true
     },
     answerNo: (state, action) => {
@@ -31,5 +35,5 @@ export const valentineSlice = createSlice({
   },
 })
 
-export const { answerYes, answerNo, continueToNext, reset } = valentineSlice.actions
+export const { start, answerYes, answerNo, continueToNext, reset } = valentineSlice.actions
 export default valentineSlice.reducer

@@ -2,10 +2,10 @@ import { useDispatch } from 'react-redux'
 import { answerYes, answerNo } from '../store/valentineSlice'
 import './QuestionScreen.css'
 
-export default function QuestionScreen({ question, stepIndex }) {
+export default function QuestionScreen({ question, stepIndex, totalQuestions }) {
   const dispatch = useDispatch()
 
-  const handleYes = () => dispatch(answerYes(stepIndex))
+  const handleYes = () => dispatch(answerYes({ stepIndex, totalQuestions }))
   const handleNo = () => dispatch(answerNo(stepIndex))
 
   return (

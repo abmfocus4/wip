@@ -47,6 +47,28 @@
   margin-bottom: 1.5rem;
 }
 
+.btn-redo {
+  margin-top: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.2s ease;
+}
+
+.btn-redo:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.03);
+}
+
+.btn-redo:active {
+  transform: scale(0.98);
+}
+
 .final-sub {
   font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.5);

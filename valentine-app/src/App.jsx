@@ -1,11 +1,22 @@
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { reset } from './store/valentineSlice'
+import StartScreen from './components/StartScreen'
 import QuestionScreen from './components/QuestionScreen'
 import ResponseScreen from './components/ResponseScreen'
 import { QUESTIONS } from './data/questions'
 import './App.css'
 
 function App() {
-  const { currentStep, answers, showingResponse } = useSelector((state) => state.valentine)
+  const dispatch = useDispatch()
+  const { started, currentStep, answers, showingResponse } = useSelector((state) => state.valentine)
+
+  if (!started) {
+    return (
+      <main className="page-container">
+        <StartScreen />
+      </main>
+    )
+  }
 
   // Show response screen after answering, then continue to next question
   if (showingResponse && answers.length > 0) {
@@ -30,6 +41,7 @@ function App() {
         <QuestionScreen
           question={QUESTIONS[currentStep]}
           stepIndex={currentStep}
+          totalQuestions={QUESTIONS.length}
         />
       </main>
     )
@@ -44,6 +56,16 @@ function App() {
           <p className="final-text">
             Hope you had fun. I love you so much, pooks.
           </p>
+          <button
+            type="button"
+            className="btn-redo"
+            onClick={() => {
+              dispatch(reset())
+              window.location.reload()
+            }}
+          >
+            Redo
+          </button>
         </div>
       </section>
     </main>
